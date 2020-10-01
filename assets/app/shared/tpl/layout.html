@@ -1,0 +1,624 @@
+<style>
+    .vbox .row-row .cell {
+        /*min-height: 300px;*/
+        /*min-height: 400px;*/
+    }
+</style>
+
+
+<!-- navbar -->
+<div data-ng-include=" '/app/shared/tpl/blocks/header.html' "
+     class="app-header navbar">
+</div>
+<!-- / navbar -->
+
+<!-- menu -->
+<div data-ng-include=" '/app/shared/tpl/blocks/aside.html' "
+     class="app-aside b-r hidden-xs {{app.settings.asideColor}}"
+     ng-class="{'hide': app.hideAside }">
+</div>
+<!-- / menu -->
+
+<!-- view -->
+<div class="app-content" ng-class="{'m-n': app.hideAside, 'h-full': app.hideFooter }">
+    <div disable-all="isDisabled">
+        <div class="app-content-body app-content-full fade-in-up" ng-class="{'h-full': app.hideFooter }" ui-view></div>
+    </div>
+</div>
+<!-- / view -->
+
+<!-- navbar -->
+<!-- <div class="app-footer navbar navbar-fixed-bottom bg-light lt b-t"
+      ng-class="{'m-n': app.hideAside, 'hide': app.hideFooter}" ui-view="footer">
+
+ </div>-->
+<!-- /navbar -->
+
+
+<!--<div data-ng-include=" '/app/shared/tpl/blocks/settings.html' " class="settings panel panel-default"></div>-->
+
+
+<!--TEMPLATES-->
+<script type="text/ng-template" id="ui-select-single.html">
+    <ui-select data-ng-model="model[options.key]" data-required="{{to.required}}" data-disabled="{{to.disabled}}"
+               theme="bootstrap">
+        <ui-select-match placeholder="{{to.placeholder}}" data-allow-clear="{{to.disabled?false:true}}">
+            <div class="diamond_s {{$select.selected.class}}" ng-if="$select.selected.class"></div>
+            {{$select.selected[to.labelProp]}}
+        </ui-select-match>
+        <ui-select-choices data-repeat="{{to.ngOptions}}">
+            <div class="diamond_s {{option.class}}" ng-if="option.class"></div>
+            <div ng-bind-html="option[to.labelProp] | highlight: $select.search">
+            </div>
+        </ui-select-choices>
+    </ui-select>
+</script>
+<script type="text/ng-template" id="ui-select-single-select2.html">
+    <ui-select data-ng-model="model[options.key]" data-required="{{to.required}}" data-disabled="{{to.disabled}}"
+               theme="select2">
+        <ui-select-match placeholder="{{to.placeholder}}">{{$select.selected[to.labelProp]}}</ui-select-match>
+        <ui-select-choices data-repeat="{{to.ngOptions}}">
+            <div ng-bind-html="option[to.labelProp] | highlight: $select.search"></div>
+        </ui-select-choices>
+    </ui-select>
+</script>
+<script type="text/ng-template" id="ui-select-single-async-search.html">
+    <ui-select data-ng-model="model[options.key]" data-required="{{to.required}}" data-disabled="{{to.disabled}}"
+               theme="bootstrap">
+        <ui-select-match placeholder="{{to.placeholder}}">{{$select.selected[to.labelProp]}}</ui-select-match>
+        <ui-select-choices data-repeat="{{to.ngOptions}}" data-refresh="to.refresh($select.search, options)"
+                           data-refresh-delay="{{to.refreshDelay}}">
+            <div ng-bind-html="option[to.labelProp] | highlight: $select.search"></div>
+            <div>
+                <small>{{option.geometry.location.lat}}, {{option.geometry.location.lng}}</small>
+            </div>
+        </ui-select-choices>
+    </ui-select>
+</script>
+<script type="text/ng-template" id="ui-select-multiple.html">
+    <ui-select multiple data-ng-model="model[options.key]" data-required="{{to.required}}"
+               data-disabled="{{to.disabled}}" theme="bootstrap">
+        <ui-select-match placeholder="{{to.placeholder}}">{{$item[to.labelProp]}}</ui-select-match>
+        <ui-select-choices data-repeat="{{to.ngOptions}}">
+            <div ng-bind-html="option[to.labelProp] | highlight: $select.search"></div>
+        </ui-select-choices>
+    </ui-select>
+</script>
+
+<script type="text/ng-template" id="vModelDeleteResponse.html">
+    <v-modal class="vModal--default" onclose="md.deactivate()">
+        <v-dialog heading="Give a look @ this" medium middle>
+            <v-close label="Close"></v-close>
+
+            <h3 class="m-n page-header text-info">
+                THIS DELETE AFFECTS <span class="text-danger">{{::message.length}} MODULES</span>, PLEASE SEE THIS.
+            </h3>
+
+            <table class="table table-bordered m-t-sm">
+                <thead>
+                <tr>
+                    <th>#</th>
+                    <th>Error</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr ng-repeat="msg in message">
+                    <td>
+                        {{::$index + 1}} ) &nbsp;&nbsp;
+                        {{::msg.key}}
+                    </td>
+                    <td>
+                        {{::msg.message}}
+                    </td>
+
+                </tr>
+
+                </tbody>
+            </table>
+
+        </v-dialog>
+    </v-modal>
+</script>
+
+
+<!--DIAMOND DETAIL TEMPLATE-->
+
+<style>
+    .k-widget {
+        color: #777;
+    }
+
+    div.k-grid-header {
+        border-bottom-width: 0 !important;
+    }
+
+    .k-header {
+        background-color: #FFF;
+    }
+
+    .k-grid-header th.k-header, .k-filter-row th {
+
+        text-align: center !important;
+        font-size: 12px;
+        font-weight: bold;
+
+    }
+
+    .k-grid-header .k-link {
+        color: #086C9C !important;
+    }
+
+    .k-grid td {
+        padding: .3em .5em !important;
+        text-align: center;
+    }
+
+    .k-grid tr td {
+        /*border-width: 0px 0 1px 1px !important;*/
+        border-color: #E0E0E0 !important;
+    }
+
+    .k-tabstrip-wrapper {
+        text-align: left !important;
+    }
+
+    .k-grid .k-hierarchy-cell + td {
+        border-left: 0;
+    }
+
+    /* .k-alt {
+         background-color: #fff;
+     }*/
+
+    .k-grid-content {
+        font-size: 13px;
+    }
+
+    .k-state-selected > .k-link,
+    .k-panelbar > li > .k-state-selected,
+    .k-panelbar > li.k-state-default > .k-link.k-state-selected {
+
+        color: #000;
+    }
+
+    .k-panelbar .k-state-focused.k-state-selected {
+        box-shadow: none;
+    }
+
+    .k-panelbar > .k-item > .k-link {
+        background-color: #CCC;
+    }
+
+    .k-panel > .k-item > .k-link {
+        line-height: 1.5;
+    }
+
+    .k-link > label {
+        padding-right: 8px;
+    }
+
+    .k-grouping-row td {
+        text-align: left;
+    }
+
+</style>
+
+
+<script type="text/ng-template" id="diamondDetailTemplate.html">
+
+
+    <div class="row">
+
+
+        <div class="col-md-6" style="width:600px">
+
+            <div class="col-md-3" style="width:170px">
+
+                <ul kendo-panel-bar>
+
+                    <li class="k-state-active">
+                        BASIC DETAILS
+                        <ul class="text-left">
+                            <li>
+                                <b><label>StoneID:</label></b>
+                                <span><b> {{:: dataItem.stone_id}} </b></span>
+                            </li>
+                            <!-- <li>
+                                 <label>Certificate:</label></b> <span>{{::dataItem.certification_number}} </span>
+                             </li>-->
+                            <li>
+                                <label>Shape:</label>
+                                <span><b>{{::dataItem.shape.name}} </b></span>
+                            </li>
+                            <li>
+                                <label>Color:</label>
+                                <span><b>{{::dataItem.color.name}} </b></span>
+                            </li>
+                            <li>
+                                <label>Clarity:</label>
+                                <span> <b>{{::dataItem.clarity.name}}</b></span>
+                            </li>
+                            <li>
+                                <label>Carat:</label>
+                                <span><b>{{::dataItem.carat}} </b></span>
+                            </li>
+                            <li>
+                                <label>Cut:</label>
+                                <span>{{::dataItem.cut.name}}</span>
+                            </li>
+                            <li>
+                                <label>Polish: </label>
+                                <span>{{::dataItem.polish.name}}</span>
+                            </li>
+                            <li>
+                                <label>Symmetry:</label>
+                                <span>{{::dataItem.symmetry.name}} </span>
+                            </li>
+                            <li>
+                                <label>Fluor:</label>
+                                <span> {{::dataItem.fluorescence.name}} </span>
+                            </li>
+                            <li ng-show="dataItem.shape_description">
+                                <label>Shape Description:</label>
+                                <span>
+                                    {{::dataItem.shape_description}}
+                                </span>
+                            </li>
+                            <li ng-show="dataItem.color_desc">
+                                <label>Color Description:</label>
+                                <span>
+                                    {{::dataItem.color_desc}}
+                                </span>
+                            </li>
+                            <li ng-show="dataItem.clarity_status">
+                                <label>Clarity Statu:</label>
+                                <span>
+                                    {{::dataItem.clarity_status}}
+                                </span>
+                            </li>
+                            <li ng-show="dataItem.polish_features">
+                                <label>Polish features:</label>
+                                <span>
+                                    {{::dataItem.polish_features}}
+                                </span>
+                            </li>
+                            <li ng-show="dataItem.symmetry_features">
+                                <label>Symmetry features:</label>
+                                <span>
+                                    {{::dataItem.symmetry_features}}
+                                </span>
+                            </li>
+                            <li ng-show="dataItem.flour_color">
+                                <label>Flour Color:</label>
+                                <span>
+                                    {{::dataItem.flour_color}}
+                                </span>
+                            </li>
+                            <li ng-show="dataItem.h_and_a.name && dataItem.h_and_a.name !='-'">
+                                <label>H&amp;A:</label>
+                                <span>
+                                    {{::dataItem.h_and_a.name}}
+                                </span>
+                            </li>
+                            <li ng-show="dataItem.shade.name && dataItem.shade.name !='-'">
+                                <label>Shade:</label>
+                                <span>
+                                    {{::dataItem.shade.name}}
+                                </span>
+                            </li>
+                            <li ng-show="dataItem.location.name && dataItem.location.name !='-'">
+                                <label>Location:</label>
+                                <span>
+                                    {{::dataItem.location.name}}
+                                </span>
+                            </li>
+
+                        </ul>
+                    </li>
+
+
+                </ul>
+
+            </div>
+            <div class="col-md-3" style="width:170px">
+
+                <ul kendo-panel-bar>
+
+
+                    <li class="k-state-active">
+                        PARAMETERS
+                        <ul class="text-left">
+
+                            <li>
+                                <label>Depth:</label>
+                                <span> {{::dataItem.depth}} </span>
+                            </li>
+                            <li>
+                                <label>Width:</label>
+                                <span> {{::dataItem.width}} </span>
+                            </li>
+                            <li>
+                                <label>Length:</label>
+                                <span> {{::dataItem.length}} </span>
+                            </li>
+                            <li>
+                                <label>Depth %:</label>
+                                <span> {{::dataItem.depth_per}} </span>
+                            </li>
+
+                            <!--<li>
+                                <label>Table:</label>
+                                <span>{{::dataItem.table}}</span>
+                            </li>-->
+                            <li>
+                                <label>Table %:</label>
+                                <span>{{::dataItem.table_per}}</span>
+                            </li>
+
+                            <li>
+                                <label>Crown Angle:</label>
+                                <span> {{::dataItem.crown_angle}} </span>
+                            </li>
+
+                            <li>
+                                <label>Pavalion Angle:</label>
+                                <span> {{::dataItem.pavalion_angle}} </span>
+                            </li>
+
+                            <li>
+                                <label>Girdle % :</label>
+                                <span> {{::dataItem.gridle_per}} </span>
+                            </li>
+
+                            <li>
+                                <label>Crown Height:</label>
+                                <span>{{::dataItem.crown_height}}</span>
+                            </li>
+
+                            <li>
+                                <label>Pavalion Height:</label>
+                                <span> {{::dataItem.pavalion_height}} </span>
+                            </li>
+
+                            <li>
+                                <label>Star Length:</label>
+                                <span> {{::dataItem.star_length}} </span>
+                            </li>
+                            <li>
+                                <label>Lower Half:</label>
+                                <span> {{::dataItem.lower_half}} </span>
+                            </li>
+
+                            <li ng-show="dataItem.girdle_max && dataItem.girdle_max !='-' ">
+                                <label>Girdle Max:</label>
+                                <span>
+                                    {{::dataItem.girdle_max}}
+                                </span>
+                            </li>
+                            <li ng-show="dataItem.girdle_min && dataItem.girdle_min !='-' ">
+                                <label>Girdle Min:</label>
+                                <span>
+                                    {{::dataItem.girdle_min}}
+                                </span>
+                            </li>
+                            <li ng-show="dataItem.girdle_condition && dataItem.girdle_condition != '-' ">
+                                <label>Girdle Condition:</label>
+                                <span>
+                                    {{::dataItem.girdle_condition}}
+                                </span>
+                            </li>
+
+                            <li>
+                                <label>Culet:</label>
+                                <span> {{::dataItem.culet_size}} </span>
+                            </li>
+                        </ul>
+                    </li>
+
+                </ul>
+
+            </div>
+
+            <div class="col-md-3" style="width:170px">
+
+                <ul kendo-panel-bar>
+
+                    <li class="k-state-active" ng-show="dataItem.is_certified">
+                        CERTIFICATION
+                        <ul class="text-left">
+                            <li>
+                                <label>LAB:</label>
+                                <span>
+                                    <b>{{::dataItem.lab.name}}-{{::dataItem.certification_number}}</b>
+                                </span>
+                            </li>
+
+                            <li>
+                                <label>Insc.:</label>
+                                <span><b>{{::dataItem.inscription}}</b> </span>
+                            </li>
+
+                        </ul>
+                    </li>
+
+
+                    <li class="k-state-active">
+                        PRICE DETAIL
+                        <ul class="text-left">
+                            <li>
+                                <label>RAP Price:</label>
+                                <span><b>{{::dataItem.rap_price}}</b></span>
+                            </li>
+                            <li>
+                                <label>Discount:</label>
+                                <span> <b>{{::dataItem.discount || 0}} %</b></span>
+                            </li>
+
+                            <li>
+                                <label>Price/Carat:</label>
+                                <span><b>{{::dataItem.rap_price -
+                                    (dataItem.rap_price*(-dataItem.discount/100))}} </b></span>
+                            </li>
+
+                            <li>
+                                <label>Value:</label>
+                                <span><b>{{::dataItem.discounted_price | number:2}} </b></span>
+                            </li>
+
+
+                        </ul>
+                    </li>
+
+                    <li class="k-state-active" ng-show="dataItem.key_to_symbols">
+                        KEY TO SYMBOLS
+                        <ul class="text-left">
+                            <li>
+                                {{::dataItem.key_to_symbols}}
+                            </li>
+                        </ul>
+                    </li>
+
+                    <li class="k-state-active" ng-show="dataItem.report_comments">
+                        REPORT COMMENTS
+                        <ul class="text-left">
+                            <li>
+                                {{::dataItem.report_comments}}
+                            </li>
+                        </ul>
+                    </li>
+
+
+                </ul>
+
+            </div>
+
+            <div class="col-md-3" style="width:170px"
+                 ng-show="dataItem.natts || dataItem.painting
+                 || dataItem.paint_comm || dataItem.proportion
+                 || dataItem.ratio || dataItem.remarks">
+
+                <ul kendo-panel-bar>
+
+                    <li class="k-state-active">
+                        OTHER DETAIL
+                        <ul class="text-left">
+                            <li>
+                                <label>BR/TG:</label>
+                                <span><b>{{::dataItem.br_tg}}</b> </span>
+                            </li>
+                            <li>
+                                <label>NATTS:</label>
+                                <span><b>{{::dataItem.natts}}</b> </span>
+                            </li>
+                            <li>
+                                <label>MILKY:</label>
+                                <span><b>{{::dataItem.milky}}</b> </span>
+                            </li>
+                            <li>
+                                <label>PAINT COMM:</label>
+                                <span><b>{{::dataItem.paint_comm}}</b> </span>
+                            </li>
+                            <li>
+                                <label>PAINTING:</label>
+                                <span><b>{{::dataItem.painting}}</b> </span>
+                            </li>
+                            <li>
+                                <label>PROPORTION:</label>
+                                <span><b>{{::dataItem.proportion}}</b> </span>
+                            </li>
+                            <li>
+                                <label>RATIO:</label>
+                                <span><b>{{::dataItem.ratio}}</b> </span>
+                            </li>
+                            <li>
+                                <label>Remarks:</label>
+                                <span><b>{{::dataItem.remarks}}</b> </span>
+                            </li>
+
+                        </ul>
+                    </li>
+                </ul>
+            </div>
+
+        </div>
+
+        <div class="col-md-3" style="width:400px">
+
+            <kendo-tabstrip>
+                <ul>
+                    <li class="k-state-active">Photo</li>
+                    <li>HD Movie</li>
+                    <!--<li>HEART & ARROW</li>
+                    <li>
+                        <a href="javascript:void(0)" id="aPdf"
+                           onclick="GIAReportwindowOpen('GIA','6202350079','4.53')"
+                           class="k-link">
+                            Verify
+                        </a>
+                    </li>-->
+                </ul>
+
+                <div>
+                    <img id="photo"
+                         src="http://103.19.133.108/srkimags/5812980485-1.jpg"
+                         style=" width: 350px; height: 290px;">
+                </div>
+
+                <div>
+
+                    <img id="ImageHeart"
+                         src="http://103.19.133.108/srkFiles/5812980485H.jpg"
+                         style="height: 150px; width: 190px; border-width: 0px;">
+                    <img id="ImageArrow"
+                         src="http://103.19.133.108/srkFiles/5812980485A.jpg"
+                         style="height: 150px; width: 190px; border-width: 0px;">
+                </div>
+                <!--<div>
+                    <ul>
+                        <li>Country: <input ng-model="dataItem.Country"/></li>
+                        <li>City: <input ng-model="dataItem.City"/></li>
+                        <li>Address: {{::dataItem.Address}}</li>
+                        <li>Home phone: {{::dataItem.HomePhone}}</li>
+                    </ul>
+                </div>-->
+            </kendo-tabstrip>
+
+        </div>
+
+    </div>
+
+</script>
+
+
+<!--EXPORT EXCEL AS EMAIL TEMPLATE FOR CCTD all Modules-->
+<script type="text/ng-template" id="cctdExportAsEmail.html">
+
+    <v-modal class="vModal--default" onclose="md.deactivate()">
+
+        <v-dialog heading="" medium middle>
+            <v-close label="Close"></v-close>
+
+            <h3 class="m-n text-info">
+
+                <div class="input-group m-b col-md-10"
+                     ng-init="exportEmail = email">
+                    <span class="input-group-addon">Email</span>
+                    <input type="email"
+                           class="form-control"
+                           id="exportEmail"
+                           ng-model="exportEmail"
+                           placeholder="Type email">
+                    <span class="input-group-btn">
+                        <a href class="btn btn-info"
+                           ng-disabled="!exportEmail"
+                           ng-click="export(groupDiamonds,exportEmail,md.deactivate)">
+                            SEND
+                        </a>
+                    </span>
+                </div>
+
+            </h3>
+
+        </v-dialog>
+    </v-modal>
+</script>

@@ -1,0 +1,65 @@
+<style>
+    div.app:not(.app-aside-folded) .navi ul.nav li a {
+        padding : 10px;
+    }
+
+    .navi ul.nav li li a {
+        padding-left : 50px !important;
+    }
+</style>
+
+<!-- list -->
+<ul class="nav">
+    <li ng-repeat="st in navMenu | orderBy: 'sequence'"
+        ng-class="{ 'active': checkMenuActiveFn(st), 'line dk': st.is_line,
+                'hidden-folded padder m-t m-b-sm text-muted text-xs': st.is_title }"
+        ui-sref-active="st && !st.is_block !st.is_title && !st.is_line && st.child_states && st.child_states.length ? 'active' : ''">
+
+        <!--Static title-->
+        <span ng-if="st.is_title">{{ st.menu_title }}</span>
+
+        <!--Single menu w/o submenus-->
+        <a ng-if="!st.is_block && !st.child_states.length && !st.is_title && st.state"
+           ui-sref="{{ st.state }}"
+           uib-tooltip="{{ st.menu_title }}"
+           tooltip-placement="right auto"
+           tooltip-append-to-body="true"
+           tooltip-enable="app.settings.asideFolded">
+            <i class="{{ st.icon }} icon"></i>
+            <span class="font-bold">{{ st.menu_title }}</span>
+        </a>
+        <!--/ Single menu w/o submenus-->
+
+        <!--Menu title with sub menus-->
+        <a href class="auto"
+           ng-if="st && !st.is_block && !st.is_title && !st.is_line && st.child_states && st.child_states.length">
+            <span class="pull-right text-muted">
+                <i class="fa fa-fw fa-angle-right text"></i>
+                <i class="fa fa-fw fa-angle-down text-active"></i>
+            </span>
+            <i class="{{ st.icon }} icon"></i>
+            <span class="font-bold">{{ st.menu_title }}</span>
+        </a>
+
+        <ul class="nav nav-sub dk"
+            ng-if="st &&!st.is_block && !st.is_title && !st.is_line && st.child_states && st.child_states.length">
+            <li class="nav-sub-header m-l m-xs">
+                <span class="text-muted text-xs">{{ st.menu_title }}</span>
+            </li>
+
+            <li ng-class="{ 'active': checkMenuActiveFn(child_st) }"
+                ng-if="!child_st.is_block"
+                ng-repeat="child_st in st.child_states"
+                ui-sref-active="active">
+                <a ng-class="{ 'active': checkMenuActiveFn(child_st) }"
+                   ui-sref="{{child_st.state}}"
+                   ui-sref-active="active"
+                   tooltip-enable="app.settings.asideFolded">
+                    <span>{{ child_st.menu_title }}</span>
+                </a>
+            </li>
+        </ul>
+        <!--/ Menu title with sub menus-->
+    </li>
+</ul>
+<!-- / list -->

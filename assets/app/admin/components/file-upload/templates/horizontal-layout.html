@@ -1,0 +1,107 @@
+<style>
+    #single-fupload .image-container {
+        position         : relative;
+        /* box-shadow      : 0px 0px 10px 2px #F3E7DC;*/
+        border           : 1px solid #E2E2E2;
+        padding          : 5px;
+        background-color : #FBFBFB;
+        cursor           : zoom-in;
+    }
+
+    #single-fupload .image-container .remove-image-icon, #single-fupload .image-container .remove-image-icon:hover {
+        position         : absolute;
+        top              : 0px;
+        right            : 0px;
+        color            : white;
+        background-color : #F05050;
+        padding          : 0px 3px !important;
+        cursor           : pointer;
+        border-left      : 3px solid #FBFBFB;
+        border-bottom    : 3px solid #FBFBFB;
+    }
+
+    #single-fupload img {
+        cursor : zoom-in !important;
+    }
+
+    #single-fupload .upload-btn-wrapper {
+        position : relative;
+        overflow : hidden;
+        display  : block;
+    }
+
+    #single-fupload .upload-btn-wrapper .btn {
+        cursor : pointer;
+    }
+
+    #single-fupload .upload-btn-wrapper input[type=file] {
+        font-size : 100px;
+        position  : absolute;
+        left      : 0;
+        top       : 0;
+        opacity   : 0;
+    }
+</style>
+
+<div id="single-fupload" class="form-group clearfix">
+    <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12 file-upload-container">
+        <div class="pull-left"
+             id="upload">
+            <label ng-if="vm.titleName">
+                {{vm.titleName}}
+            </label>
+            <div class="upload-btn-wrapper">
+                <button class="btn btn-default" type="button">
+                    {{ vm.btnText || 'Upload Image' }}
+                </button>
+                <input type="file"
+                       class="fileUpload"
+                       data-classButton="btn btn-default"
+                       accept="image/*"
+                       onchange="angular.element(this).scope().vm.fileUploadFn(this)"
+                       data-classInput="form-control inline v-middle input-s">
+            </div>
+
+            <div class="text-muted m-t-xs text-xs text-i">{{vm.subtitle}}
+            </div>
+        </div>
+        <div class="pull-left m-l">
+            <img ng-if="vm.uploadLoader" class="m-t-sm"
+                 ng-src="/img/imageLoader.gif" width="60" height="60" />
+            <div ng-if="vm.file">
+                <div class="image-container inline">
+                    <span class="popup-gallery">
+                        <img title="{{vm.titleName}}"
+                             src="{{vm.file}}"
+                             ng-click="vm.displayFn({array : [{path:vm.file,type:1}],ind : 0})"
+                             alt="img"
+                             height="{{vm.height || 125}}"
+                             width="{{vm.width || 125}}" />
+                    </span>
+
+                    <a class="remove-image-icon"
+                       ng-click="vm.removeUploadedFileFn(vm.file)">
+                        <i class="fa fa-times"></i>
+                    </a>
+
+                    <!--
+
+                    <div class="popup-gallery inline">
+                        <a ng-if="vm.file" ng-click="displayImages([{path:vm.file,type:1}], 0)">
+                            <img ng-src="{{vm.file | fileUrlFilter }}"
+                                 alt="img" height="125" width="125"/>
+                        </a>
+                    </div>
+
+                    <a class="badge badge-sm up pull-right-xs remove-image-icon"
+                       ng-click="vm.removeUploadedFileFn(vm.file)">
+                        <i class="icon-close text-danger"
+                           style="vertical-align: top; font-size: 16px;"></i>
+                    </a>
+
+                    -->
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

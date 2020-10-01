@@ -1,0 +1,172 @@
+<div class="modal-header wrapper-sm">
+    <h4 class="modal-title">
+        <span ng-bind="vm.main_master.id ? 'Edit' : 'Add'"></span> Master
+
+        <button type="button"
+                class="close"
+                ng-click="vm.cancelMasterFormFn();">
+            &times;
+        </button>
+    </h4>
+</div>
+
+<div class="modal-body">
+    <form name="masterForm" novalidate>
+        <!--Name, code-->
+        <div class="form-group pull-in clearfix">
+            <!--Name-->
+            <div class="col-md-6">
+                <label>
+                    Name
+                    <span ng-class="(
+                            masterForm.name.$error.required ||
+                            masterForm.name.$invalid ?
+                            'text-danger' : 'text-success')">*</span>
+
+                    <span uib-tooltip="Only alphanumeric value allowed"
+                          tooltip-placement="right">
+                        <i class="fa fa-info-circle"></i>
+                    </span>
+                </label>
+
+                <input type="text" name="name"
+                       validate-alpha-numeric
+                       class="form-control"
+                       ng-change="vm.changeNameFn(vm.main_master.name);"
+                       ng-model="vm.main_master.name"
+                       focus-me="vm.nameFocus"
+                       placeholder="Master Name"
+                       required/>
+            </div>
+
+            <!--Code-->
+            <div class="col-md-6">
+                <label>
+                    Code
+                    <span ng-class="(
+                            masterForm.code.$error.required ||
+                            masterForm.code.$invalid ?
+                            'text-danger' : 'text-success')">*</span>
+
+                    <span class="text-danger text-xs"
+                          ng-show="masterForm.code.$error.pattern">
+                        Only alphanumeric value allowed with '_' separator
+                    </span>
+                </label>
+
+                <input type="text" name="code"
+                       class="form-control"
+                       ng-pattern="regex.CODE_VAR"
+                       ng-trim="false"
+                       ng-model="vm.main_master.code"
+                       placeholder="Master Code"
+                       required/>
+            </div>
+        </div>
+
+        <!--Description-->
+        <div class="form-group">
+            <label>Description</label>
+
+            <textarea name="description"
+                      class="form-control"
+                      auto-grow
+                      ng-model="vm.main_master.description"
+                      placeholder="Master Description"></textarea>
+        </div>
+
+        <!--Group-->
+        <div class="form-group">
+            <label>Group</label>
+
+            <input type="text" name="group" class="form-control"
+                   ng-model="vm.main_master.group"
+                   placeholder="Master Group"/>
+        </div>
+
+        <!--Image, Active, Default-->
+        <div class="form-group pull-in clearfix">
+            <!--Image-->
+            <div class="col-md-6">
+                <label>Image</label>
+
+                <div class="row">
+                    <file-upload title="Image" layout-type="'horizontal'" accept="['image']" folder="'master'"
+                                 btn-text="'Upload Image'"
+                                 display-fn="displayImages(array, ind)"
+                                 saved="vm.imageSaved"
+                                 is-update="vm.main_master.id"
+                                 file="vm.main_master.image" remove="vm.removeImage"
+                                 subtitle="'(Size: 1700 X 1130 For Best Resolution)'"></file-upload>
+                </div>
+            </div>
+
+            <!--Active, Default-->
+            <!--<div class="col-md-6"
+                 ng-if="!vm.main_master.id">
+                <div class="checkbox">
+                    <label class="checkbox-inline i-checks">
+                        <input type="checkbox" value=""
+                               ng-change="vm.changeActiveFn(vm.main_master.isActive)"
+                               ng-model="vm.main_master.isActive"/><i></i>Active
+                    </label>
+                </div>
+
+                <div class="checkbox">
+                    <label class="checkbox-inline i-checks">
+                        <input type="checkbox" ng-disabled="!vm.main_master.isActive" name="is_default"
+                               ng-model="vm.main_master.isDefault"
+                               value="option2"/><i></i>Default
+                    </label>
+                </div>
+            </div>-->
+        </div>
+    </form>
+</div>
+
+<div class="modal-footer wrapper-sm">
+    <button type="button"
+            class="btn btn-sm btn-default" ng-click="vm.cancelMasterFormFn();">
+        Cancel
+    </button>
+
+    <button type="button"
+            class="btn btn-sm btn-info"
+            ng-if="!vm.main_master.id"
+            ng-click="vm.nameFocus = false; vm.resetMasterFormFn();">
+        Reset
+    </button>
+
+    <button type="button" class="btn btn-sm btn-success"
+            ng-if="vm.main_master.id"
+            ng-click="vm.updateMasterDataFn();"
+            ng-disabled="masterForm.$invalid || vm.saveMasterLoader"
+            has-permission="{{ updatePermission }}"
+            has-module="{{ moduleMaster }}">
+        <i class="fa fa-spinner fa-spin"
+           ng-show="vm.saveMasterLoader"></i>
+        Update
+    </button>
+
+    <button type="button" class="btn btn-sm btn-success"
+            ng-if="!vm.main_master.id"
+            ng-click="vm.saveMasterDataFn(true);"
+            ng-disabled="masterForm.$invalid || vm.saveMasterLoader"
+            has-permission="{{ insertPermission }}"
+            has-module="{{ moduleMaster }}">
+        <i class="fa fa-spinner fa-spin"
+           ng-show="vm.isContinue && vm.saveMasterLoader"></i>
+        Save & Continue
+    </button>
+
+    <button type="button" class="btn btn-sm btn-success"
+            ng-if="!vm.main_master.id"
+            ng-click="vm.saveMasterDataFn();"
+            ng-disabled="masterForm.$invalid || vm.saveMasterLoader"
+            has-permission="{{ insertPermission }}"
+            has-module="{{ moduleMaster }}">
+        <i class="fa fa-spinner fa-spin"
+           ng-show="!vm.isContinue && vm.saveMasterLoader"></i>
+        Save
+    </button>
+</div>

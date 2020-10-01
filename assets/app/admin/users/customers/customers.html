@@ -1,0 +1,367 @@
+<style>
+    .panel {
+        box-shadow: none;
+    }
+
+    .location-popover {
+        min-width: 400px;
+    }
+
+    .location-popover .popover-content {
+        padding: 2px;
+        max-height: 150px;
+        overflow-x: hidden;
+    }
+</style>
+
+<script type="text/ng-template" id="location-popover.html">
+    <span class="popover-icon-close"
+          ng-click="data.isOpen = false;">
+        <i class="icon-close"></i>
+    </span>
+
+    <div class="">
+        <ul class="list-group list-group-xs m-n">
+            <li class="list-group-item no-border no-padder"
+                ng-repeat="address in data.addresses track by $index">
+                <div class="hbox p3"
+                     ng-class="$last ? '' : 'm-b-xs b-b b-light'">
+                    <div class="col col-sm-1 text-center text-muted p03">
+                        ({{ $index + 1 }})
+                    </div>
+                    <div class="col col-sm-10 p03">
+                        <pre class="m-n no-padder">{{ address | fullAddress }}</pre>
+                    </div>
+                    <div class="col col-sm-1 text-center text-lg p03"
+                         ng-if="address.isPrimary">
+                        <i class="fa fa-fw fa-check-circle text-success"
+                           uib-tooltip="Primary"
+                           tooltip-append-to-body="true"></i>
+                    </div>
+                </div>
+            </li>
+        </ul>
+    </div>
+</script>
+
+<!-- hbox layout -->
+<div class="hbox hbox-auto-xs bg-light " ng-init="
+  app.settings.asideFixed = true;
+  app.settings.asideDock = false;
+  app.settings.container = false;
+  app.hideAside = false;
+  ">
+    <div class="col">
+        <div class="vbox">
+            <!--Header-->
+            <div class="wrapper-sm bg-gray clearfix b-b">
+                <!--Module Name-->
+                <div class="pull-left m-t-xs h4">
+                    {{vm.moduleData.title}} <b class="badge bg-dark text-white m-l-xs">{{vm.totalCount || 0}}</b>
+
+                    <button class="btn btn-sm btn-rounded p08"
+                            ng-class="vm.refreshLoader ? 'btn-info' : 'btn-default b-info'"
+                            ng-click="vm.refreshFn(tab.type);">
+                        <i ng-class="vm.refreshLoader ? 'fa-spin text-white' : 'text-info'" class="fa fa-refresh"></i>
+                    </button>
+                </div>
+
+                <!--Search in header-->
+                <div class="pull-right m-r-xs w-lg">
+                    <div class="input-group">
+                        <input type="text"
+                               class="fontAwesome form-control h30"
+                               ng-model="vm.search"
+                               my-enter="vm.searchFocus = false; vm.getUsers();"
+                               focus-me="vm.searchFocus"
+                               placeholder="Name / Email / Mobile"/>
+                        <span ng-if="vm.search && vm.searchApplied" ng-click="vm.resetSearchFn(tab.type);" class="cad">
+                            <i class="fa fa-times text-danger"></i>
+                        </span>
+                        <div class="input-group-btn">
+                            <button type="button" class="btn btn-sm"
+                                    ng-disabled="!vm.search"
+                                    ng-class="vm.searchApplied ? 'btn-info' : 'btn-default'"
+                                    ng-click="vm.searchFocus = false; vm.getUsers();">
+                                <i ng-class="vm.searchLoader ? 'fa-spinner fa-spin' : 'fa-search'" class="fa"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!--Action-->
+                <div class="btn-group pull-right m-r-xs">
+                    <button id="btnAction"
+                            class="btn btn-sm btn-default"
+                            ng-disabled="!vm.actionCheckBox.length"
+                            data-toggle="dropdown">
+                        <i class="fa fa-gear"></i> Action
+                    </button>
+                    <ul class="dropdown-menu dropdown-menu-right no-padder">
+                        <li ng-repeat="typ in vm.bulkActionTypes"
+                            ng-if="!(vm.totalCount == 0) && (typ.tab == null)"
+                            has-permission="{{typ.hasPermissionFilter}}"
+                            has-module="{{moduleUsers}}"
+                            display-type="' '">
+                            <a ng-click="vm.selectBulkActionFn(typ.id);">
+                                <i class="{{ typ.icon }} m-r-xs"></i>
+                                {{ typ.name }}
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+
+                <!--Active filter-->
+                <div class="btn-group pull-right m-r-xs">
+                    <button class="btn btn-sm"
+                            ng-class="(vm.activeTab == tab.type ? 'btn-expand' : 'btn-default bg-white')"
+                            ng-repeat="tab in vm.tabs"
+                            ng-disabled="vm.activeTab == tab.type"
+                            ng-model="vm.activeTab"
+                            ng-click="vm.activeTab = tab.type; vm.page = 1; vm.searchFocus = false; vm.getUsers();"
+                            uib-btn-radio="'{{tab.type}}'">
+                        <i class="fa fa-check text-active"></i>
+                        {{tab.name}}
+                    </button>
+                </div>
+            </div>
+
+            <!--Content-->
+            <div class="row-row">
+                <div class="cell">
+                    <div class="cell-inner">
+                        <div class="">
+                            <div class="panel no-border m-n"
+                                 ng-if="!vm.show_loading && vm.mainList.length">
+                                <div class="list-group list-group-md m-n">
+                                    <div class="list-group-item clearfix"
+                                         ng-repeat="data in vm.mainList">
+                                        <div class="row">
+                                            <div class="hbox">
+                                                <!--Col 1-->
+                                                <div class="col col-md-6 p-l-none">
+                                                    <div class="hbox">
+                                                        <!--Index-->
+                                                        <div class="col text-center v-middle thumb-xs">
+                                                            <span class="text-muted">{{ vm.list_showing_from + $index}}</span>
+                                                        </div>
+
+                                                        <!--Checkbox-->
+                                                        <div class="col text-center v-middle thumb-xs">
+                                                            <div class="checkbox m-n">
+                                                                <label class="i-checks m-n pull-right">
+                                                                    <input type="checkbox"
+                                                                           ng-model="data.isChecked"
+                                                                           ng-change="vm.checkFn(data.id,data.isChecked);"/>
+                                                                    <i></i>
+                                                                </label>
+                                                            </div>
+                                                        </div>
+
+                                                        <!--Name, Email, Cell-->
+                                                        <div class="col v-middle">
+                                                            <!--Image-->
+                                                            <div class="m-l-xs m-r thumb-sm pull-left">
+                                                                <div class="popup-gallery"
+                                                                     ng-if="data.image">
+                                                                    <img class=""
+                                                                         ng-src="{{ data.image }}"
+                                                                         ng-click="displayImages([{path:data.image,type:1}], 0);"
+                                                                         alt="image"/>
+                                                                </div>
+
+                                                                <ng-avatar width="100%"
+                                                                           ng-if="!data.image"
+                                                                           initials="{{ data.name | limitTo: 1 }}"
+                                                                           img-class="avatar"
+                                                                           upper-case="true"
+                                                                           round-shape="true"
+                                                                           bg-color="lightgray"
+                                                                           text-color="gray"
+                                                                           bind="true">
+                                                                </ng-avatar>
+                                                            </div>
+
+                                                            <div class="clearfix">
+                                                                <!--Name-->
+                                                                <span class="">
+                                                                    <a href="" class="ahover"
+                                                                       ui-sref="apps.users.customerView({userId: data.id})"
+                                                                       uib-tooltip="View Details"
+                                                                       tooltip-append-to-body="true">
+                                                                        {{ (data.firstName || '-') | ucfirst }} {{data.lastName | ucfirst}}
+                                                                    </a>
+
+                                                                    <span ng-hide="true">
+                                                                        {{ pAddress = (data.addresses |
+                                                                        primaryAddress: ["city", "state"]) }}
+                                                                    </span>
+
+                                                                    <!--Location-->
+                                                                    <div class="pull-right text-primary"
+                                                                         ng-if="pAddress">
+                                                                        <a href=""
+                                                                           uib-tooltip="Click to View Details"
+                                                                           tooltip-append-to-body="true"
+                                                                           uib-popover-template="'location-popover.html'"
+                                                                           popover-is-open="data.isOpen"
+                                                                           popover-class="location-popover"
+                                                                           popover-title="Locations ({{ data.addresses.length }})"
+                                                                           popover-placement="auto bottom"
+                                                                           popover-trigger="'outsideClick'"
+                                                                           popover-append-to-body="true">
+                                                                            <i class="fa fa-fw fa-map-marker text-muted"></i>
+                                                                            {{ pAddress }}
+                                                                        </a>
+                                                                    </div>
+                                                                </span>
+
+                                                                <!--Emails, Mobiles-->
+                                                                <div class="m-t-xs">
+                                                                    <span ng-hide="true">
+                                                                        {{ primaryEmail = (data.emails |
+                                                                        arrayPrimaryValue: 'email') }}
+                                                                    </span>
+                                                                    <span class="">
+                                                                        <i class="text-muted fa fa-fw fa-envelope"></i>
+                                                                        {{ (primaryEmail) || '-' }}
+                                                                    </span>
+
+                                                                    <span class="pull-right">
+                                                                        <i class="text-muted fa fa-fw fa-phone"></i>
+                                                                        {{ (data.mobiles | primaryMobile) || '-' }}
+                                                                    </span>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+
+                                                <!--Col 2: Jobs-->
+                                                <div class="col col-md-2 b-l b-light">
+                                                    <div class="text-center">
+                                                        <span class="h3">{{ (data.completedJobs) || 0 }}</span>
+                                                        <div class="text-muted">Jobs Completed</div>
+                                                    </div>
+                                                </div>
+
+                                                <!--Col 3-->
+                                                <div class="col col-md-2 b-l b-light">
+                                                    <div class="text-center">
+                                                        <span class="h3">{{ (data.averageRating.overallRating.rating |
+                                                            number: 0) || 0 }}</span>
+                                                        <div class="">
+                                                            <span class="text-warning"
+                                                                  ng-model="data.averageRating.overallRating.rating"
+                                                                  uib-rating max="5"
+                                                                  read-only="true"></span>
+                                                        </div>
+                                                    </div>
+                                                </div>
+
+                                                <!--Col 4-->
+                                                <div class="col col-md-2 no-padder b-l b-light">
+                                                    <div class="text-center">
+                                                        <!--Active/Deactive-->
+                                                        <button type="button"
+                                                                class="btn btn-xs btn-default w-xxs"
+                                                                ng-click="vm.activeDeactiveFn(!data.isActive, data.id);"
+                                                                uib-tooltip="Click to {{ data.isActive ? 'Deactivate' : 'Activate' }}"
+                                                                tooltip-placement="auto top"
+                                                                tooltip-append-to-body="true">
+                                                            <span ng-class="data.isActive ? 'text-success' : 'text-danger'">
+                                                                {{ data.isActive ? 'Active' : 'Deactive' }}
+                                                            </span>
+                                                        </button>
+
+                                                        <!--Actions-->
+                                                        <action-buttons
+                                                                has-type-permission="{
+                                                                    view : listPermission,
+                                                                    notification: updatePermission
+                                                                }"
+                                                                has-type-module="{all : moduleUsers}"
+                                                                view-exp-type="'sref'"
+                                                                view="{sref:'apps.users.customerView',params:{userId: data.id}}"
+                                                                notification-exp-type="'sref'"
+                                                                notification-target="'_blank'"
+                                                                notification="{sref:'apps.adminSetup.notification',params:{email: data.email, userType: vm.cuType}}">
+                                                        </action-buttons>
+                                                    </div>
+
+                                                    <div class="text-center">
+                                                        <!--<i class="text-muted fa fa-fw fa-calendar"></i>-->
+                                                        <small class="text-muted"> Reg. Date:</small>
+                                                        {{ data.updatedAt | appOnlyDate }}
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <content-loader is-loading="vm.show_loading"
+                                            list-length="vm.mainList.length"></content-loader>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!--Pagination-->
+            <div class="wrapper-xs clearfix b-t"
+                 ng-if="vm.mainList.length">
+                <app-pagination page="vm.page"
+                                limit="vm.limit"
+                                limits-array="vm.limitsArray"
+                                total-count="vm.totalCount"
+                                list-from="vm.list_showing_from"
+                                list-to="vm.list_showing_to"
+                                default-limit-range="defaultLimitRange"
+                                limit-change-fn="vm.perPageChangeFn(limit)"
+                                page-change-fn="vm.searchFocus = false;vm.getUsers(page, limit);">
+                </app-pagination>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!--Bulk Active Deactive Modal-->
+<div id="bulk-active-deactive-modal" class="modal fade" role="dialog">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <!--Content-->
+            <div class="modal-body">
+                <h3 class="text-center">What action you want to perform for selected customer(s)?</h3>
+                <h3 class="text-center">
+                    <label class="i-checks i-checks-success text-success">
+                        <input type="radio" name="activeAction"
+                               ng-model="vm.activeAction"
+                               value="{{vm.activeActionObj.activate}}">
+                        <i></i> Activate
+                    </label>
+
+                    <label class="i-checks i-checks-danger text-danger m-l">
+                        <input type="radio" name="activeAction"
+                               ng-model="vm.activeAction"
+                               value="{{vm.activeActionObj.deactivate}}">
+                        <i></i> Deactivate
+                    </label>
+                </h3>
+            </div>
+
+            <!--Footer-->
+            <div class="modal-footer">
+                <div class="text-center">
+                    <button type="button" class="btn btn-sm btn-default" data-dismiss="modal">
+                        Cancel
+                    </button>
+                    <button type="button" class="btn btn-sm btn-success"
+                            ng-click="vm.toggleBulkActiveFn();">
+                        Submit
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

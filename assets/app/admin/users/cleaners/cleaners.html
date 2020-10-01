@@ -1,0 +1,627 @@
+<style>
+
+    .address-popover {
+        min-width : 300px;
+    }
+
+    .address-popover .popover-content {
+        padding    : 2px;
+        max-height : 150px;
+        overflow-x : hidden;
+    }
+
+    .p10 {
+        padding : 10px 3px 0 !important;
+    }
+</style>
+
+<script type="text/ng-template" id="address-popover.html">
+    <span class="popover-icon-close"
+          ng-click="data.isOpen = false;">
+        <i class="icon-close"></i>
+    </span>
+
+    <div class="">
+        <ul class="list-group list-group-xs m-n">
+            <li class="list-group-item no-border no-padder"
+                ng-repeat="address in data.addresses track by $index">
+                <div class="hbox p3"
+                     ng-class="$last ? '' : 'm-b-xs b-b b-light'">
+                    <div class="col col-sm-1 text-center text-muted p03">
+                        ({{ $index + 1 }})
+                    </div>
+                    <div class="col col-sm-10 p03">
+                        <pre class="m-n no-padder">{{ address | fullAddress }}</pre>
+                    </div>
+                    <div class="col col-sm-1 text-center text-lg p03"
+                         ng-if="address.isPrimary">
+                        <i class="fa fa-fw fa-check-circle text-success"
+                           uib-tooltip="Primary"
+                           tooltip-append-to-body="true"></i>
+                    </div>
+                </div>
+            </li>
+        </ul>
+    </div>
+</script>
+
+<script type="text/ng-template" id="service-popover.html">
+    <span class="popover-icon-close"
+          ng-click="data.openService = false;">
+        <i class="icon-close"></i>
+    </span>
+
+    <div class="">
+        <ul class="list-group list-group-xs m-n">
+            <li class="list-group-item no-border no-padder"
+                ng-repeat="service in data.services track by $index">
+                <div class="hbox p3"
+                     ng-class="$last ? '' : 'm-b-xs b-b b-light'">
+                    <div class="col v-middle col-sm-1 text-center text-muted p10">
+                        {{ $index + 1 }}
+                    </div>
+                    <div class="col v-middle col-sm-11 p03">
+
+                        <div class="m-r thumb-sm pull-left">
+                            <div class="popup-gallery"
+                                 ng-if="service.icon">
+                                <img class=""
+                                     ng-src="{{ service.icon }}"
+                                     ng-click="displayImages([{path:service.icon,type:1}], 0);"
+                                     alt="image" />
+                            </div>
+
+                            <ng-avatar
+                                    width="100%"
+                                    ng-if="!service.icon"
+                                    initials="{{ service.name | limitTo: 1 }}"
+                                    img-class="avatar"
+                                    upper-case="true"
+                                    round-shape="true"
+                                    bg-color="lightgray"
+                                    text-color="gray"
+                                    bind="true">
+                            </ng-avatar>
+                        </div>
+
+                        <span class="clear">
+                            <div class="m-t-sm">
+                              <span class="text-md">
+                                    {{(service.name || '-') | ucfirst }}
+                              </span>
+                            </div>
+                        </span>
+                    </div>
+                </div>
+
+            </li>
+        </ul>
+    </div>
+</script>
+
+<!-- hbox layout -->
+<div class="hbox hbox-auto-xs bg-light " ng-init="
+  app.settings.asideFixed = true;
+  app.settings.asideDock = false;
+  app.settings.container = false;
+  app.hideAside = false;
+  ">
+    <div class="col">
+        <div class="vbox">
+            <!--header-->
+            <div class="wrapper-sm bg-gray clearfix b-b">
+
+                <!--Module Name-->
+                <div class="pull-left m-t-xs h4">
+                    {{vm.moduleData.title}} <b class="badge bg-dark text-white m-l-xs">{{vm.totalCount || 0}}</b>
+
+                    <button class="btn btn-sm btn-rounded p08"
+                            ng-class="vm.refreshLoader ? 'btn-info' : 'btn-default b-info'"
+                            ng-click="vm.refreshFn(tab.type);">
+                        <i ng-class="vm.refreshLoader ? 'fa-spin text-white' : 'text-info'" class="fa fa-refresh"></i>
+                    </button>
+                </div>
+
+                <!--Search in header-->
+                <div class="pull-right m-r-xs">
+                    <div class="input-group">
+                        <input type="text"
+                               class="fontAwesome form-control h30"
+                               ng-model="vm.search"
+                               my-enter="vm.getUsers()"
+                               focus-me="vm.searchFocus"
+                               placeholder="Name / Email" />
+                        <span ng-if="vm.search && vm.searchApplied" ng-click="vm.resetSearchFn(tab.type)" class="cad">
+                            <i class="fa fa-times text-danger"></i>
+                        </span>
+                        <div class="input-group-btn">
+                            <button type="button" class="btn btn-sm"
+                                    ng-disabled="!vm.search"
+                                    ng-class="vm.searchApplied ? 'btn-info' : 'btn-default'"
+                                    ng-click="vm.getUsers()">
+                                <i ng-class="vm.searchLoader ? 'fa-spinner fa-spin' : 'fa-search'" class="fa"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!--Action-->
+                <div class="btn-group pull-right m-r-xs">
+                    <button id="btnAction"
+                            ng-if="vm.activeTab === vm.cleanerType.APPROVED"
+                            class="btn btn-sm btn-default" data-toggle="dropdown"
+                            ng-disabled="!vm.actionCheckBox.length"
+                            skip-disable>
+                        <i class="fa fa-gear"></i> Action
+                    </button>
+                    <ul class="dropdown-menu dropdown-menu-right no-padder">
+                        <li ng-repeat="typ in vm.bulkActionTypes"
+                            ng-if="!(vm.totalCount == 0) && (typ.tab == vm.activeTab || typ.tab == null)">
+                            <a ng-click="vm.selectBulkActionFn(typ.id);">
+                                <i class="{{ typ.icon }} m-r-xs"></i>
+                                {{typ.name}}
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+
+                <!--Active filter-->
+                <div class="btn-group pull-right m-r-xs">
+                    <button ng-repeat="tab in vm.tabs"
+                            ng-disabled="vm.activeTab == tab.type"
+                            class="btn btn-sm"
+                            has-permission="{{typ.hasPermissionFilter }}"
+                            has-module="{{type.hasModule}}"
+                            ng-class="(vm.activeTab == tab.type ? 'btn-expand' : 'btn-default bg-white')"
+                            ng-model="vm.activeTab"
+                            uib-btn-radio="'{{tab.type}}'"
+                            ng-click="vm.tabChangeFn(vm.activeTab)">
+                        <i class="fa fa-check text-active"></i>
+                        {{tab.name}}
+                    </button>
+                </div>
+            </div>
+            <div class="row-row">
+                <div class="cell">
+                    <div class="cell-inner">
+                        <!--body-->
+                        <div>
+                            <div class="panel no-border m-n"
+                                 ng-if="!vm.show_loading && vm.mainList.length">
+                                <div class="list-group list-group-md m-n">
+                                    <div class="list-group-item clearfix ng-scope" ng-repeat="data in vm.mainList">
+                                        <div class="row">
+                                            <div class="hbox">
+                                                <!--Col 1-->
+                                                <div class="col col-md-6 col-sm-7 b-r p-l-none">
+                                                    <div class="hbox">
+                                                        <!--Index-->
+                                                        <div class="col text-center v-middle  thumb-xs">
+                                                            <span class="text-muted">{{ vm.list_showing_from +$index }}</span>
+                                                        </div>
+                                                        <!--Checkbox-->
+                                                        <div class="col text-center v-middle thumb-xs"
+                                                             ng-if="vm.activeTab === vm.cleanerType.APPROVED">
+                                                            <div class="checkbox m-n">
+                                                                <label class="i-checks">
+                                                                    <input type="checkbox" ng-model="data.isChecked"
+                                                                           ng-change="vm.checkFn(data.id,data.isChecked);"
+                                                                           aria-invalid="false">
+                                                                    <i></i>
+                                                                </label>
+                                                            </div>
+                                                        </div>
+
+                                                        <!--Name, Email, Cell,address-->
+                                                        <div class="col v-middle">
+                                                            <div class="m-l-xs  m-r thumb-sm pull-left">
+                                                                <div class="popup-gallery"
+                                                                     ng-if="data.image">
+                                                                    <img class=""
+                                                                         ng-src="{{ data.image }}"
+                                                                         ng-click="displayImages([{path:data.image,type:1}], 0);"
+                                                                         alt="image" />
+                                                                </div>
+
+                                                                <ng-avatar width="100%"
+                                                                           ng-if="!data.image"
+                                                                           initials="{{ data.name | limitTo: 1 }}"
+                                                                           img-class="avatar"
+                                                                           upper-case="true"
+                                                                           round-shape="true"
+                                                                           bg-color="lightgray"
+                                                                           text-color="gray"
+                                                                           bind="true">
+                                                                </ng-avatar>
+                                                            </div>
+
+                                                            <div class="clearfix">
+                                                                 <span class="">
+                                                                     <a href="" class="ahover"
+                                                                        ui-sref="apps.users.cleanerDetails({userId:data.id,userStatus:vm.activeTab})"
+                                                                        uib-tooltip="View Details"
+                                                                        tooltip-append-to-body="true">
+                                                                            {{ (data.firstName || '-') | ucfirst }} {{data.lastName | ucfirst}}
+                                                                        </a>
+                                                                         <span class="m-l-xs"
+                                                                               ng-if="vm.activeTab === vm.cleanerType.APPROVED"
+                                                                               uib-tooltip="Click here to update Exprience Level"
+                                                                               tooltip-append-to-body="true"
+                                                                               ng-click="vm.updateExperienceLevelFn(true,data.id)">
+                                                                              <span ng-if="data.experienceLevel"
+                                                                                    class="label bg-light text-xs inline">
+                                                                                  <i class="icon-badge"></i> {{data.experienceLevel.name}}
+                                                                               </span>
+                                                                               <span ng-if="!data.experienceLevel"
+                                                                                     class="text-sm text-muted">
+                                                                                  No Experience Level set.
+                                                                               </span>
+                                                                         </span>
+                                                                     <div class="pull-right text-primary">
+                                                                        <a href=""
+                                                                           ng-if=" data.primaryAddress && data.primaryAddress.city"
+                                                                           uib-popover-template="'address-popover.html'"
+                                                                           popover-enable="{{data.addresses.length}}"
+                                                                           popover-class="address-popover"
+                                                                           popover-placement="auto bottom"
+                                                                           popover-trigger="'outsideClick'"
+                                                                           popover-is-open="data.isOpen"
+                                                                           popover-title="Address"
+                                                                           popover-append-to-body="true"
+                                                                           uib-tooltip="Click here to view full address"
+                                                                           tootltip-append-to-body="true"
+                                                                           tooltip-placement="auto top"
+                                                                           tooltip-enable="{{data.addresses.length}}">
+                                                                            <i class="fa fa-fw fa-map-marker text-muted"></i>
+                                                                            {{data.primaryAddress.city | ucfirst }}, {{data.primaryAddress.state | ucfirst}}
+                                                                        </a>
+                                                                    </div>
+                                                                 </span>
+                                                                <!--Emails, Mobiles-->
+                                                                <div class="m-t-xs ">
+                                                                    <span class="">
+                                                                        <i class="fa fa-fw fa-envelope text-muted"></i>
+                                                                        {{ data.emails | arrayPrimaryValue: 'email' }}
+                                                                    </span>
+                                                                    <span class="pull-right">
+                                                                        <i class="fa fa-fw fa-phone text-muted"></i>
+                                                                        {{ data.mobiles | arrayPrimaryValue: 'mobile' }}
+                                                                    </span>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <!--Col 2 documents detail-->
+                                                <div class="col col-md-3 col-sm-2"
+                                                     ng-if="vm.activeTab !== vm.cleanerType.APPROVED">
+
+                                                    <div class="row m-t-xs ">
+                                                        <!--Col 2-->
+                                                        <div class=" col-md-4 col-sm-6 b-r no-padder">
+                                                            <div class="text-center"
+                                                                 ng-if="data.categoryWiseDocumentCount && data.categoryWiseDocumentCount.PRIMARY">
+                                                                <span class="text-lg m-r-sm text-success ng-binding"
+                                                                      uib-tooltip="approved"
+                                                                      tooltip-append-to-body="true">{{data.categoryWiseDocumentCount.PRIMARY[2] || 0}}</span>
+                                                                <span class="text-lg text-danger ng-binding"
+                                                                      uib-tooltip="Pending Approval "
+                                                                      tooltip-append-to-body="true">{{data.categoryWiseDocumentCount.PRIMARY[1] || 0}}</span>
+                                                                <div class="text-xs text-muted">Primary</div>
+                                                            </div>
+                                                            <div class="text-center"
+                                                                 ng-if="!data.categoryWiseDocumentCount || !data.categoryWiseDocumentCount.PRIMARY">
+                                                                <span class="text-lg m-r-sm text-success ng-binding"
+                                                                      uib-tooltip="approved"
+                                                                      tooltip-append-to-body="true">0</span>
+                                                                <span class="text-lg text-danger ng-binding"
+                                                                      uib-tooltip="Pending Approval "
+                                                                      tooltip-append-to-body="true">0</span>
+                                                                <div class="text-xs text-muted">Primary</div>
+                                                            </div>
+                                                        </div>
+
+                                                        <!--Col 3-->
+                                                        <div class=" col-md-4 col-sm-6 b-r no-padder">
+                                                            <div class="text-center"
+                                                                 ng-if="data.categoryWiseDocumentCount && data.categoryWiseDocumentCount.SECONDARY">
+                                                                <span class="text-lg m-r-sm text-success ng-binding"
+                                                                      uib-tooltip="approved"
+                                                                      tooltip-append-to-body="true">{{data.categoryWiseDocumentCount.SECONDARY[2] || 0}}</span>
+                                                                <span class="text-lg text-danger ng-binding"
+                                                                      uib-tooltip="Pending Approval "
+                                                                      tooltip-append-to-body="true">{{data.categoryWiseDocumentCount.SECONDARY[1] || 0}}</span>
+                                                                <div class="text-xs text-muted">Secondary</div>
+                                                            </div>
+                                                            <div class="text-center"
+                                                                 ng-if="!data.categoryWiseDocumentCount || !data.categoryWiseDocumentCount.SECONDARY">
+                                                                <span class="text-lg m-r-sm text-success ng-binding"
+                                                                      uib-tooltip="approved"
+                                                                      tooltip-append-to-body="true">0</span>
+                                                                <span class="text-lg text-danger ng-binding"
+                                                                      uib-tooltip="Pending Approval "
+                                                                      tooltip-append-to-body="true">0</span>
+                                                                <div class="text-xs text-muted">Secondary</div>
+                                                            </div>
+                                                        </div>
+
+                                                        <div class=" col-md-4 col-sm-6 no-padder">
+                                                            <div class="text-center"
+                                                                 ng-if="data.categoryWiseDocumentCount && data.categoryWiseDocumentCount.TERTIARY">
+                                                                <span class="text-lg m-r-sm text-success ng-binding"
+                                                                      uib-tooltip="approved"
+                                                                      tooltip-append-to-body="true">{{data.categoryWiseDocumentCount.TERTIARY[2] || 0}}</span>
+                                                                <span class="text-lg text-danger ng-binding"
+                                                                      uib-tooltip="Pending Approval "
+                                                                      tooltip-append-to-body="true">{{data.categoryWiseDocumentCount.TERTIARY[1] || 0}}</span>
+                                                                <div class="text-xs text-muted">Tertiary</div>
+                                                            </div>
+                                                            <div class="text-center"
+                                                                 ng-if="!data.categoryWiseDocumentCount || !data.categoryWiseDocumentCount.TERTIARY">
+                                                                <span class="text-lg m-r-sm text-success ng-binding"
+                                                                      uib-tooltip="approved"
+                                                                      tooltip-append-to-body="true">0</span>
+                                                                <span class="text-lg text-danger ng-binding"
+                                                                      uib-tooltip="Pending Approval "
+                                                                      tooltip-append-to-body="true">0</span>
+                                                                <div class="text-xs text-muted">Tertiary</div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+
+                                                <!--Col 2 doc points-->
+                                                <div class="col col-md-1 col-sm-1 b-l v-middle"
+                                                     ng-if="vm.activeTab !== vm.cleanerType.APPROVED">
+
+                                                    <div class="text-center  text-success h3"> {{data.assignedPoints}}
+                                                    </div>
+                                                    <div class="text-xs  text-muted"> Doc. points</div>
+                                                </div>
+
+                                                <!--Col 2: Jobs-->
+                                                <div class="col ng-scope"
+                                                     ng-if="vm.activeTab === vm.cleanerType.APPROVED">
+                                                    <div class="text-center">
+                                                        <span class="h3">{{ (data.completedJobsCount) || 0 }}</span>
+                                                        <div class="text-xs text-muted">Job(s) Completed</div>
+                                                    </div>
+                                                </div>
+
+                                                <!--Col 3: Services-->
+                                                <div class="col b-l"
+                                                     ng-if="vm.activeTab === vm.cleanerType.APPROVED">
+                                                    <div class="text-center"
+                                                         uib-popover-template="'service-popover.html'"
+                                                         popover-enable="{{data.services.length}}"
+                                                         popover-class="address-popover"
+                                                         popover-placement="auto bottom"
+                                                         popover-trigger="'outsideClick'"
+                                                         popover-is-open="data.openService"
+                                                         popover-title="Services"
+                                                         popover-append-to-body="true"
+                                                         uib-tooltip="Click here to view Service detail"
+                                                         tootltip-append-to-body="true"
+                                                         tooltip-placement="auto top"
+                                                         tooltip-enable="{{data.services.length}}">
+                                                        <span class="h3">{{ data.services.length || 0 }}</span>
+                                                        <div class="text-xs text-muted">Service(s)</div>
+                                                    </div>
+                                                </div>
+
+                                                <!--Col 3-->
+                                                <div class="col b-l"
+                                                     ng-if="vm.activeTab === vm.cleanerType.APPROVED">
+                                                    <div class="text-center">
+                                                        <span class="h3">{{ (data.averageRating.overallRating.rating | number: 0) || 0 }}</span>
+                                                        <div class="">
+                                                            <span class="text-warning"
+                                                                  ng-model="data.averageRating.overallRating.rating"
+                                                                  uib-rating max="5"
+                                                                  read-only="true"></span>
+                                                        </div>
+                                                    </div>
+                                                </div>
+
+                                                <!--Col 4-->
+                                                <div class="col col-md-2 col-sm-2 b-l no-padder">
+                                                    <div class="text-center">
+                                                        <!--Active/Deactive-->
+                                                        <button type="button"
+                                                                ng-if="vm.activeTab === vm.cleanerType.PENDING_APPROVAL && loginUser.type == vm.usersType.SUPER_ADMIN"
+                                                                class="btn btn-xs btn-default w-xxs"
+                                                                ng-click="vm.approveCleanerFn(true,data.id);"
+                                                                uib-tooltip="Click to Approve Cleaner"
+                                                                tooltip-placement="auto top"
+                                                                tooltip-append-to-body="true">
+                                                            <span class="text-success">
+                                                                Approve
+                                                            </span>
+                                                        </button>
+                                                        <button type="button"
+                                                                ng-if="vm.activeTab === vm.cleanerType.APPROVED"
+                                                                class="btn btn-xs btn-default w-xxs"
+                                                                ng-click="vm.activeDeactiveFn(!data.isActive, data.id);"
+                                                                uib-tooltip="Click to {{ data.isActive ? 'Deactivate' : 'Activate' }}"
+                                                                tooltip-placement="auto top"
+                                                                tooltip-append-to-body="true">
+                                                            <span ng-class="data.isActive ? 'text-success' : 'text-danger'">
+                                                                {{ data.isActive ? 'Active' : 'Deactive' }}
+                                                            </span>
+                                                        </button>
+                                                        <action-buttons
+                                                                has-type-permission="{
+                                                                    view : listPermission,
+                                                                    notification: updatePermission
+                                                                }"
+                                                                has-type-module="{all : moduleUsers}"
+                                                                view-exp-type="'sref'"
+                                                                view="{sref:'apps.users.cleanerDetails',params:{userId:data.id,userStatus:vm.activeTab}}"
+                                                                notification-exp-type="'sref'"
+                                                                notification-target="'_blank'"
+                                                                notification="{sref:'apps.adminSetup.notification',params:{email:data.email ,userType:vm.cuType}}">
+                                                        </action-buttons>
+                                                    </div>
+                                                    <div class="m-t-xs text-center">
+                                                        <!--<i class="fa fa-fw fa-calendar text-muted"></i>-->
+                                                        <small class="text-muted"> Reg. Date:</small>
+                                                        {{ data.updatedAt | appOnlyDate }}
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <content-loader is-loading="vm.show_loading"
+                                            list-length="vm.mainList.length"></content-loader>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="wrapper-xs clearfix b-t"
+                 ng-if="vm.mainList.length">
+                <app-pagination page="vm.page"
+                                limit="vm.limit"
+                                limits-array="vm.limitsArray"
+                                total-count="vm.totalCount"
+                                list-from="vm.list_showing_from"
+                                list-to="vm.list_showing_to"
+                                default-limit-range="defaultLimitRange"
+                                limit-change-fn="vm.perPageChangeFn(limit)"
+                                page-change-fn="vm.searchFocus = false;vm.getUsers(page, limit);">
+                </app-pagination>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!--Bulk Active Deactive Modal-->
+<div id="bulk-active-deactive-modal" class="modal fade" role="dialog">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <!--Content-->
+            <div class="modal-body">
+                <h3 class="text-center">What action you want to perform for selected cleaner(s)?</h3>
+                <h3 class="text-center">
+                    <label class="i-checks i-checks-success text-success">
+                        <input type="radio" name="activeAction"
+                               ng-model="vm.activeAction"
+                               value="{{vm.activeActionObj.activate}}">
+                        <i></i> Activate
+                    </label>
+
+                    <label class="i-checks i-checks-danger text-danger m-l">
+                        <input type="radio" name="activeAction"
+                               ng-model="vm.activeAction"
+                               value="{{vm.activeActionObj.deactivate}}">
+                        <i></i> Deactivate
+                    </label>
+                </h3>
+            </div>
+
+            <!--Footer-->
+            <div class="modal-footer">
+                <div class="text-center">
+                    <button type="button" class="btn btn-sm btn-default" data-dismiss="modal">
+                        Cancel
+                    </button>
+                    <button type="button" class="btn btn-sm btn-success"
+                            ng-click="vm.toggleBulkActiveFn();">
+                        Submit
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div id="experienceLevelUpdate" class="modal fade" data-backdrop="static">
+    <div class="modal-dialog modal-xs">
+        <div class="portlet box">
+            <div class="portlet-body">
+                <div class="panel panel-default">
+                    <!--Header-->
+                    <div id="pnlHdr" class="modal-header h4">
+                        Update Experience Level
+
+                        <button type="button" class="close"
+                                data-dismiss="modal">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+
+                    <!--Content-->
+                    <div class="modal-body no-padder">
+                        <div class="clearfix">
+                            <div id="pnlBody1" class="col-md-12 ">
+                                <div class="wrapper form-group">
+                                    <label>Experience Level</label>
+                                    <ui-select id="role" ng-model="vm.experienceLevel"
+                                               name="userType"
+                                               theme="bootstrap">
+                                        <ui-select-match placeholder="Select Experience Level">
+                                            {{$select.selected.name}}
+                                        </ui-select-match>
+                                        <ui-select-choices
+                                                repeat="itm.id as itm in vm.experienceLevels | filter: $select.search">
+                                            <div ng-bind-html="itm.name"></div>
+                                        </ui-select-choices>
+                                    </ui-select>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!--Actions-->
+                    <div id="pnlFtr" class="modal-footer text-right">
+                        <!--Close-->
+                        <button type="button" class="btn btn-sm btn-default"
+                                data-dismiss="modal">
+                            cancel
+                        </button>
+                        <!--Assign Perms-->
+                        <button type="button" class="btn btn-sm btn-success"
+                                ng-disabled="!vm.experienceLevel"
+                                ng-click="vm.updateExperienceLevelFn(false);">
+                            Update
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!--Approve cleaner Modal-->
+<div id="approveClenaer" class="modal fade" role="dialog">
+    <div class="modal-dialog modal-md">
+        <div class="modal-content">
+            <!--Content-->
+            <div class="panel-body">
+                <div class="form-group pull-in clearfix" style="font-size:22px">
+                        <div class="col-md-12 wrapper-xs text-dark text-center"><span
+                                class="text-danger"><i class="fa fa-warning"></i></span> &nbsp;
+                            Are you sure you want to Approve this cleaner?
+                        </div>
+                    </div>
+                <div class="form-group pull-in clearfix">
+                        <div class="text-right m-t">
+                            <center>
+                                <button type="submit"
+                                        ng-click="vm.approveCleanerFn(false,vm.approveCleanerId)"
+                                        class="btn btn-success m-r-xs" style="width:11%"> Yes
+                                </button>
+                                <button type="submit" data-dismiss="modal"
+                                        class="btn btn-danger" style="width:11%"> No
+                                </button>
+                            </center>
+                        </div>
+                    </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+

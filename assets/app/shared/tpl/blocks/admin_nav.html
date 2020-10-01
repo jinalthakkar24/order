@@ -1,0 +1,621 @@
+<!-- list -->
+<ul class="nav" style="font-size: medium !important;">
+
+    <!--<li class="hidden-folded padder m-t m-b-sm text-muted text-xs">
+        <span translate="aside.nav.HEADER">Navigation</span>
+    </li>-->
+
+    <!--<li ui-sref-active="active">
+        <a ui-sref="apps.dashboard">
+            <i class="fa fa-dashboard zoom-icon text-info-dker"></i>
+            <span class="font-bold" translate="aside.nav.DASHBOARD">Dashboard</span>
+        </a>
+    </li>-->
+    <li ui-sref-active="active"
+        ng-if="me.type==type_super_admin"
+        ng-class="{'active':currentState=='apps.addStore' || currentState=='apps.editStore'}">
+        <a ui-sref="apps.store">
+            <i class="fa fa-home icon icon zoom-icon text-info-dker"></i>
+            <span class="font-bold"> Store</span>
+        </a>
+    </li>
+    <!--  <li ui-sref-active="active"
+          ng-class="{'active':currentState=='apps.addUtility' || currentState=='apps.editUtility'}">
+          <a ui-sref="apps.utility">
+              <i class="icon icon-energy icon zoom-icon text-info-dker"></i>
+              <span class="font-bold"> Utility</span>
+          </a>
+      </li>-->
+
+    <li ng-class="{'active':$state.includes('apps.masters')
+    || $state.includes('apps.submasters') || currentState=='apps.country' || currentState=='apps.state'
+    || currentState=='apps.city' || currentState=='apps.taluka' || currentState=='apps.area'}">
+        <a href class="auto">
+            <span class="pull-right text-muted">
+                <i class="fa fa-fw fa-angle-right text"></i>
+                <i class="fa fa-fw fa-angle-down text-active"></i>
+            </span>
+            <i class="icon icon-layers icon zoom-icon text-info-dker"></i>
+            <span class="font-bold"> Masters</span>
+        </a>
+
+        <ul class="nav nav-sub dk">
+            <!--Sub Master-->
+            <li ui-sref-active="active"
+                ng-if="me.type==type_super_admin">
+                <a ui-sref="apps.masters">
+                    <!--<i class="glyphicon glyphicon-calendar icon text-info-dker"></i>-->
+                    <span class="font-bold"> Masters</span>
+                </a>
+            </li>
+
+            <li ui-sref-active="active">
+                <a ui-sref="apps.submasters">
+                    <!--<i class="glyphicon glyphicon-calendar icon text-info-dker"></i>-->
+                    <span class="font-bold">Sub Masters</span>
+                </a>
+            </li>
+            <li ui-sref-active="active">
+                <a ui-sref="apps.country">
+                    <!--<i class="glyphicon glyphicon-calendar icon text-info-dker"></i>-->
+                    <span class="font-bold">Country</span>
+                </a>
+            </li>
+            <li ui-sref-active="active">
+                <a ui-sref="apps.state">
+                    <!--<i class="glyphicon glyphicon-calendar icon text-info-dker"></i>-->
+                    <span class="font-bold">State</span>
+                </a>
+            </li>
+            <li ui-sref-active="active">
+                <a ui-sref="apps.city">
+                    <!--<i class="glyphicon glyphicon-calendar icon text-info-dker"></i>-->
+                    <span class="font-bold">City</span>
+                </a>
+            </li>
+            <!--<li ui-sref-active="active">
+                <a ui-sref="apps.taluka">
+                    <span class="font-bold">Taluka</span>
+                </a>
+            </li>-->
+            <li ui-sref-active="active">
+                <a ui-sref="apps.area">
+                    <!--<i class="glyphicon glyphicon-calendar icon text-info-dker"></i>-->
+                    <span class="font-bold">Area</span>
+                </a>
+            </li>
+        </ul>
+    </li>
+
+    <li ng-class="{'active':$state.includes('apps.drawingPower')
+    || $state.includes('apps.emiCalculator')
+    || $state.includes('apps.unitCalculator')
+    || $state.includes('apps.jantriCalculator')}">
+        <a href class="auto">
+            <span class="pull-right text-muted">
+                <i class="fa fa-fw fa-angle-right text"></i>
+                <i class="fa fa-fw fa-angle-down text-active"></i>
+            </span>
+            <i class="fa fa-calculator zoom-icon text-info-dker"></i>
+            <span class="font-bold">Calculator</span>
+        </a>
+        <ul class="nav nav-sub dk">
+            <li ui-sref-active="active">
+                <a ui-sref="apps.drawingPower">
+                    <span class="font-bold">Drawing-Power</span>
+                </a>
+            </li>
+        </ul>
+        <ul class="nav nav-sub dk">
+            <li ui-sref-active="active">
+                <a ui-sref="apps.jantriCalculator">
+                    <span class="font-bold">Jantri</span>
+                </a>
+            </li>
+        </ul>
+
+        <ul class="nav nav-sub dk">
+            <li ui-sref-active="active">
+                <a ui-sref="apps.emiCalculator">
+                    <span class="font-bold">EMI</span>
+                </a>
+            </li>
+        </ul>
+        <ul class="nav nav-sub dk">
+            <li ui-sref-active="active">
+                <a ui-sref="apps.unitCalculator">
+                    <span class="font-bold">Unit Converter</span>
+                </a>
+            </li>
+        </ul>
+    </li>
+
+    <li ng-class="{ $state.includes('apps.event')}">
+        <a href class="auto">
+            <span class="pull-right text-muted">
+                <i class="fa fa-fw fa-angle-right text"></i>
+                <i class="fa fa-fw fa-angle-down text-active"></i>
+            </span>
+            <i class="fa fa-calculator zoom-icon text-info-dker"></i>
+            <span class="font-bold">Activities</span>
+        </a>
+        <ul class="nav nav-sub dk">
+            <li ui-sref-active="active">
+                <a ui-sref="apps.event">
+                    <span class="font-bold">Events</span>
+                </a>
+            </li>
+        </ul>
+    </li>
+
+    <li ui-sref-active="active">
+        <a ui-sref="apps.product">
+            <i class="fa fa-building zoom-icon text-info-dker"></i>
+            <span class="font-bold">Product
+            </span>
+        </a>
+    </li>
+
+    <li ui-sref-active="active">
+        <a ui-sref="apps.demand">
+            <i class="fa fa-building zoom-icon text-info-dker"></i>
+            <span class="font-bold">Demand
+            </span>
+        </a>
+    </li>
+
+    <li ui-sref-active="active"
+        ng-class="{'active':$state.includes('apps.addJantri') || $state.includes('apps.editJantri')}">
+        <a ui-sref="apps.jantri">
+            <i class="fa fa-building zoom-icon text-info-dker"></i>
+            <span class="font-bold" translate="aside.nav.JANTRI">Jantri
+            </span>
+        </a>
+    </li>
+
+    <li ui-sref-active="active"
+        ng-class="{'active':currentState=='apps.addOffer' || currentState=='apps.editOffer'}">
+        <a ui-sref="apps.offer">
+            <i class="icon-users zoom-icon text-info-dker"></i>
+            <span class="font-bold" translate="aside.nav.OFFER">Offer
+            </span>
+        </a>
+    </li>
+    <li ui-sref-active="active"
+        ng-class="{'active':currentState=='apps.addUser' || currentState=='apps.editUser'}">
+        <a ui-sref="apps.users">
+            <i class="icon-users zoom-icon text-info-dker"></i>
+            <span class="font-bold" translate="aside.nav.USERS">Users
+            </span>
+        </a>
+    </li>
+
+    <li ui-sref-active="active"
+        ng-class="{'active':$state.includes('apps.customerLeadAdd')}">
+        <a ui-sref="apps.customerLead">
+            <i class="icon-users zoom-icon text-info-dker"></i>
+            <span class="font-bold">Customer Lead
+            </span>
+        </a>
+    </li>
+    <li ui-sref-active="active"
+        ng-class="{'active':$state.includes('apps.suppliers')}">
+        <a ui-sref="apps.suppliers">
+            <i class="icon-users zoom-icon text-info-dker"></i>
+            <span class="font-bold">Supplier
+            </span>
+        </a>
+    </li>
+    <!-- <li ui-sref-active="active">
+         <a href ui-sref="apps.serviceFile">
+             <i class="fa fa-star-o zoom-icon text-info-dker"></i>
+             <span class="font-bold"> Service File</span>
+         </a>
+     </li>-->
+
+
+    <li ui-sref-active="active"
+        ng-class="{'active':$state.includes('apps.applyLoanForCustomer')
+        || $state.includes('apps.applyLoanForCustomer.addAppointment')
+        || $state.includes('apps.customerDocumentsUpload')
+        || $state.includes('apps.adminDocumentsUpload')
+        || $state.includes('apps.newCustomerProfile')
+        || $state.includes('apps.invoice')}">
+        <a ui-sref="apps.customerProfileList">
+            <i class="glyphicon glyphicon-th zoom-icon text-info-dker"></i>
+            <span class="font-bold">Customer Profile</span>
+        </a>
+    </li>
+
+    <!--<li ng-class="{'active':$state.includes('apps.customerProfile')
+    || $state.includes('apps.newCustomerProfile')
+    || $state.includes('apps.customerProfileList')}">
+        <a href class="auto">
+            <span class="pull-right text-muted">
+                <i class="fa fa-fw fa-angle-right text"></i>
+                <i class="fa fa-fw fa-angle-down text-active"></i>
+            </span>
+            <i class="glyphicon glyphicon-th zoom-icon text-info-dker"></i>
+            <span class="font-bold"> Apply Loan</span>
+        </a>
+
+        <ul class="nav nav-sub dk">
+            <li ui-sref-active="active">
+                <a ui-sref="apps.serviceFile">
+                    <span class="font-bold">Customer Profile</span>
+                </a>
+            </li>
+            <li ui-sref-active="active">
+                <a ui-sref="apps.customerProfileList">
+                    <span class="font-bold">New Customer Profile</span>
+                </a>
+            </li>
+        </ul>
+    </li>-->
+
+    <li ng-class="{'active':$state.includes('apps.appointmentSlot')
+    || $state.includes('apps.appointmentSlot.add')
+    || $state.includes('apps.appointmentSchedule')
+    || $state.includes('apps.appointmentScheduleAdd')}">
+        <a href class="auto">
+            <span class="pull-right text-muted">
+                <i class="fa fa-fw fa-angle-right text"></i>
+                <i class="fa fa-fw fa-angle-down text-active"></i>
+            </span>
+            <i class="glyphicon glyphicon-th zoom-icon text-info-dker"></i>
+            <span class="font-bold"> Appointment</span>
+        </a>
+
+        <ul class="nav nav-sub dk">
+            <li ui-sref-active="active">
+                <a ui-sref="apps.appointmentSlot">
+                    <span class="font-bold">Slot</span>
+                </a>
+            </li>
+            <li ui-sref-active="active">
+                <a ui-sref="apps.appointmentSchedule">
+                    <span class="font-bold">Schedule</span>
+                </a>
+            </li>
+        </ul>
+    </li>
+    <!--<li ui-sref-active="active">-->
+    <!--<a ui-sref="apps.orders">-->
+    <!--<i class="fa fa-shopping-cart zoom-icon text-info-dker"></i>-->
+    <!--<span class="font-bold">Orders</span>-->
+    <!--</a>-->
+    <!--</li>-->
+    <li ui-sref-active="active"
+        ng-class="{'active':currentState=='apps.serviceAdd' || currentState=='apps.serviceEdit'}">
+        <a ui-sref="apps.service">
+            <i class="glyphicon glyphicon-list icon zoom-icon text-info-dker"></i>
+            <span class="font-bold"> Service</span>
+        </a>
+    </li>
+    <!--<li ui-sref-active="active"
+        ng-class="{'active':currentState=='apps.invoice'}">
+        <a ui-sref="apps.invoice">
+            <i class="glyphicon glyphicon-list icon zoom-icon text-info-dker"></i>
+            <span class="font-bold"> Invoice</span>
+        </a>
+    </li>-->
+    <li ui-sref-active="active"
+        ng-class="{'active':currentState=='apps.ServiceCheckListAdd' || currentState=='apps.ServiceCheckListEdit'}">
+        <a ui-sref="apps.serviceCheckList">
+            <i class="fa fa-check-square-o icon zoom-icon text-info-dker"></i>
+            <span class="font-bold"> Service CheckList</span>
+        </a>
+    </li>
+    <li ui-sref-active="active">
+        <a href ui-sref="apps.holidays">
+            <i class="fa fa-star-o zoom-icon text-info-dker"></i>
+            <span class="font-bold"> Holiday</span>
+        </a>
+    </li>
+    <li ui-sref-active="active">
+        <a ui-sref="apps.testimonial">
+            <i class="fa fa-user icon zoom-icon text-info-dker"></i>
+            <span class="font-bold"> Testimonial</span>
+        </a>
+    </li>
+
+    <!--<li ng-if="me && (me.type==type_admin)">
+        <a href class="auto">
+            <span class="pull-right text-muted">
+                <i class="fa fa-fw fa-angle-right text"></i>
+                <i class="fa fa-fw fa-angle-down text-active"></i>
+            </span>
+            <i class="icon icon-book-open zoom-icon text-info-dker"></i>
+            <span class="font-bold"> Plan</span>
+        </a>
+
+        <ul class="nav nav-sub dk">
+            <li ui-sref-active="active"
+                ng-if="me && (me.type==type_admin || me.type==type_company || me.type==type_company_owner)">
+                <a ui-sref="apps.plan">
+                    &lt;!&ndash;<i class="glyphicon glyphicon-book zoom-icon text-info-dker"></i>&ndash;&gt;
+                    <span class="font-bold">Plan</span>
+                </a>
+            </li>
+            <li ui-sref-active="active"
+                ng-if="me && me.type==type_admin">
+                <a ui-sref="apps.approve-plan">
+                    &lt;!&ndash;<i class="glyphicon glyphicon-book zoom-icon text-info-dker"></i>&ndash;&gt;
+                    <span class="font-bold">Plan Approval</span>
+                </a>
+            </li>
+            <li ui-sref-active="active"
+                ng-if="me && me.type==type_admin">
+                <a ui-sref="apps.assign-plan">
+                    &lt;!&ndash;<i class="glyphicon glyphicon-plus zoom-icon text-info-dker"></i>&ndash;&gt;
+                    <span class="font-bold">Plan Allocation</span>
+                </a>
+            </li>
+        </ul>
+    </li>-->
+    <!--<li ui-sref-active="active"
+        ng-if="me && (me.type==type_company || me.type==type_company_owner)">
+        <a ui-sref="apps.plan">
+            <i class="icon icon-book-open zoom-icon text-info-dker"></i>
+            <span class="font-bold">Plan</span>
+        </a>
+    </li>-->
+
+    <!--<li ui-sref-active="active"
+        ng-if="(me && me.type==type_company && me.currently_assigned_plan
+        && !me.currently_assigned_plan.current_plan_expired)
+        || (me && me.type==type_company_owner && me.currently_assigned_plan
+        && !me.currently_assigned_plan.current_plan_expired)">
+        <a ui-sref="apps.permission">
+            <i class="fa fa-users zoom-icon text-info-dker"></i>
+            <span class="font-bold">Permission Group
+            </span>
+        </a>
+    </li>-->
+
+
+    <li ng-class="{'active':$state.includes('apps.notification-setting') || $state.includes('apps.block-setting') || $state.includes('apps.series-setting')}">
+        <a href class="auto">
+            <span class="pull-right text-muted">
+                <i class="fa fa-fw fa-angle-right text"></i>
+                <i class="fa fa-fw fa-angle-down text-active"></i>
+            </span>
+            <i class="icon icon-settings zoom-icon text-info-dker"></i>
+            <span class="font-bold"> Setting</span>
+        </a>
+
+        <ul class="nav nav-sub dk">
+            <li ui-sref-active="active">
+                <a ui-sref="apps.notification-setting">
+                    <span class="font-bold">Notification</span>
+                </a>
+            </li>
+            <!--<li ui-sref-active="active"
+                ng-if="me && (me.type==type_admin)">
+                <a ui-sref="apps.setting">
+                    <span class="font-bold">Order</span>
+                </a>
+            </li>-->
+            <li ui-sref-active="active">
+                <a ui-sref="apps.series-setting">
+                    <span class="font-bold">Series Generator</span>
+                </a>
+            </li>
+            <li ui-sref-active="active">
+                <a ui-sref="apps.block-setting">
+                    <span class="font-bold">Block Setting</span>
+                </a>
+            </li>
+        </ul>
+    </li>
+
+    <!--<li ui-sref-active="active"
+        ng-if="me && (me.type==type_company || me.type==type_company_owner)">
+        <a ui-sref="apps.planHistory">
+            <i class="fa fa-history zoom-icon text-info-dker"></i>
+            <span class="font-bold">Plan History</span>
+        </a>
+    </li>
+
+-->
+
+    <li ui-sref-active="active">
+        <a ui-sref="apps.transaction">
+            <i class="glyphicon glyphicon-transfer zoom-icon text-info-dker"></i>
+            <span class="font-bold">Transactions</span>
+        </a>
+    </li>
+    <li ui-sref-active="active">
+        <a ui-sref="apps.contacts">
+            <i class="icon icon-book-open zoom-icon text-info-dker"></i>
+            <span class="font-bold">Contacts
+            </span>
+        </a>
+    </li>
+    <li ui-sref-active="active">
+        <a ui-sref="apps.seo">
+            <i class="fa fa-search zoom-icon text-info-dker"></i>
+            <span class="font-bold">SEO
+            </span>
+        </a>
+    </li>
+
+    <!-- <li ui-sref-active="active">
+         <a ui-sref="apps.events">
+             <i class="fa fa-star zoom-icon"></i>
+             <span class="font-bold" translate="aside.nav.EVENT">EVENTS</span>
+         </a>
+     </li>
+
+     <li ui-sref-active="active">
+         <a ui-sref="apps.announcement">
+             <i class="glyphicon glyphicon-align-justify zoom-icon"></i>
+             <span class="font-bold">Announcement</span>
+         </a>
+     </li>
+
+     <li ui-sref-active="active">
+         <a ui-sref="apps.appointmentSlot" tooltip="Appointment Slot">
+             <i class="fa fa-list-alt"></i>
+             <span class="font-bold">Appointment Slot</span>
+         </a>
+     </li>
+
+     <li ui-sref-active="active">
+         <a ui-sref="apps.appointmentSchedule" tooltip="Schedule">
+             <i class="fa fa-calendar"></i>
+             <span class="font-bold"> Schedule</span>
+         </a>
+     </li>
+
+     <li ui-sref-active="active">
+         <a ui-sref="apps.version">
+             <i class="glyphicon glyphicon-align-justify zoom-icon"></i>
+             <span class="font-bold">Version</span>
+         </a>
+     </li>-->
+
+    <!-- <li class="line dk"></li>
+
+     <li>
+         <a href class="auto">
+             <span class="pull-right text-muted">
+                 <i class="fa fa-fw fa-angle-right text"></i>
+                 <i class="fa fa-fw fa-angle-down text-active"></i>
+             </span>
+             <i class="fa fa-columns zoom-icon"></i>
+             <span class="font-bold">Jewellery</span>
+         </a>
+         <ul class="nav nav-sub dk">
+             <li ui-sref-active="active">
+                 <a ui-sref="apps.addJewellery">
+                     <span class="font-bold" translate="aside.nav.JEWELLERYADD">Add Jewellery</span>
+                 </a>
+             </li>
+
+             <li ui-sref-active="active">
+                 <a ui-sref="apps.jewelleries">
+                     <span class="font-bold" translate="aside.nav.JEWELLERYList">Jewellery List</span>
+                 </a>
+             </li>
+
+             <li ui-sref-active="active">
+                 <a ui-sref="apps.jewelleryMetalMaster">
+                     <span class="font-bold" translate="aside.nav.JEWELLERYMETAL">Jewellery Metal</span>
+                 </a>
+             </li>
+
+             <li ui-sref-active="active">
+                 <a ui-sref="apps.jewelleryNCDMaster">
+                     <span class="font-bold" translate="aside.nav.JEWELLERYNCD">Jewellery NCD</span>
+                 </a>
+             </li>
+
+             <li ui-sref-active="active">
+                 <a ui-sref="apps.jewellerySettingMaster">
+                     <span class="font-bold" translate="aside.nav.JEWELLERYSETTING">Jewellery Setting</span>
+                 </a>
+             </li>
+
+             <li ui-sref-active="active">
+                 <a ui-sref="apps.jewelleryLatestCCW">
+                     <span class="font-bold" translate="aside.nav.JEWELLERYCCW">Jewellery CCW</span>
+                 </a>
+             </li>
+
+             <li ui-sref-active="active">
+                 <a ui-sref="apps.jewelleryOrders">
+                     <span class="font-bold" translate="aside.nav.JEWELLERYORDER">Jewellery Order</span>
+                 </a>
+             </li>
+         </ul>
+     </li>
+
+     <li class="line dk hidden-folded"></li>
+
+     <li>
+         <a href class="auto">
+             <span class="pull-right text-muted">
+                 <i class="fa fa-fw fa-angle-right text"></i>
+                 <i class="fa fa-fw fa-angle-down text-active"></i>
+             </span>
+             <i class="fa fa-signal zoom-icon"></i>
+             <span class="font-bold">Reports</span>
+         </a>
+         <ul class="nav nav-sub dk">
+
+             <li ui-sref-active="active">
+                 <a ui-sref="apps.diamondSearchReport">
+                     <span translate="aside.nav.REPORT.DIAMONDSEARCH">Diamond search</span>
+                 </a>
+             </li>
+
+             <li ui-sref-active="active">
+                 <a ui-sref="apps.DDSReport">
+                     <span translate="aside.nav.REPORT.DDS">Dm. Deep search</span>
+                 </a>
+             </li>
+
+             <li ui-sref-active="active">
+                 <a ui-sref="apps.pointerReport">
+                     <span translate="aside.nav.REPORT.POINTERREPORT">Pointer Report</span>
+                 </a>
+             </li>
+
+             <li ui-sref-active="active">
+                 <a ui-sref="apps.discountReport">
+                     <span translate="aside.nav.REPORT.DISCOUNTREPORT">Discount Report</span>
+                 </a>
+             </li>
+
+             <li ui-sref-active="active">
+                 <a ui-sref="apps.rangeReport">
+                     <span translate="aside.nav.REPORT.RANGEREPORT">Range Report</span>
+                 </a>
+             </li>
+
+             <li ui-sref-active="active">
+                 <a ui-sref="apps.customerReport">
+                     <span translate="aside.nav.REPORT.CUSTOMERREPORT">Customer Report</span>
+                 </a>
+             </li>
+
+             <li ui-sref-active="active">
+                 <a ui-sref="apps.rapPriceReport">
+                     <span translate="aside.nav.REPORT.RAPPRICEREPORT">RapPrice Report</span>
+                 </a>
+             </li>
+
+             <li ui-sref-active="active">
+                 <a ui-sref="apps.tempStockReport">
+                     <span translate="aside.nav.REPORT.TEMPSTOCKREPORT">Temp Stock Report</span>
+                 </a>
+             </li>
+
+             <li ui-sref-active="active">
+                 <a ui-sref="apps.paramSummaryReport">
+                     <span translate="aside.nav.REPORT.PARAMSUMMARYREPORT">Param Summary Report</span>
+                 </a>
+             </li>
+
+         </ul>
+     </li>-->
+
+    <!--<li class="hidden-folded padder m-t m-b-sm text-muted text-xs">
+      <span translate="aside.nav.your_stuff.YOUR_STUFF">Your Stuff</span>
+    </li>
+    <li>
+      <a ui-sref="app.page.profile">
+        <i class="icon-user icon text-success-lter"></i>
+        <b class="badge bg-success pull-right">30%</b>
+        <span translate="aside.nav.your_stuff.PROFILE">Profile</span>
+      </a>
+    </li>
+    <li>
+      <a ui-sref="app.docs">
+        <i class="icon-question icon"></i>
+        <span translate="aside.nav.your_stuff.DOCUMENTS">Documents</span>
+      </a>
+    </li>-->
+</ul>
+<!-- / list -->

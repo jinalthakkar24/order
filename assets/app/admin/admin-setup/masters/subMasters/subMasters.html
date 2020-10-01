@@ -1,0 +1,572 @@
+<div class="hbox hbox-auto-xs bg-light" ng-init="
+  app.settings.asideFixed = true;
+  app.settings.asideDock = false;
+  app.settings.container = false;
+  app.settings.asideFolded = false;
+  app.hideAside = false;
+  app.hideFooter = true;
+  ">
+
+    <!--Col 1: Master Listings-->
+    <div class="col w-md lter b-r">
+        <div class="vbox">
+            <div class="wrapper b-b bg-gray">
+                <div class="h4">
+                    Masters
+                    <b class="badge bg-dark text-white">{{vm.masterSearch.length}}</b>
+                </div>
+            </div>
+
+            <div class="p3 lter b-b">
+                <div class="input-group">
+                    <span class="input-group-addon input-sm"><i class="fa fa-search"></i></span>
+                    <input type="text" class="form-control input-sm"
+                           placeholder="Search" ng-model="vm.searchMasters" aria-invalid="false">
+                </div>
+            </div>
+
+            <!--Content-->
+            <div class="row-row">
+                <div class="cell">
+                    <div class="cell-inner">
+                        <div class="list-group no-radius">
+                            <a ng-repeat="mst in vm.masterSearch = (vm.active_masters | filter: vm.searchMasters)"
+                               class="list-group-item b-l-3x hover-anchor"
+                               ng-class="(mst.id == vm.activeMaster.id) ? 'b-l-success bg-gray font-bold' : ''"
+                               ng-click="vm.tabChangeFn(mst);">
+                                <span uib-tooltip="{{mst.name}}"
+                                      tooltip-append-to-body="true"
+                                      tooltip-placement="top"
+                                      tooltip-enable="mst.name.length > 30">
+                                    {{mst.name | truncate: 30}}
+                                </span>
+                            </a>
+                        </div>
+
+                        <div class="wrapper text-muted text-center text-lg"
+                             ng-if="vm.masters.length && (!vm.masterSearch || !vm.masterSearch.length)">
+                            No Records Found!
+                        </div>
+
+                        <content-loader is-loading="vm.masterLoading"
+                                        list-length="vm.masters.length"></content-loader>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!--Col 2: SubMaster Listings-->
+    <div class="col lter b-l">
+        <div class="vbox">
+            <div class="wrapper-sm b-b b-light lt bg-gray clearfix">
+                <!--Module Name-->
+                <div class="pull-left m-t-xs h4">
+                    <span uib-tooltip="{{vm.activeMaster.name}}"
+                          tooltip-placement="bottom"
+                          tooltip-enable="vm.activeMaster.name.length > 30">
+                        {{vm.moduleData.title}}: <b>{{vm.activeMaster.name | truncate: '30'}}</b>
+                    </span>
+                    <b class="badge bg-dark text-white">{{vm.child_masters.length}}</b>
+
+                    <button class="btn btn-sm btn-rounded p08"
+                            ng-class="vm.refreshLoader ? 'btn-info' : 'btn-default b-info'"
+                            ng-click="vm.refreshFn();">
+                        <i ng-class="vm.refreshLoader ? 'fa-spin text-white' : 'text-info'" class="fa fa-refresh"></i>
+                    </button>
+                </div>
+
+                <!--Add-->
+                <button type="button"
+                        class="btn btn-sm btn-dark pull-right"
+                        has-permission="{{insertPermission}}"
+                        has-module="{{moduleSubMaster}}"
+                        ng-click="vm.upsertSubMasterModalFn();">
+                    Add
+                </button>
+
+                <!--Update sequence-->
+                <button ng-if="vm.sortedSeq.length"
+                        ng-click="vm.updateSequenceFn()"
+                        has-permission="{{updatePermission}}"
+                        has-module="{{moduleSubMaster}}"
+                        class="btn btn-sm btn-success pull-right m-r-xs"
+                        ng-disabled="vm.updatingSequence">
+                    <i class="fa fa-spinner fa-spin"
+                       ng-show="vm.updatingSequence"></i>
+                    Update Sequence
+                </button>
+
+                <!--Search in header-->
+                <div class="pull-right m-r-xs w-lg">
+                    <div class="input-group">
+                        <input type="text"
+                               class="form-control h30"
+                               ng-model="vm.search"
+                               my-enter="vm.searchFn()"
+                               focus-me="vm.searchFocus"
+                               placeholder="Name / Group" />
+                        <span ng-if="vm.search && vm.searchApplied"
+                              ng-click="vm.search = ''; vm.searchFn();" class="cad">
+                            <i class="fa fa-times text-danger"></i>
+                        </span>
+                        <div class="input-group-btn">
+                            <button type="button" class="btn btn-sm"
+                                    ng-class="vm.searchApplied ? 'btn-info' : 'btn-default'"
+                                    ng-click="vm.searchFn()">
+                                <i ng-class="vm.searchLoader ? 'fa-spinner fa-spin' : 'fa-search'" class="fa"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div ng-if="vm.child_masters && vm.child_masters.length">
+                <table class="table m-b-none">
+                    <thead>
+                    <tr>
+                        <th class="text-center" width="5%" nowrap>#</th>
+
+                        <th class="text-center" width="6%" nowrap></th>
+
+                        <!--Name-->
+                        <th class="" width="20%">
+                            <a href=""
+                               ng-click="vm.sortByFn('name', vm.sortBy.type, true);">
+                                Name
+                                <span class="sorter">
+                                    <i class="fa fa-sort"
+                                       ng-if="!vm.sortBy.name"></i>
+
+                                    <i class="fa fa-caret-up"
+                                       ng-if="vm.sortBy.name && vm.sortBy.type == 1"
+                                       ng-click="vm.sortByFn('name', 1);"></i>
+
+                                    <i class="fa fa-caret-down"
+                                       ng-if="vm.sortBy.name && vm.sortBy.type == -1"
+                                       ng-click="vm.sortByFn('name', -1);"></i>
+                                </span>
+                            </a>
+                        </th>
+
+                        <!--Code-->
+                        <th class="" width="20%">
+                            <a href=""
+                               ng-click="vm.sortByFn('code', vm.sortBy.type, true);">
+                                Code
+                                <span class="sorter">
+                                    <i class="fa fa-sort"
+                                       ng-if="!vm.sortBy.code"></i>
+
+                                    <i class="fa fa-caret-up"
+                                       ng-if="vm.sortBy.code && vm.sortBy.type == 1"
+                                       ng-click="vm.sortByFn('code', 1);"></i>
+
+                                    <i class="fa fa-caret-down"
+                                       ng-if="vm.sortBy.code && vm.sortBy.type == -1"
+                                       ng-click="vm.sortByFn('code', -1);"></i>
+                                </span>
+                            </a>
+                        </th>
+
+                        <th class="" width="15%">Group</th>
+
+                        <th class="text-center" width="10%">Active</th>
+                        <th class="text-center" width="10%">Default</th>
+                        <th class="text-center">Actions</th>
+                    </tr>
+                    </thead>
+                </table>
+            </div>
+
+            <div class="row-row">
+                <div class="cell">
+                    <div class="cell-inner">
+                        <div ng-if="vm.child_masters.length">
+                            <table class="table table-hover table-striped m-b-none">
+                                <tbody data-as-sortable="vm.dragControlListeners"
+                                       data-ng-model="vm.child_masters">
+                                <tr ng-repeat="m in vm.child_masters"
+                                    as-sortable-item="{ table: true}">
+                                    <!--Index-->
+                                    <td class="v-middle text-center" width="5%" nowrap>
+                                        {{$index + 1}}
+                                    </td>
+
+                                    <!--Image-->
+                                    <td class="text-center" width="6%" nowrap>
+                                        <div class="popup-gallery" ng-if="m.image">
+                                            <img class="img-list"
+                                                 ng-src="{{ m.image }}"
+                                                 ng-click="displayImages([{path:m.image,type:1}], 0);"
+                                                 alt="image"/>
+                                        </div>
+
+                                        <div ng-if="!m.image">
+                                            <ng-avatar width="100%"
+                                                       initials="{{ m.name | limitTo: 1 }}"
+                                                       img-class="thumb-sm avatar"
+                                                       upper-case="true"
+                                                       round-shape="true"
+                                                       bg-color="lightgray"
+                                                       text-color="gray"
+                                                       bind="true">
+                                            </ng-avatar>
+                                        </div>
+                                    </td>
+
+                                    <!--Name-->
+                                    <td class="v-middle" width="20%">
+                                        <a href ng-click="vm.showSubMasterDetailFn($index)"
+                                           uib-tooltip="View Details" class="ahover"
+                                           tooltip-append-to-body="true">
+                                            {{m.name || '-'}}
+                                        </a>
+                                    </td>
+
+                                    <!--Code-->
+                                    <td class="v-middle" width="20%">{{m.code || '-'}}</td>
+
+                                    <td class="v-middle" width="15%">{{m.group || '-'}}</td>
+
+                                    <!--Active-->
+                                    <td class="v-middle text-center" width="10%">
+                                        <a href
+                                           ng-class="{'inactiveClick': m.isDefault}"
+                                           ng-model="m.isActive"
+                                           ng-click="vm.activeDeactiveMasterFn(m, 'isActive')"
+                                           has-permission="{{updatePermission}}"
+                                           has-module="{{moduleMaster}}">
+                                            <i ng-if="m.isActive"
+                                               uib-tooltip="Click to Deactivate"
+                                               tooltip-append-to-body="true"
+                                               class="fa fa-check text-success">
+                                            </i>
+                                            <i ng-if="!m.isActive"
+                                               uib-tooltip="Click to Active"
+                                               tooltip-append-to-body="true"
+                                               class="fa fa-times text-danger">
+                                            </i>
+                                        </a>
+
+                                        <span has-permission="{{notUpdatePermission}}"
+                                              has-module="{{moduleMaster}}">
+                                            <i ng-if="m.isActive"
+                                               class="fa fa-check text-success"></i>
+
+                                            <i ng-if=" !m.isActive"
+                                               class="fa fa-times text-danger"></i>
+                                        </span>
+                                    </td>
+
+                                    <!--Default-->
+                                    <td class="v-middle text-center" width="10%">
+
+                                        <a href
+                                           ng-class="{'inactiveClick': !m.isActive}"
+                                           ng-model="m.isDefault"
+                                           ng-click="vm.activeDeactiveMasterFn(m, 'isDefault')"
+                                           has-permission="{{updatePermission}}"
+                                           has-module="{{moduleMaster}}">
+                                            <i ng-if="m.isDefault"
+                                               uib-tooltip="Click to Remove Default"
+                                               tooltip-append-to-body="true"
+                                               class="fa fa-check text-success">
+                                            </i>
+                                            <i ng-if="!m.isDefault"
+                                               uib-tooltip="Click to Set Default"
+                                               tooltip-append-to-body="true"
+                                               class="fa fa-times text-danger">
+                                            </i>
+                                        </a>
+
+                                        <span has-permission="{{notUpdatePermission}}"
+                                              has-module="{{moduleMaster}}">
+                                            <i ng-if="m.isDefault"
+                                               class="fa fa-check text-success"></i>
+
+                                            <i ng-if=" !m.isDefault"
+                                               class="fa fa-times text-danger"></i>
+                                        </span>
+                                    </td>
+
+                                    <!--Actions-->
+                                    <td class="v-middle text-center">
+                                        <action-buttons
+                                                has-type-permission="{
+                                                          view : listPermission,
+                                                          edit : updatePermission,
+                                                          delete : deletePermission
+                                                       }"
+                                                has-type-module="{all : moduleSubMaster}"
+                                                view-exp-type="'fn'"
+                                                view-fn="vm.showSubMasterDetailFn($index)"
+                                                edit-exp-type="'fn'"
+                                                edit-fn="vm.upsertSubMasterModalFn(m.id)"
+                                                delete-exp-type="'fn'"
+                                                delete-fn="deleteDocument({documentId:m.id,model:'master',title:'Sub Master','subTitle':m.name,noDelete: true}, {listCount:vm.child_masters.length,pageNo:1} , vm.getMastersFn,vm.child_masters,true)">
+                                        </action-buttons>
+
+                                        <a uib-tooltip="Drag to change sequence"
+                                           tooltip-append-to-body="true"
+                                           tooltip-placement="auto top"
+                                           class="btn no-padder v-middle m-l-xs actionButton grab"
+                                           data-as-sortable-item-handle
+                                           has-permission="{{updatePermission}}" has-module="{{moduleSubMaster}}"
+                                           ng-if="vm.child_masters.length > 1">
+                                            <i class="glyphicon glyphicon-transfer rotate-90"></i>
+                                        </a>
+                                    </td>
+                                </tr>
+                                </tbody>
+                            </table>
+                        </div>
+
+                        <content-loader is-loading="vm.show_loading || vm.masterLoading"
+                                        list-length="vm.child_masters.length"></content-loader>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="deleteSubMaster modal modalBackdrp fade" id="deleteSubMaster" tabindex="-1" data-backdrop="static"
+     aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="portlet box">
+            <div class="portlet-body">
+                <div class="wrapper-md">
+                    <div class="row">
+                        <div class="col-sm-12">
+                            <div class="panel panel-default">
+                                <div class="panel-heading">
+                                    <span class="h4">Warning Message</span>
+                                    <button type="button" class="close" data-dismiss="modal"><span
+                                            aria-hidden="true">&times;</span></button>
+                                </div>
+                                <div class="panel-body">
+                                    <ul>
+                                        <li ng-repeat="m in msg">
+                                            {{m}}
+                                        </li>
+
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!--Single delete dependency-->
+<div class="singleDeleteDependencyModal modal modalBackdrp fade"
+     tabindex="-1"
+     data-backdrop="static"
+     aria-hidden="true">
+    <div class="modal-dialog "
+         style="width:75%;    margin: 10px auto;">
+        <div class="portlet box">
+            <div class="portlet-body">
+                <!-- <div id="mainDataModal" class="row">-->
+                <div class="panel panel-default m-b-0">
+                    <div class="panel-heading" id="tHeader">
+                        <span class="h4 inline">
+                            <span class="text-muted">Delete -</span> {{vm.dependencyData.modal}}
+                        </span>
+                        <button type="button"
+                                class="close"
+                                data-dismiss="modal"><span
+                                aria-hidden="true">&times;</span></button>
+                    </div>
+                    <div class="panel-body wrapper-sm clearfix" id="tBody">
+                        <table class="table m-b-none">
+                            <thead>
+                            <tr class="bg-white m-n">
+                                <th class="text-center" colspan="10">Dependencies</th>
+                            </tr>
+                            <tr>
+                                <th style="width: 1%;">#</th>
+                                <th class="col-md-1 text-center text-sm">
+                                    Name
+                                </th>
+
+                                <th class="col-md-1 text-sm" ng-repeat="heading in vm.dependencyData.dependencies">
+                                    {{heading.humanizeIdentity}}
+                                </th>
+                            </tr>
+                            </thead>
+                        </table>
+
+                        <div ng-if="vm.dependencyData.dependencies && vm.dependencyData.dependencies"
+                             class="table-responsive">
+                            <table class="table m-b-none table-hover">
+                                <tbody>
+                                <tr>
+                                    <!--index-->
+                                    <td style="width: 1%;">
+                                        {{$index + 1}}
+                                    </td>
+
+                                    <td class="col-md-1 text-center text-sm">
+                                        {{vm.dependencyData.name}}
+                                    </td>
+
+                                    <td class="col-md-1 text-sm" ng-repeat="dep in vm.dependencyData.dependencies">
+                                        {{dep.count}}
+                                    </td>
+                                </tr>
+                                </tbody>
+                            </table>
+                        </div>
+
+                        <div class="clearfix" ng-if="!vm.dependencyData.dependencies">
+                            <div class="block-form text-center">
+                                <br /><br />
+                                <h3>No Delete Dependencies found!</h3>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="panel-footer text-right p3" id="tFooter">
+                        <button type="button"
+                                ng-click="vm.deleteMasterFn(true);"
+                                class="btn btn-sm text-sm btn-primary">
+                            Force Destroy
+                        </button>
+                        <button type="button"
+                                data-dismiss="modal"
+                                class="btn btn-sm text-sm btn-close">
+                            Cancel
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!--Sub Master Detail View Modal-->
+<div id="sub-master-detail-modal" class="modal fade" role="dialog">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <!--Header-->
+            <div class="modal-header">
+                <h4 class="modal-title inline">
+                    <b>{{vm.masterData.name}}</b>
+                    <small uib-tooltip="Code" class="text-info-dker">(#{{vm.masterData.code}})</small>
+                </h4>
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+                <div class="m-r-sm pull-right">
+                    <button class="btn btn-sm btn-rounded btn-default bg-default p38 b-l-2x"
+                            ng-disabled="vm.masterData.index == 0"
+                            ng-click="vm.setViewSubMasterData(vm.masterData.index - 1);">
+                        <i class="fa fa-angle-double-left v-middle text-md"></i>
+                        Previous
+                    </button>
+                    <button class="btn btn-sm btn-rounded btn-default bg-default p38 b-r-2x"
+                            ng-disabled="vm.masterData.index == vm.child_masters.length - 1"
+                            ng-click="vm.setViewSubMasterData(vm.masterData.index + 1);">
+                        Next
+                        <i class="fa fa-angle-double-right v-middle text-md"></i>
+                    </button>
+                </div>
+            </div>
+
+            <!--Content-->
+            <div class="modal-body">
+                <div class="row">
+                    <div class="col-lg-9 col-md-9 col-sm-8 col-xs-12">
+                        <div class="row">
+                            <!--Active, Default, Group-->
+                            <div class="col-sm-8">
+                                <!--Active, Default-->
+                                <div class="text-md form-group">
+                                    <div class="inline m-r"
+                                         ng-class="vm.masterData.isActive ? 'font-bold' : ''">
+                                        Active
+                                        <i ng-class="vm.masterData.isActive ?
+                                                        'fa icn-active fa-check-square-o' : 'fa fa-square-o'"></i>
+                                    </div>
+
+                                    <div class="inline"
+                                         ng-class="vm.masterData.isDefault ? 'font-bold' : ''">
+                                        Default
+                                        <i ng-class="vm.masterData.isDefault ?
+                                                        'fa icn-default fa-check-square-o' : 'fa fa-square-o'"></i>
+                                    </div>
+                                </div>
+
+                                <!--Group-->
+                                <div>
+                                    <span class="text-muted">Group: </span>{{vm.masterData.group || '-'}}
+                                </div>
+                            </div>
+
+                            <!--Icon-->
+                            <div class="col-sm-4">
+                                <div class="pull-right">
+                                    <div class="popup-gallery" ng-if="vm.masterData.icon">
+                                        <a href
+                                           ng-click="displayImages([{path:vm.masterData.icon,type:1}], 0);">
+                                            <figcaption>Icon</figcaption>
+                                            <img class="b-a wrapper-xs zoom-in" ng-src="{{vm.masterData.icon}}"
+                                                 alt="icon" height="60" width="60" />
+                                        </a>
+                                    </div>
+
+                                    <div class="" ng-if="!vm.masterData.icon">
+                                        <figcaption>Icon</figcaption>
+                                        <img ng-src="{{ noImage }}"
+                                             alt="icon" height="60" width="60" />
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!--Description-->
+                        <fieldset class="m-t-sm">
+                            <legend class="m-b-none">Description</legend>
+
+                            <div ng-if="vm.masterData.description"
+                                 class="descBlock">
+                                <pre>{{vm.masterData.description}}</pre>
+                            </div>
+
+                            <div class="text-muted m-sm text-md" ng-if="!vm.masterData.description">
+                                No description available.
+                            </div>
+                        </fieldset>
+                    </div>
+
+                    <!--Image-->
+                    <div class="col-lg-3 col-md-3 col-sm-4 col-xs-12 text-center">
+                        <div class="popup-gallery" ng-if="vm.masterData.image">
+                            <a href
+                               ng-click="displayImages([{path:vm.masterData.image,type:1}], 0);">
+                                <figcaption>Image</figcaption>
+                                <img class="b-a wrapper-xs zoom-in" ng-src="{{vm.masterData.image}}"
+                                     alt="image" height="200" width="100%" />
+
+                            </a>
+                        </div>
+
+                        <div ng-if="!vm.masterData.image">
+                            <figcaption>Image</figcaption>
+                            <img ng-src="{{ noImage }}"
+                                 alt="image" height="200" width="100%" />
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!--Footer-->
+            <div class="modal-footer">
+                <button type="button" class="btn btn-sm btn-default" data-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>

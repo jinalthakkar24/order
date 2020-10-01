@@ -1,0 +1,67 @@
+<style>
+    .remove-image-icon {
+        top: -5px;
+        right: 5px;
+        padding: 2px 3px !important;
+        vertical-align: top;
+        cursor: pointer;
+        background-color: white;
+    }
+    .upload-btn-wrapper {
+        position: relative;
+        overflow: hidden;
+        display: block;
+    }
+
+    .upload-btn-wrapper .btn {
+        cursor: pointer;
+    }
+
+    .upload-btn-wrapper input[type=file] {
+        font-size: 100px;
+        position: absolute;
+        left: 0;
+        top: 0;
+        opacity: 0;
+    }
+</style>
+<div class="form-group clearfix">
+    <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12 no-padder"
+         id="upload">
+        <label>
+            {{vm.titleName}}
+        </label>
+        <div class="upload-btn-wrapper">
+            <button class="btn btn-default" type="button">Upload a file
+            </button>
+            <input type="file"
+                   class="fileUpload"
+                   data-classButton="btn btn-default"
+                   accept="image/*"
+                   onchange="angular.element('.fileUpload').scope().vm.fileUploadFn(this)"
+                   data-classInput="form-control inline v-middle input-s">
+        </div>
+        <div class="text-muted m-t-xs text-xs text-i">{{vm.subTitle}}
+        </div>
+    </div>
+    <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12 no-padder m-t-sm">
+        <img ng-if="vm.uploadLoader" class="m-t-sm"
+             ng-src="/img/imageLoader.gif" width="60" height="60"/>
+        <span ng-if="vm.file && vm.file">
+            <!--<img height="100" width="100"
+               ng-src="{{vm.file}}"/>-->
+            <div class="popup-gallery inline">
+               <a ng-click="displayImages([{path:vm.file,type:1}], 0)">
+               <img ng-src="{{vm.file | fileUrlFilter }}"
+                    alt="img" height="{{vm.height || '125'}}"
+                    width="{{vm.width || '125'}}" />
+               </a>
+            </div>
+            <a class="badge badge-sm up pull-right-xs remove-image-icon"
+               ng-click="vm.removeUploadedFileFn(vm.file)">
+            <i class="icon-close icn-remove"
+               style="vertical-align: top; font-size: 14px;"></i>
+            </a>
+         </span>
+    </div>
+</div>

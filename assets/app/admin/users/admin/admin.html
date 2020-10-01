@@ -1,0 +1,582 @@
+<style>
+    .tab-pane-users div {
+        text-align : right;
+    }
+
+    #bulk-roles-assign-modal .ui-select-bootstrap > .ui-select-choices {
+        position : relative;
+    }
+</style>
+
+<script type="text/ng-template" id="role-popover.html">
+    <span class="popover-icon-close"
+          ng-click="user.isOpen = false;">
+        <i class="icon-close"></i>
+    </span>
+    <div ng-repeat="role in user.roles track by $index">
+        ({{$index + 1}}) {{role.title}}
+    </div>
+</script>
+
+<!-- hbox layout -->
+<div class="hbox hbox-auto-xs bg-light " ng-init="
+  app.settings.asideFixed = true;
+  app.settings.asideDock = false;
+  app.settings.container = false;
+  app.hideAside = false;
+  ">
+    <div class="col">
+        <div class="vbox">
+            <!--header-->
+            <div class="wrapper-sm bg-gray clearfix b-b">
+                <!--Module Name-->
+                <div class="pull-left m-t-xs h4">
+                    {{vm.moduleData.title}} <b class="badge bg-dark text-white m-l-xs">{{vm.totalCount|| 0}}</b>
+
+                    <button class="btn btn-sm btn-rounded p08"
+                            ng-class="vm.refreshLoader ? 'btn-info' : 'btn-default b-info'"
+                            ng-click="vm.refreshFn(tab.type);">
+                        <i ng-class="vm.refreshLoader ? 'fa-spin text-white' : 'text-info'" class="fa fa-refresh"></i>
+                    </button>
+                </div>
+
+                <!--Add-->
+                <button type="button"
+                        class="btn btn-sm btn-dark pull-right"
+                        has-permission="{{insertPermission}}"
+                        has-module="{{moduleUsers}}"
+                        ui-sref="apps.users.upsert">
+                    Add
+                </button>
+
+                <!--Search in header-->
+                <div class="pull-right m-r-xs w-lg">
+                    <div class="input-group">
+                        <input type="text"
+                               class="fontAwesome form-control h30"
+                               ng-model="vm.search"
+                               my-enter="vm.getUsers()"
+                               focus-me="vm.searchFocus"
+                               placeholder="Name / Email / Mobile" />
+                        <span ng-if="vm.search && vm.searchApplied" ng-click="vm.resetSearchFn(tab.type)" class="cad">
+                            <i class="fa fa-times text-danger"></i>
+                        </span>
+                        <div class="input-group-btn">
+                            <button type="button" class="btn btn-sm"
+                                    ng-disabled="!vm.search"
+                                    ng-class="vm.searchApplied ? 'btn-info' : 'btn-default'"
+                                    ng-click="vm.getUsers()">
+                                <i ng-class="vm.searchLoader ? 'fa-spinner fa-spin' : 'fa-search'" class="fa"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!--Action-->
+                <div class="btn-group pull-right m-r-xs">
+                    <button id="btnAction"
+                            class="btn btn-sm btn-default"
+                            ng-disabled="!vm.actionCheckBox.length"
+                            data-toggle="dropdown">
+                        <i class="fa fa-gear"></i> Action
+                    </button>
+                    <ul class="dropdown-menu dropdown-menu-right no-padder">
+                        <li ng-repeat="typ in vm.bulkActionTypes"
+                            ng-if="!(vm.totalCount == 0) && (vm.cuType == vm.userTypes.ADMIN || typ.tab == null)"
+                            has-permission="{{typ.hasPermissionFilter}}"
+                            has-module="{{moduleUsers}}"
+                            display-type="' '">
+                            <a ng-click="vm.selectBulkActionFn(typ.id);">
+                                <i class="{{ typ.icon }} m-r-xs"></i>
+                                {{ typ.name }}
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+
+                <!--Active filter-->
+                <div class="btn-group pull-right m-r-xs">
+                    <button class="btn btn-sm"
+                            ng-class="(vm.activeTab == tab.type ? 'btn-expand' : 'btn-default bg-white')"
+                            ng-repeat="tab in vm.tabs"
+                            ng-disabled="vm.activeTab == tab.type"
+                            ng-model="vm.activeTab"
+                            ng-click="vm.activeTab = tab.type; vm.page = 1; vm.searchFocus = false; vm.getUsers();"
+                            uib-btn-radio="'{{tab.type}}'">
+                        <i class="fa fa-check text-active"></i>
+                        {{tab.name}}
+                    </button>
+                </div>
+            </div>
+
+            <div class="col-md-12 no-padder"
+                 ng-if=" !vm.show_loading && vm.mainList.length">
+                <table class="table m-b-none">
+                    <thead>
+                    <tr>
+                        <th class="text-center" width="5%" nowrap>
+                            #
+
+                            <label class="i-checks m-n pull-right">
+                                <input type="checkbox"
+                                       ng-change="vm.checkAllFn();"
+                                       ng-model="vm.checkAll" />
+                                <i></i>
+                            </label>
+                        </th>
+
+                        <th class="" width="8%"></th>
+                        <th class="" width="20%">Name</th>
+                        <th class="" width="20%">Email</th>
+                        <th class="" width="15%">Mobile</th>
+                        <th class="text-center" width="10%">Active</th>
+                        <th class="" width="15%">
+                            <a href=""
+                               ng-click="vm.sortByFn('createdAt', vm.sortBy.type, true);">
+                                Created At
+                                <span class="sorter">
+                                    <i class="fa fa-sort"
+                                       ng-if="!vm.sortBy.createdAt"></i>
+
+                                    <i class="fa fa-caret-up"
+                                       ng-if="vm.sortBy.createdAt && vm.sortBy.type == 1"
+                                       ng-click="vm.sortByFn('createdAt', 1);"></i>
+
+                                    <i class="fa fa-caret-down"
+                                       ng-if="vm.sortBy.createdAt && vm.sortBy.type == -1"
+                                       ng-click="vm.sortByFn('createdAt', -1);"></i>
+                                </span>
+                            </a></th>
+                        <th class="text-center" ng-if="vm.cuType == vm.userTypes.ADMIN">
+                            Actions
+                        </th>
+                    </tr>
+                    </thead>
+                </table>
+            </div>
+
+            <div class="row-row">
+                <div class="cell">
+                    <div class="cell-inner">
+                        <!--body-->
+                        <div class="col-md-12 no-padder">
+                            <div ng-if="!vm.show_loading && vm.mainList.length">
+                                <div class="col-lg-12 col-md-12 col-sm-12 no-padder">
+                                    <div ng-if="vm.mainList.length">
+                                        <table class="table m-b-none">
+                                            <tbody>
+                                            <tr ng-repeat="user in vm.mainList | orderBy:vm.sortByVal track by $index">
+                                                <!--Index-->
+                                                <td class="v-middle text-muted text-center" width="5%" nowrap>
+                                                    {{ vm.list_showing_from + $index }}
+
+                                                    <label class="i-checks m-n pull-right">
+                                                        <input type="checkbox"
+                                                               ng-model="user.isChecked"
+                                                               ng-change="vm.checkFn(user.id,user.isChecked);" />
+                                                        <i></i>
+                                                    </label>
+                                                </td>
+
+                                                <!--Name-->
+                                                <td class="v-middle text-center" width="8%">
+                                                    <div class="popup-gallery" ng-if="user.image">
+                                                        <img class="img-list"
+                                                             ng-src="{{ user.image }}"
+                                                             ng-click="displayImages([{path:user.image,type:1}], 0);"
+                                                             alt="image" />
+                                                    </div>
+
+                                                    <div ng-if="!user.image">
+                                                        <ng-avatar width="100%"
+                                                                   initials="{{ user.firstName | limitTo: 1 }}"
+                                                                   img-class="thumb-sm avatar"
+                                                                   upper-case="true"
+                                                                   round-shape="true"
+                                                                   bg-color="lightgray"
+                                                                   text-color="gray"
+                                                                   bind="true">
+                                                        </ng-avatar>
+                                                    </div>
+                                                </td>
+                                                <td class="v-middle" width="20%">
+                                                    {{user.firstName | ucfirst}} {{user.lastName | ucfirst }}
+                                                </td>
+
+                                                <!--Email-->
+                                                <td class="v-middle" width="20%">
+                                                    <div class="clear text-left">
+                                                        <span>{{user.emails | arrayPrimaryValue:'email'}}</span>
+                                                    </div>
+                                                </td>
+
+                                                <!--Mobile-->
+                                                <td class="v-middle" width="15%">
+                                                    <div class="clear text-left">
+                                                        <span>
+                                                            <span>{{user.mobiles |
+                                                                arrayPrimaryValue:'mobile'}}</span>
+                                                        </span>
+                                                    </div>
+                                                </td>
+
+                                                <!--Active-->
+                                                <td class="v-middle text-center" width="10%">
+                                                    <a href="" class="active"
+                                                       ng-if="user.isActive"
+                                                       ng-model="user.isActive"
+                                                       ng-click="vm.activeDeactiveFn(false, user.id)"
+                                                       uib-tooltip="Click to Deactivate"
+                                                       tooltip-append-to-body="true">
+                                                        <i class="fa fa-check icn-active text-active"></i>
+                                                    </a>
+
+                                                    <a href=""
+                                                       ng-if="!user.isActive"
+                                                       ng-model="user.isActive"
+                                                       ng-click="vm.activeDeactiveFn(true, user.id)"
+                                                       uib-tooltip="Click to Activate"
+                                                       tooltip-append-to-body="true">
+                                                        <i class="fa fa-times icn-inactive text"></i>
+                                                    </a>
+                                                </td>
+
+                                                <!--Created At-->
+                                                <td class="v-middle" width="15%">
+                                                    <div class="clear text-left">
+                                                        <span>
+                                                            {{user.createdAt | appDateTime}}
+                                                        </span>
+                                                    </div>
+
+                                                </td>
+
+                                                <!--Actions-->
+                                                <td class="v-middle text-center"
+                                                    ng-if="vm.cuType == vm.userTypes.ADMIN">
+                                                    <div class="btn-group" uib-dropdown>
+                                                        <button type="button" class="btn btn-sm btn-default p15"
+                                                                uib-dropdown-toggle>
+                                                            Actions <span class="caret"></span>
+                                                        </button>
+                                                        <ul class="dropdown-menu dropdown-menu-right no-padder"
+                                                            style="min-width: 120px;"
+                                                            role="menu" uib-dropdown-menu>
+
+                                                            <li role="menuitem">
+                                                                <a href
+                                                                   ng-click="vm.openViewModal(user.id)">
+                                                                    <i class="fa fa-paste text-primary m-r-xs"></i>View</a>
+                                                            </li>
+
+
+                                                            <li role="menuitem">
+                                                                <a href
+                                                                   ui-sref="apps.users.upsert({userType:user.type,userId:user.id})">
+                                                                    <i class="fa fa-edit text-info m-r-xs"></i>Edit
+                                                                </a>
+                                                            </li>
+
+
+                                                            <li role="menuitem">
+                                                                <a ng-click="deleteDocument({documentId:user.id,model:'user',title:'User','subTitle':user.name,noDelete:true}, {listCount:vm.mainList.length,pageNo:vm.page} , vm.getUsers)">
+                                                                    <i class="fa fa-trash-o text-danger m-r-xs"></i>Delete
+                                                                </a>
+                                                            </li>
+
+                                                            <li role="menuitem">
+                                                                <a ng-click="vm.resetPasswordPopUp(user.id,user.name)">
+                                                                    <i class="fa fa-refresh text-primary m-r-xs"></i>Reset
+                                                                    password
+                                                                </a>
+                                                            </li>
+
+                                                            <li role="menuitem">
+                                                                <a href
+                                                                   ui-sref="apps.adminSetup.roles.upsert({userId:user.id})">
+                                                                    <i class="fa fa-key text-primary m-r-xs"></i>Customize
+                                                                    Permission
+                                                                </a>
+                                                            </li>
+
+                                                        </ul>
+                                                    </div>
+                                                </td>
+                                            </tr>
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <content-loader is-loading="vm.show_loading"
+                                            list-length="vm.mainList.length"></content-loader>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="wrapper-xs clearfix b-t"
+                 ng-if="vm.mainList.length">
+                <app-pagination page="vm.page"
+                                limit="vm.limit"
+                                limits-array="vm.limitsArray"
+                                total-count="vm.totalCount"
+                                list-from="vm.list_showing_from"
+                                list-to="vm.list_showing_to"
+                                default-limit-range="defaultLimitRange"
+                                limit-change-fn="vm.perPageChangeFn(limit)"
+                                page-change-fn="vm.searchFocus = false;vm.getUsers(page, limit);">
+                </app-pagination>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!--Request confirmation modal-->
+<confirm-delete
+        message="Are you sure you want to reject this request?"
+        visible="vm.showReqRejectModal"
+        confirm-delete-fn="vm.requestMemberFn(vm.userId, false)"
+        cancel-delete-fn="vm.searchFocus = true; vm.showReqRejectModal = false">
+</confirm-delete>
+
+<!--User delete confirmation modal-->
+<confirm-delete
+        message="Are you sure you want to delete this user?"
+        visible="vm.showDeleteModal"
+        confirm-delete-fn="vm.deleteUser()"
+        cancel-delete-fn="vm.searchFocus = true; vm.showDeleteModal = false">
+</confirm-delete>
+
+<!--Reset password modal-->
+<div id="resetPsswordPopUP" class="modal fade" role="dialog">
+    <div class="modal-dialog modal-sm">
+        <!-- Modal content-->
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+                <h4 class="modal-title">Reset Password for <br />{{vm.resetPasswordData.name}}</h4>
+            </div>
+            <form name="resetPasswordForm" ng-submit="vm.resetPassword()">
+                <div class=" col-md-12 ">
+                    <div class="m-t-sm col-md-12">
+                        <label>
+                            New Password
+                            <span class="error"
+                                  ng-show="resetPasswordForm.password.$error.required"
+                                  style="color:RED">*</span>
+                            <span class="valid" ng-show="resetPasswordForm.password.$valid"
+                                  style="color:#31B404">*</span>
+                            <i class="fa fa-info-circle text-info m-r-xs"
+                               uib-tooltip-html="passwordGuideline"
+                               tooltip-append-to-body="true"></i>
+                        </label>
+                        <label class="pull-right">
+                             <span id="password-strength-label"
+                                   class="text-xs"></span>
+                        </label>
+                        <div class="input-group">
+                            <input ng-attr-type="{{ vm.showPassword ? 'text' : 'password' }}"
+                                   class="form-control" name="password"
+                                   ok-password
+                                   ng-model="vm.password"
+                                   placeholder="Enter Password"
+                                   required>
+                            <a href=""
+                               class="input-group-addon"
+                               ng-click="vm.showPassword = !vm.showPassword"
+                               uib-tooltip="{{ 'Click to ' + (vm.showPassword ? 'hide' : 'show') + ' password' }}"
+                               tooltip-append-to-body="true"
+                               tooltip-placement="auto">
+                                <i class="fa"
+                                   ng-class="vm.showPassword ? 'fa-eye' : 'fa-eye-slash'"></i>
+                            </a>
+                        </div>
+                        <!--Strength meter-->
+                        <div class="strength-meter">
+                            <div class="strength-meter-fill"
+                                 data-strength="{{passwordStrength}}"></div>
+                        </div>
+                    </div>
+                    <div class="m-t-sm  m-b-sm col-md-12">
+                        <label>
+                            Confirm Password
+                            <span class="error"
+                                  ng-show="vm.confirmPassword !== vm.password || resetPasswordForm.confirmPassword.$error.required"
+                                  style="color:RED">*</span>
+                            <span class="valid"
+                                  ng-show="vm.confirmPassword === vm.password && resetPasswordForm.confirmPassword.$valid"
+                                  style="color:#31B404">*</span>
+                        </label>
+                        <input type="password" class="form-control" name="confirmPassword"
+                               ng-model="vm.confirmPassword"
+                               placeholder="Enter Password Again"
+                               required>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+
+                    <button type="submit" class="btn btn-success"
+                            ng-disabled="(vm.confirmPassword != vm.password) && resetPasswordForm.$invalid">Reset
+                        Password
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!--Bulk Active Deactive Modal-->
+<div id="bulk-active-deactive-modal" class="modal fade" role="dialog">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <!--Content-->
+            <div class="modal-body">
+                <h3 class="text-center">What action you want to perform for selected user(s)?</h3>
+                <h3 class="text-center">
+                    <label class="i-checks i-checks-success text-success">
+                        <input type="radio" name="activeAction"
+                               ng-model="vm.activeAction"
+                               value="{{vm.activeActionObj.activate}}">
+                        <i></i> Activate
+                    </label>
+
+                    <label class="i-checks i-checks-danger text-danger m-l">
+                        <input type="radio" name="activeAction"
+                               ng-model="vm.activeAction"
+                               value="{{vm.activeActionObj.deactivate}}">
+                        <i></i> Deactivate
+                    </label>
+                </h3>
+            </div>
+
+            <!--Footer-->
+            <div class="modal-footer">
+                <div class="text-center">
+                    <button type="button" class="btn btn-sm btn-default" data-dismiss="modal">
+                        Cancel
+                    </button>
+                    <button type="button" class="btn btn-sm btn-success"
+                            ng-click="vm.toggleBulkActiveFn();">
+                        Submit
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div id="bulk-roles-assign-modal" class="modal fade" data-backdrop="static">
+    <div class="modal-dialog modal-lg">
+        <div class="portlet box">
+            <div class="portlet-body">
+                <div class="panel panel-default">
+                    <!--Header-->
+                    <div id="pnlHdr" class="modal-header h4">
+                        Assign Permissions(Roles)
+
+                        <button type="button" class="close"
+                                data-dismiss="modal">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+
+                    <!--Content-->
+                    <div class="modal-body no-padder">
+                        <form id="assign-perms-form" name="assignPermsForm">
+                            <div class="clearfix">
+                                <!--Users List-->
+                                <div id="pnlBody" class="col-sm-7 wrapper-xs b-r">
+                                    <div style="padding: 5px 0px;"
+                                         ng-class="$last ? '' : 'b-b b-light'"
+                                         ng-repeat="user in vm.selectedUserList track by user.id">
+                                        <div class="checkbox col-md-1 no-padder text-right">
+                                            <label class="i-checks">
+                                                <input type="checkbox"
+                                                       ng-model="user.isChecked"
+                                                       ng-change="vm.SelectedUserPermsChangeFn();" />
+                                                <i></i>
+                                            </label>
+                                        </div>
+
+                                        <div class="col-md-11">
+                                            <div>
+                                                <span class="col-md-10 no-padder">{{ user.firstName }} {{
+                                                    user.lastName}}</span>
+                                                <span class="col-md-2" ng-if="user.roles">
+                                                    <i class="fa fa-info-circle"
+                                                       uib-popover-template="'role-popover.html'"
+                                                       popover-enable="{{user.roles.length}}"
+                                                       popover-class="desc-popover"
+                                                       popover-placement="auto bottom"
+                                                       popover-trigger="'outsideClick'"
+                                                       popover-is-open="user.isOpen"
+                                                       popover-title="Roles"
+                                                       popover-append-to-body="true"></i></span>
+                                            </div>
+
+                                            <div class="clearfix col-md-12 no-padder">
+                                                <div class="pull-left text-muted">
+                                                    <i class="fa fa-envelope"></i><span
+                                                        style="text-transform: lowercase" class="m-l-xs">{{user.emails |
+                                                    arrayPrimaryValue:'email'}}</span>
+                                                </div>
+                                                <div class="pull-right text-muted">
+                                                    <i class="fa fa-phone"></i><span style="text-transform: lowercase"
+                                                                                     class="m-l-xs">{{user.mobiles |
+                                                    arrayPrimaryValue:'mobile'}}</span>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <div class="clearfix"></div>
+                                    </div>
+                                </div>
+
+                                <!--Permission Profiles-->
+                                <div id="pnlBody1" class="no-padder col-sm-5 b-r">
+                                    <div class="wrapper form-group">
+                                        <label>Assign Roles</label>
+                                        <ui-select id="role" ng-model="vm.roles"
+                                                   name="userType"
+                                                   theme="bootstrap"
+                                                   close-on-select="false"
+                                                   multiple>
+                                            <ui-select-match placeholder="Select Role">
+                                                {{$item.title}}
+                                            </ui-select-match>
+                                            <ui-select-choices
+                                                    repeat="itm.id as itm in vm.roleList | filter: $select.search">
+                                                <div ng-bind-html="itm.title"></div>
+                                            </ui-select-choices>
+                                        </ui-select>
+                                    </div>
+                                </div>
+
+                            </div>
+                        </form>
+
+                    </div>
+
+                    <!--Actions-->
+                    <div id="pnlFtr" class="modal-footer text-right">
+                        <!--Close-->
+                        <button type="button" class="btn btn-sm btn-default"
+                                data-dismiss="modal">
+                            cancel
+                        </button>
+                        <!--Assign Perms-->
+                        <button type="button" class="btn btn-sm btn-success"
+                                ng-click="vm.assignRolesFn();">
+                            <i class="fa fa-spin fa-spinner"
+                               ng-show="vm.assignRoleLoading"></i>
+                            Assign
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

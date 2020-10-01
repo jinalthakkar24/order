@@ -1,0 +1,79 @@
+{
+  "navMenu": [
+    {
+      "code": "ADMIN_SETUP",
+      "menu_title": "Admin Setup",
+      "level": true,
+      "is_block": true,
+      "sequence": 2
+    },
+    {
+      "code": "MASTERS",
+      "menu_title": "Masters",
+      "sequence": 12,
+      "icon": "fa fa-database",
+      "active_states": [
+        "apps.adminSetup.mainMasters",
+        "apps.adminSetup.submasters"
+      ],
+      "child_states": [
+        {
+          "code": "MAIN",
+          "menu_title": "Main Master",
+          "module": 11,
+          "sequence": 13,
+          "add_state": "apps.adminSetup.masters",
+          "state": "apps.adminSetup.mainMasters",
+          "route_name": "/admin-setup/masters",
+          "active_states": [
+            "apps.adminSetup.mainMasters",
+            "apps.adminSetup.masters.edit"
+          ]
+        },
+        {
+          "code": "SUB_MASTER",
+          "menu_title": "Sub Master",
+          "module": 12,
+          "sequence": 14,
+          "add_state": "apps.adminSetup.subMasters.edit",
+          "state": "apps.adminSetup.subMasters",
+          "route_name": "/sub-masters",
+          "active_states": [
+            "apps.subMasters",
+            "apps.subMasters.edit"
+          ]
+        }
+      ]
+    },
+    {
+      "code": "USERS",
+      "menu_title": "Users",
+      "module": 9,
+      "sequence": 11,
+      "icon": "fa fa-users",
+      "state": "apps.users.list",
+      "route_name": "/users/list",
+      "active_states": [
+        "apps.users.list",
+        "apps.users.upsert"
+      ]
+    },
+    {
+      "is_line": true,
+      "sequence": 170
+    },
+    {
+      "code": "STYLE_GRID",
+      "menu_title": "Style Grid",
+      "module": 50,
+      "sequence": 180,
+      "icon": "fa fa-css3",
+      "show_add_btn": false,
+      "state": "apps.adminSetup.styleGrid.list",
+      "route_name": "/admin-setup/styleGrid/style",
+      "active_states": [
+        "apps.adminSetup.styleGrid.list"
+      ]
+    }
+  ]
+}

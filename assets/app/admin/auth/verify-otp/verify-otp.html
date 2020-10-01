@@ -1,0 +1,43 @@
+<div id="app"
+     class="app ng-scope app-aside-fixed">
+    <div class="row m-n wrapper-lg animated fade-in">
+    </div>
+    <div  class="container w-xxl w-auto-xs loginBoxCss">
+        <a class="navbar-brand block m-t appNameCss">
+            <!--<img style="max-height: 30px !important;" src="/img/mobile-logo.png">-->
+            {{app.name}}
+        </a>
+        <div class="m-b">
+            <div class="wrapper text-center">
+            </div>
+            <form name="form"
+                  class="form-validation">
+                <div class="list-group list-group-sm">
+                    <div class="list-group-item">
+                        <input type="text"
+                               name="email"
+                               ng-model="vm.user.verificationCode"
+                               placeholder="Enter OTP You Received "
+                               class="form-control no-border"
+                               required="true">
+                    </div>
+                </div>
+                <button type="submit"
+                        ng-click="vm.verifyOtp()"
+                        class="btn btn-lg btn-login btn-block">
+                    Verify OTP
+                </button>
+                <button type="submit"
+                        ng-click="vm.isOTPSent=false;"
+                        class="btn btn-lg btn-save btn-block">
+                    Resend OTP
+                </button>
+            </form>
+
+        </div>
+
+        <div class="clearfix">
+        </div>
+    </div>
+
+</div>

@@ -1,0 +1,67 @@
+<style>
+    .r-account-overview__user-icon {
+        width: 90px;
+        height: 90px;
+        border-radius: 50%;
+        overflow: hidden;
+        position: relative;
+        transition: all .25s cubic-bezier(.175, .885, .32, 1.275);
+        margin-bottom: 15px;
+    }
+
+    .r-account-overview__user-icon .fileUpload {
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        margin: 0;
+        background: #000000;
+        color: #FFFFFF;
+        padding: 4px 0px 6px;
+        text-transform: uppercase;
+        font-size: 10px;
+        opacity: 0.2;
+        transition: all .25s cubic-bezier(.175, .885, .32, 1.275);
+    }
+
+    .r-account-overview__user-icon:hover .fileUpload {
+        opacity: 0.9;
+    }
+
+    input:not([type=checkbox]):not([type=radio]),
+    textarea {
+        -webkit-appearance: none;
+        resize: vertical;
+    }
+
+    .fileUpload {
+        position: relative;
+        overflow: hidden;
+        margin: 10px;
+        text-align: center;
+    }
+
+    .fileUpload input.upload {
+        position: absolute;
+        top: 0;
+        right: 0;
+        margin: 0;
+        padding: 0;
+        font-size: 20px;
+        cursor: pointer;
+        opacity: 0;
+        filter: alpha(opacity=0);
+    }
+</style>
+<div class="r-account-overview__user-icon">
+    <div class="preview__deleteIcon" ng-if="vm.file"
+         ng-click="vm.removeUploadedFileFn(false,vm.file)"></div>
+
+    <img title="Profile Image" width="90" height="90" alt="Profile Image"
+         ng-src="{{vm.file | fileUrlFilter:'/images/common/user-avatar.png'}}">
+    <div class="fileUpload">
+        <span>Change</span>
+        <input type="file" class="upload" id="fileUpload"
+               onchange="angular.element(this).scope().vm.fileUploadFn(this)"/>
+    </div>
+</div>

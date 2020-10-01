@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en" data-ng-app="app">
+<head>
+    <meta charset="utf-8"/>
+    <title update-title>sample app</title>
+    <meta name="description" content="Angularjs, Html5, Music, Landing, 4 in 1 ui kits package"/>
+    <meta name="keywords"
+          content="AngularJS, angular, bootstrap, admin, dashboard, panel, app, charts, components,flat, responsive, layout, kit, ui, route, web, app, widgets"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+    <!--STYLES-->
+    <link rel="stylesheet" href="/css/app.css">
+    <link rel="stylesheet" href="/css/font.css">
+    <link rel="stylesheet" href="/css/material-design-icons.css">
+    <link rel="stylesheet" href="/css/md.css">
+    <link rel="stylesheet" href="/css/style.css">
+    <!--STYLES END-->
+</head>
+<body ng-controller="AppCtrl">
+<div class="app" id="app"
+     ng-class="{'app-header-fixed':app.settings.headerFixed, 'app-aside-fixed':app.settings.asideFixed, 'app-aside-folded':app.settings.asideFolded, 'app-aside-dock':app.settings.asideDock, 'container':app.settings.container}"
+     ui-view>
+</div>
+
+<!--VENDOR SCRIPTS-->
+
+<!--VENDOR SCRIPTS END-->
+<!--SCRIPTS-->
+<script src="/js/angularjs-crypto/aes.js"></script>
+<script src="/js/angularjs-crypto/mode-ecb.js"></script>
+<script src="/app/admin/admin-setup/masters/module.js"></script>
+<script src="/app/admin/admin-setup/module.js"></script>
+<script src="/app/admin/admin-setup/styleGrid/module.js"></script>
+<script src="/app/admin/auth/module.js"></script>
+<script src="/app/admin/users/module.js"></script>
+<script src="/app/admin/admin-setup/masters/mainMasters/mainMasters.controller.js"></script>
+<script src="/app/admin/admin-setup/masters/mainMasters/modals/upsertMainMaster.controller.js"></script>
+<script src="/app/admin/admin-setup/masters/subMasters/modals/upsertSubMaster.controller.js"></script>
+<script src="/app/admin/admin-setup/masters/subMasters/subMaster.controller.js"></script>
+<script src="/app/admin/admin-setup/notifications/notifications.controller.js"></script>
+<script src="/app/admin/admin-setup/settings/settings.controller.js"></script>
+<script src="/app/admin/admin-setup/styleGrid/list/styleGrid.controller.js"></script>
+<script src="/app/admin/admin-setup/styleGrid/template.js"></script>
+<script src="/app/admin/admin-setup/test/test.controller.js"></script>
+<script src="/app/admin/app.js"></script>
+<script src="/app/admin/auth/forgot-password/forgot-password.controller.js"></script>
+<script src="/app/admin/auth/login/login.controller.js"></script>
+<script src="/app/admin/auth/reset-password/reset-password.controller.js"></script>
+<script src="/app/admin/auth/verify-email/verify-opt.controller.js"></script>
+<script src="/app/admin/auth/verify-otp/verify-opt.controller.js"></script>
+<script src="/app/admin/components/action-buttons/action-buttons.js"></script>
+<script src="/app/admin/components/code-conv/code-conv.js"></script>
+<script src="/app/admin/components/excel-operation/excel-operation.js"></script>
+<script src="/app/admin/components/file-upload/file-upload.js"></script>
+<script src="/app/admin/components/multiple-emails/emails.js"></script>
+<script src="/app/admin/components/multiple-file-upload/multiple-file-upload.js"></script>
+<script src="/app/admin/components/multiple-mobiles/mobiles.js"></script>
+<script src="/app/admin/config.router.js"></script>
+<script src="/app/admin/constant/constant.js"></script>
+<script src="/app/admin/constant/moduleConstant.js"></script>
+<script src="/app/admin/constant/regxConstant.js"></script>
+<script src="/app/admin/directives/confirm-delete.js"></script>
+<script src="/app/admin/directives/csv-reader.js"></script>
+<script src="/app/admin/directives/customDirectives.js"></script>
+<script src="/app/admin/directives/file-upload.js"></script>
+<script src="/app/admin/directives/nks-only-number.js"></script>
+<script src="/app/admin/directives/setnganimate.js"></script>
+<script src="/app/admin/directives/ui-butterbar.js"></script>
+<script src="/app/admin/directives/ui-focus.js"></script>
+<script src="/app/admin/directives/ui-nav.js"></script>
+<script src="/app/admin/directives/ui-scroll.js"></script>
+<script src="/app/admin/directives/ui-shift.js"></script>
+<script src="/app/admin/directives/ui-toggleclass.js"></script>
+<script src="/app/admin/directives/update-title.js"></script>
+<script src="/app/admin/factories/permission.factory.js"></script>
+<script src="/app/admin/filters/custom.filter.js"></script>
+<script src="/app/admin/filters/date-view.filter.js"></script>
+<script src="/app/admin/filters/fileUrl.filter.js"></script>
+<script src="/app/admin/filters/fromNow.js"></script>
+<script src="/app/admin/filters/tuncate.filter.js"></script>
+<script src="/app/admin/main.js"></script>
+<script src="/app/admin/providers/auth.provider.js"></script>
+<script src="/app/admin/services/auth.service.js"></script>
+<script src="/app/admin/services/common-crud.service.js"></script>
+<script src="/app/admin/services/common.service.js"></script>
+<script src="/app/admin/services/deleteDocument/deleteDocument.js"></script>
+<script src="/app/admin/services/localstorage.service.js"></script>
+<script src="/app/admin/services/master.service.js"></script>
+<script src="/app/admin/services/notification.service.js"></script>
+<script src="/app/admin/services/user.service.js"></script>
+<script src="/app/admin/services/userPermission.service.js"></script>
+<script src="/app/admin/users/cleaners/cleaner.controller.js"></script>
+<script src="/app/admin/users/cleaners/view/cleaner-view.controller.js"></script>
+<script src="/app/admin/users/customers/view/customerView.controller.js"></script>
+<script src="/app/admin/users/list/list/users.controller.js"></script>
+<script src="/app/admin/users/list/modals/users-view.controller.js"></script>
+<script src="/app/admin/users/list/profile/profile.controller.js"></script>
+<script src="/app/admin/users/list/upsert/user-upsert.controller.js"></script>
+<script src="/app/admin/users/list/view/user-view.controller.js"></script>
+<!--SCRIPTS END-->
+
+</body>
+</html>

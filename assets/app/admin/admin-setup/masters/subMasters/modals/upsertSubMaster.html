@@ -1,0 +1,182 @@
+<div class="modal-header wrapper-sm">
+    <h4 class="modal-title">
+        <span ng-bind="vm.child_master.id ? 'Edit' : 'Add'"></span> Sub Master
+
+        <button type="button"
+                class="close"
+                ng-click="vm.cancelSubMasterFormFn();">
+            &times;
+        </button>
+    </h4>
+</div>
+
+<div class="modal-body">
+    <form name="subMasterForm" novalidate>
+        <!--Name, code-->
+        <div class="form-group pull-in clearfix">
+            <!--Name-->
+            <div class="col-md-6">
+                <label>
+                    Name
+                    <span ng-class="(
+                            subMasterForm.name.$error.required ||
+                            subMasterForm.name.$invalid ?
+                            'text-danger' : 'text-success')">*</span>
+
+                    <span uib-tooltip="Only alphanumeric value allowed"
+                          tooltip-placement="right">
+                        <i class="fa fa-info-circle"></i>
+                    </span>
+                </label>
+
+                <input type="text" name="name"
+                       class="form-control"
+                       validate-alpha-numeric
+                       ng-change="vm.changeNameFn(vm.child_master.name);"
+                       ng-model="vm.child_master.name"
+                       focus-me="vm.nameFocus"
+                       placeholder="Sub Master Name"
+                       required/>
+            </div>
+
+            <!--Code-->
+            <div class="col-md-6">
+                <label>
+                    Code
+                    <span ng-class="(
+                            subMasterForm.code.$error.required ||
+                            subMasterForm.code.$invalid ?
+                            'text-danger' : 'text-success')">*</span>
+
+                    <span class="text-danger text-xs"
+                          ng-show="subMasterForm.code.$error.pattern">
+                        Only alphanumeric value allowed with '_' separator
+                    </span>
+                </label>
+
+                <input type="text" name="code"
+                       class="form-control"
+                       ng-pattern="regex.CODE_VAR"
+                       ng-trim="false"
+                       ng-model="vm.child_master.code"
+                       placeholder="Sub Master Code"
+                       required/>
+            </div>
+        </div>
+
+        <!--Description-->
+        <div class="form-group">
+            <label>Description</label>
+
+            <textarea name="description"
+                      class="form-control"
+                      auto-grow
+                      ng-model="vm.child_master.description"
+                      placeholder="Sub Master Description"></textarea>
+        </div>
+
+        <!--Group-->
+        <div class="form-group">
+            <label>Group</label>
+
+            <input type="text" name="group" class="form-control"
+                   ng-model="vm.child_master.group"
+                   placeholder="Sub Master Group"/>
+        </div>
+
+        <!--Active, Default-->
+        <!--<div class="form-group clearfix"
+             ng-if="!vm.child_master.id">
+            <div class="checkbox inline">
+                <label class="checkbox-inline i-checks">
+                    <input type="checkbox" value=""
+                           ng-change="vm.changeActiveFn(vm.child_master.isActive)"
+                           ng-model="vm.child_master.isActive"/><i></i>Active
+                </label>
+            </div>
+
+            <div class="checkbox inline m-l-xs">
+                <label class="checkbox-inline i-checks">
+                    <input type="checkbox" ng-disabled="!vm.child_master.isActive" name="is_default"
+                           ng-model="vm.child_master.isDefault"
+                           value="option2"/><i></i>Default
+                </label>
+            </div>
+        </div>-->
+
+        <!--Image, Icon-->
+        <div class="form-group pull-in clearfix">
+            <!--Image-->
+            <div class="col-md-6">
+                <label>Image</label>
+
+                <div class="row">
+                    <file-upload title="Image" layout-type="'horizontal'" accept="['image']" folder="'master'"
+                                 btn-text="'Upload Image'"
+                                 display-fn="displayImages(array, ind)"
+                                 file="vm.child_master.image" remove="vm.removeImage"
+                                 subtitle="'(Size: 1700 X 1130 For Best Resolution)'"></file-upload>
+                </div>
+            </div>
+
+            <!--Icon-->
+            <div class="col-md-6">
+                <label>Icon</label>
+
+                <div class="row">
+                    <file-upload title="Icon" layout-type="'horizontal'" accept="['image']" folder="'subMaster'"
+                                 btn-text="'Upload Icon'"
+                                 display-fn="displayImages(array, ind)"
+                                 file="vm.child_master.icon" remove="vm.removeImage"></file-upload>
+                </div>
+            </div>
+        </div>
+    </form>
+</div>
+
+<div class="modal-footer wrapper-sm">
+    <button type="button"
+            class="btn btn-sm btn-default" ng-click="vm.cancelSubMasterFormFn();">
+        Cancel
+    </button>
+
+    <button type="button"
+            class="btn btn-sm btn-info"
+            ng-if="!vm.child_master.id"
+            ng-click="vm.nameFocus = false; vm.resetSubMasterFormFn();">
+        Reset
+    </button>
+
+    <button type="button" class="btn btn-sm btn-success"
+            ng-if="vm.child_master.id"
+            ng-click="vm.updateSubMasterDataFn();"
+            ng-disabled="subMasterForm.$invalid || vm.saveSubMasterLoader"
+            has-permission="{{ updatePermission }}"
+            has-module="{{ moduleSubMaster }}">
+        <i class="fa fa-spinner fa-spin"
+           ng-show="vm.saveSubMasterLoader"></i>
+        Update
+    </button>
+
+    <button type="button" class="btn btn-sm btn-success"
+            ng-if="!vm.child_master.id"
+            ng-click="vm.saveSubMasterDataFn(true);"
+            ng-disabled="subMasterForm.$invalid || vm.saveSubMasterLoader"
+            has-permission="{{ insertPermission }}"
+            has-module="{{ moduleSubMaster }}">
+        <i class="fa fa-spinner fa-spin"
+           ng-show="vm.isContinue && vm.saveSubMasterLoader"></i>
+        Save & Continue
+    </button>
+
+    <button type="button" class="btn btn-sm btn-success"
+            ng-if="!vm.child_master.id"
+            ng-click="vm.saveSubMasterDataFn();"
+            ng-disabled="subMasterForm.$invalid || vm.saveSubMasterLoader"
+            has-permission="{{ insertPermission }}"
+            has-module="{{ moduleSubMaster }}">
+        <i class="fa fa-spinner fa-spin"
+           ng-show="!vm.isContinue && vm.saveSubMasterLoader"></i>
+        Save
+    </button>
+</div>

@@ -1,0 +1,86 @@
+<style>
+    .input-group .form-control:focus {
+        z-index: inherit;
+    }
+</style>
+<!--Label and required *(star)-->
+<label>
+    Mobile
+    <span ng-if="vm.isRequired" ng-class="vm.invalidMobiles ? 'text-danger' : 'text-success'">*</span>
+</label>
+
+<div id="mobArr" ng-repeat="cn in vm.arrayList track by cn.id">
+    <div ng-class="{'m-t-xs':!$first}">
+        <div class="input-group high-z-index"
+             ng-class="{'err-brd':vm.form.cell{{cn.id}}.$error.ngIntlTelInput,
+             'dup-brd':cn.isDuplicate}">
+
+            <!--Primary radio-->
+            <span class="input-group-addon p08">
+                <label class="i-checks m-b-none">
+                    <input type="radio"
+                           ng-disabled="cn.isDuplicate"
+                           checked=""
+                           value="{{$index}}"
+                           ng-model="vm.isPrimaryMobile">
+                    <i></i>
+                </label>
+            </span>
+
+            <!--Input field-->
+            <input type="text"
+                   class="form-control"
+                   ng-class="{'err-group-input':vm.form.cell{{cn.id}}.$error.ngIntlTelInput,
+                   'dup-input':cn.isDuplicate ,
+                   'dup-bg' : cn.isDuplicate,
+                   'err-bg' : vm.form.cell{{cn.id}}.$error.ngIntlTelInput
+                   }"
+
+                   id="cell{{$index}}"
+                   name="cell{{cn.id}}"
+                   my-enter="vm.addNextIfValidFn(cn.mobile)"
+
+                   ng-change="vm.changeFn(vm.arrayList, cn)"
+                   focus-me="vm.focusMobile.cell{{$index}}"
+
+                   ng-model="cn.mobile"
+                   ng-intl-tel-input
+                   ng-required="vm.isRequired"/>
+
+            <!--separate required email *(star)-->
+            <span ng-if="vm.isRequired">
+                <span class="text-danger customStar"
+                      ng-show="cn.isDuplicate || vm.form.cell{{cn.id}}.$error.required || vm.form.cell{{cn.id}}.$error.ngIntlTelInput">*</span>
+                <span class="text-success customStar"
+                      ng-show="!cn.isDuplicate && vm.form.cell{{cn.id}}.$valid">*</span>
+            </span>
+
+            <!--Add remove buttons-->
+            <span class="input-group-btn">
+                <button class="btn btn-info p6"
+                        ng-disabled="vm.invalidMobiles = !cn.mobile || vm.isDuplicate || vm.addDisabled"
+                        ng-click="vm.addNextValueFn()">
+                    <i class="text-xs fa fa-plus"></i>
+                </button>
+                <button class="btn btn-danger p6"
+                        ng-disabled="!cn.mobile && vm.arrayList.length == 1 && $first"
+                        ng-click="vm.removeThisValueFn(cn.id, $index, vm.isPrimaryMobile)">
+                    <i class="text-xs fa fa-times"></i>
+                </button>
+            </span>
+
+        </div>
+        <!--Pattern error message-->
+        <span class="text-danger text-xs"
+              ng-show="vm.form.cell{{cn.id}}.$error.ngIntlTelInput">
+            <i class="fa fa-exclamation-triangle"></i> Enter a valid number for <i>{{vm.getData($index).countryDetails.name}}</i>
+            <span class="font-bold text-i">Ex. {{vm.getData($index).placeHolder}}</span>
+        </span>
+
+        <!--duplicate email message-->
+        <span class="text-danger text-xs"
+              ng-show="cn.isDuplicate">
+            <i class="fa fa-exclamation-triangle"></i> This is <b>duplicate</b> number
+        </span>
+    </div>
+</div>

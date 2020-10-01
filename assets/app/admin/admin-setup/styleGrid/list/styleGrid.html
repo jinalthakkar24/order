@@ -1,0 +1,284 @@
+<style>
+
+    .sampleImage{
+        position : absolute;
+        right: 20px;
+        border           : 1px solid #E2E2E2;
+        padding          : 3px;
+        background-color : #FBFBFB;
+        cursor           : zoom-in;
+    }
+    .image-container {
+        position         : relative;
+        /* box-shadow      : 0px 0px 10px 2px #F3E7DC;*/
+        border           : 1px solid #E2E2E2;
+        padding          : 3px;
+        background-color : #FBFBFB;
+        cursor           : zoom-in;
+    }
+
+    .image-container .remove-image-icon, .image-container .remove-image-icon:hover {
+        position         : absolute;
+        top              : 0px;
+        right            : 0px;
+        color            : white;
+        background-color : #F05050;
+        padding          : 0px 3px !important;
+        cursor           : pointer;
+        border-left      : 3px solid #FBFBFB;
+        border-bottom    : 3px solid #FBFBFB;
+    }
+
+    .img-md {
+        width  : 125px;
+        height : 125px;
+        cursor : zoom-in;
+    }
+
+    .img-sm {
+        width  : 100px;
+        height : 100px;
+        cursor : zoom-in;
+    }
+
+    .img-xs {
+        width  : 50px;
+        height : 50px;
+        cursor : zoom-in;
+    }
+
+    .img-list {
+        width         : 40px;
+        height        : 40px;
+        border-radius : 50%;
+        cursor        : zoom-in;
+    }
+
+    .code {
+        padding          : 2px 4px !important;
+        font-size        : 90%;
+        color            : #C7254E;
+        background-color : #F9F2F4 !important;
+        border-radius    : 4px;
+        font-family      : Menlo, Monaco, Consolas, "Courier New", monospace !important;
+        white-space      : pre-wrap;
+        max-height       : 400px;
+        width            : 100%;
+    }
+
+    .no-id {
+        padding          : 5px !important;
+        color            : #3A3F51 !important;
+        background-color : #F9F2F4 !important;
+        font-style       : italic;
+    }
+
+    .bg-active {
+        background-color : #E0FFE8 !important;
+    }
+
+    .backHightLight {
+        background-color : #FFFEF4;
+    }
+
+    hr {
+        margin       : 0px !important;
+        border-color : #97A1A8 !important;
+    }
+
+    /* Specify styling for tooltip contents */
+    .tooltip.customTooltipClass .tooltip-inner {
+        color            : #880000;
+        background-color : #FFFF66;
+        box-shadow       : 0 6px 12px rgba(0, 0, 0, .175);
+    }
+
+    /* Hide arrow */
+    .tooltip.customTooltipClass .tooltip-arrow {
+        border-bottom-color : #9B2A20;
+    }
+</style>
+
+<script type="text/ng-template" id="description-popover.html">
+    <span class="popover-icon-close"
+          ng-click="vm.isOpen = false;">
+            <i class="icon-close"></i>
+    </span>
+    <div>
+        <pre>{{vm.desc}}</pre>
+    </div>
+</script>
+
+<script type="text/ng-template" id="myPopoverTemplate.html">
+    <span class="popover-icon-close"
+          ng-click="vm.dynamicPopover.close()">
+            <i class="icon-close"></i>
+    </span>
+    <div>
+        uib-popover-template - A URL representing the location of a template to use
+        for the popover body. Note that the contents of this template need to be
+        wrapped in a tag.
+    </div>
+</script
+>
+
+<div class="hbox hbox-auto-xs bg-light " ng-init="
+  app.settings.asideFixed = true;
+  app.settings.asideDock = false;
+  app.settings.container = false;
+  app.hideAside = false;
+  app.hideFooter = true
+  ">
+    <div class="col w-lg animated fade-in">
+        <div class="vbox">
+            <div class="nav-tabs-alt">
+                <ul class="nav nav-tabs nav-justified">
+                    <li ng-class="{'active':vm.activeTab.id == vm.tabType.common}">
+                        <a class="p8" data-target="#tab-1"
+                           ng-click="vm.activeTabFn('common')" role="tab" data-toggle="tab">Common</a>
+                    </li>
+                    <li ng-class="{'active':vm.activeTab.id == vm.tabType.header}">
+                        <a class="p8" data-target="#tab-2"
+                           ng-click="vm.activeTabFn('header')" role="tab" data-toggle="tab">Header</a>
+                    </li>
+                    <li ng-class="{'active':vm.activeTab.id == vm.tabType.body}">
+                        <a class="p8" data-target="#tab-3"
+                           ng-click="vm.activeTabFn('body')" role="tab" data-toggle="tab">Body</a>
+                    </li>
+                    <li ng-class="{'active':vm.activeTab.id == vm.tabType.footer}">
+                        <a class="p8" data-target="#tab-4"
+                           ng-click="vm.activeTabFn('footer')" role="tab" data-toggle="tab">Footer</a>
+                    </li>
+                </ul>
+            </div>
+
+            <div class="row-row">
+                <div class="cell scrollable hover">
+                    <div class="cell-inner">
+                        <div class="tab-content">
+                            <div ng-class="{'active':vm.activeTab.id == vm.tabType.common}"
+                                 ng-if="vm.activeTab.id == vm.tabType.common"
+                                 class="tab-pane active" id="tab-1">
+                                <div class="list-group no-radius m-b-none">
+                                    <a ui-scroll-to="{{list.id}}"
+                                       ng-repeat="list in vm.commonList"
+                                       class="list-group-item b-l-3x hover-anchor"
+                                       ng-class="{'b-l-success bg-active font-bold':list.id == vm.activeCommon.id,
+                                        'list-group-item b-l-3x hover-anchor' : !list.isMerge,
+                                        'list-group-item no-id' : list.isMerge,
+                                        }"
+                                       ng-disabled="list.id  == vm.activeCommon.id"
+                                       ng-click="vm.mainTabChangeFn('common',list);">
+                                        {{list.name}}
+                                    </a>
+                                </div>
+                            </div>
+
+                            <div ng-class="{'active':vm.activeTab.id == vm.tabType.header}"
+                                 ng-if="vm.activeTab.id == vm.tabType.header"
+                                 class="tab-pane" id="tab-2">
+                                <div class="list-group no-radius m-b-none">
+                                    <!--ng-click="vm.mainTabChangeFn('header',list);"-->
+                                    <a ui-scroll-to="{{list.id}}"
+                                       ng-repeat="list in vm.headerList"
+                                       ng-class="{'b-l-success bg-active font-bold':list.id == vm.activeHeader.id,
+                                        'list-group-item b-l-3x hover-anchor' : !list.isMerge,
+                                        'list-group-item no-id' : list.isMerge,
+                                        }"
+                                       ng-click="vm.mainTabChangeFn('header',list);"
+                                       ng-disabled="list.id  == vm.activeHeader.id">
+                                        {{list.name}}
+                                    </a>
+                                </div>
+                            </div>
+
+                            <div ng-class="{'active':vm.activeTab.id == vm.tabType.body}"
+                                 ng-if="vm.activeTab.id == vm.tabType.body"
+                                 class="tab-pane" id="tab-3">
+                                <div class="list-group no-radius m-b-none">
+                                    <a ui-scroll-to="{{list.id}}"
+                                       ng-repeat="list in vm.bodyList"
+                                       class="list-group-item b-l-3x hover-anchor"
+                                       ng-class="{'b-l-success bg-active font-bold':list.id == vm.activeBody.id,
+                                        'list-group-item b-l-3x hover-anchor' : !list.isMerge,
+                                        'list-group-item no-id' : list.isMerge,
+                                        }"
+                                       ng-disabled="list.id  == vm.activeBody.id"
+                                       ng-click="vm.mainTabChangeFn('body',list);">
+                                        {{list.name}}
+                                    </a>
+                                </div>
+                            </div>
+
+                            <div ng-class="{'active':vm.activeTab.id == vm.tabType.footer}"
+                                 ng-if="vm.activeTab.id == vm.tabType.footer"
+                                 class="tab-pane" id="tab-4">
+                                <div class="list-group no-radius m-b-none">
+                                    <a ui-scroll-to="{{list.id}}"
+                                       ng-repeat="list in vm.footerList"
+                                       class="list-group-item b-l-3x hover-anchor"
+                                       ng-class="{'b-l-success bg-active font-bold':list.id == vm.activeFooter.id,
+                                        'list-group-item b-l-3x hover-anchor' : !list.isMerge,
+                                        'list-group-item no-id' : list.isMerge,
+                                        }"
+                                       ng-disabled="list.id  == vm.activeFooter.id"
+                                       ng-click="vm.mainTabChangeFn('footer',list);">
+                                        {{list.name}}
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="col lter b-l">
+        <div class="vbox">
+            <div class="p8 b-b b-light clearfix">
+                <div class="font-thin h4 pull-left">
+                    <b>{{vm.activeTab.name}}</b>
+                    <i class="fa fa-angle-double-right"></i>
+                    <span ng-if="vm.activeTab.id == vm.tabType.header">{{vm.activeHeader.name}}</span>
+                    <span ng-if="vm.activeTab.id == vm.tabType.body">{{vm.activeBody.name}}</span>
+                    <span ng-if="vm.activeTab.id == vm.tabType.footer">{{vm.activeFooter.name}}</span>
+                    <span ng-if="vm.activeTab.id == vm.tabType.common">{{vm.activeCommon.name}}</span>
+                </div>
+                <div class="text-danger font-bold pull-right">
+                    Reference Module : <b class="text-dark">Conference</b>
+                </div>
+            </div>
+            <div class="row-row">
+                <div class="cell">
+                    <div class="cell-inner">
+                        <div ng-if="vm.activeTab.id == vm.tabType.common"
+                             class="padder clearfix">
+                            <div data-ng-include="'/app/admin/admin-setup/styleGrid/common.html'"></div>
+                        </div>
+                        <div ng-if="vm.activeTab.id == vm.tabType.header"
+                             class="padder clearfix">
+                            <div data-ng-include="'/app/admin/admin-setup/styleGrid/header.html'"></div>
+                        </div>
+                        <div ng-if="vm.activeTab.id == vm.tabType.body"
+                             class="no-padder clearfix">
+                            <div data-ng-include="'/app/admin/admin-setup/styleGrid/body.html'"></div>
+                        </div>
+                        <div ng-if="vm.activeTab.id == vm.tabType.footer"
+                             class="padder clearfix">
+                            <div data-ng-include="'/app/admin/admin-setup/styleGrid/footer.html'"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!--Confirm Delete Model-->
+<confirm-delete
+        message="Are you sure you want to delete this item ?"
+        visible="vm.showDeleteModal"
+        confirm-delete-fn="vm.deleteListItemFn()"
+        cancel-delete-fn="vm.showDeleteModal = false">
+</confirm-delete>

@@ -1,0 +1,426 @@
+<style>
+
+    .p1510 {
+        padding: 15px 10px !important;
+    }
+
+    .p1015 {
+        padding: 10px 15px !important;
+    }
+
+    .noBoxShadow {
+        box-shadow: none !important;
+    }
+
+    i.zoom-icon:hover {
+        font-size: 26px !important;
+    }
+
+    .ui-select-bootstrap > .ui-select-choices {
+        max-height: 350px;
+    }
+
+    @media only screen and (max-width: 768px) {
+
+        .w-xxl {
+            width: 250px;
+        }
+    }
+
+    @media only screen and (min-width: 768px) {
+        .navbar-form .form-control {
+            width: 100% !important;
+            border-top-left-radius: 20px !important;
+            border-bottom-left-radius: 20px !important;
+            height: 32px;
+            border: none;
+            padding: 6px 12px !important;
+        }
+
+        .navbar-form .input-group .input-group-btn1 {
+            position: relative;
+            font-size: 0;
+            white-space: nowrap;
+            vertical-align: middle;
+            display: block;
+        }
+    }
+
+    .f11 {
+        font-size: 11px;
+    }
+
+</style>
+
+<!-- navbar header -->
+<div class="navbar-header b-r list-icon text-center {{app.settings.navbarHeaderColor}}">
+    <button class="pull-right visible-xs dk" ui-toggle-class="show" data-target=".navbar-collapse">
+        <i class="glyphicon glyphicon-cog"></i>
+    </button>
+    <button class="pull-right visible-xs" ui-toggle-class="off-screen" data-target=".app-aside" ui-scroll-to="app">
+        <i class="glyphicon glyphicon-align-justify"></i>
+    </button>
+    <!-- brand -->
+    <a href="#/" class="navbar-brand hdr-logo-name text-lt">
+        <!--<i class="fa fa-btc"></i>-->
+        <!-- <img src="{{app.icon}}" alt=".">-->
+        <span class="hidden-folded m-l-xs ng-binding">{{app.name}}</span>
+    </a>
+
+    <!--<a href="#/" class="p-l-r-sm navbar-brand text-lt">
+        <span class="hidden-folded">Yolo Carts</span>
+    </a>-->
+    <!-- / brand -->
+</div>
+<!-- / navbar header -->
+
+<!-- navbar collapse -->
+<div class="collapse pos-rlt navbar-collapse box-shadow {{app.settings.navbarCollapseColor}}">
+    <!-- buttons -->
+    <!--<div class="nav navbar-nav hidden-xs">
+        <a href class="btn no-shadow navbar-btn"
+           ng-click="app.settings.asideFolded = !app.settings.asideFolded; sideToggleFn()">
+            <i class="fa {{app.settings.asideFolded ? 'fa-indent' : 'fa-dedent'}} fa-fw"></i>
+        </a>
+        &lt;!&ndash;<a href class="btn no-shadow navbar-btn" ui-toggle-class="show" target="#aside-user">
+          <i class="icon-user fa-fw"></i>
+        </a>&ndash;&gt;
+    </div>-->
+    <!-- search form -->
+    <form class="navbar-form navbar-form-sm navbar-left shift" ui-shift="prependTo" role="search">
+        <div class="form-group">
+            <div class="w-xxl input-group">
+                <!--my-enter="gotoSearchFn()"-->
+                <!--<ui-select ng-model="search_id"
+                           name="search_id"
+                           on-select="changeSearchDataFn(search_id,$select.selected)"
+                           theme="bootstrap">
+                    <ui-select-match allow-clear="true"
+                                     placeholder="Minimum 3 character to search...">
+
+                    <span ng-if="$select.selected.first_name || $select.selected.last_name">
+                        {{$select.selected.first_name}} {{$select.selected.last_name}}</span>
+
+                    <span ng-if="!$select.selected.first_name && !$select.selected.question
+                    && !$select.selected.company_name && $select.selected.name">
+                        {{$select.selected.name | truncate:35}}</span>
+
+                        <span ng-if="$select.selected.company_name">{{$select.selected.company_name | truncate:35}}</span>
+                        <span ng-if="$select.selected.subject && $select.selected.title">{{$select.selected.subject | truncate:35}}</span>
+                        <span ng-if="!$select.selected.subject && $select.selected.title">{{$select.selected.title| truncate:35}}</span>
+                        <span ng-if="$select.selected.subject && !$select.selected.title">{{$select.selected.subject| truncate:35}}</span>
+                        <span ng-if="$select.selected.question">{{$select.selected.question | truncate:35}}</span>
+                        <span ng-if="$select.selected.remarks">{{$select.selected.remarks | truncate:35}}</span>
+
+
+                    </ui-select-match>
+                    <ui-select-choices group-by="'type_name'"
+                                       refresh-delay="100"
+                                       refresh="refreshGlobalSearchFn($select.search)"
+                                       repeat="typ.id as typ in allSearchData | filter: $select.search">
+
+                        &lt;!&ndash;Name&ndash;&gt;
+                        <div ng-if="typ.first_name || typ.last_name"
+                             ng-bind-html="typ.first_name + ' ' + typ.last_name | highlight: $select.search"></div>
+                        <div ng-if="!typ.first_name && !typ.question && !typ.company_name && typ.name"
+                             ng-bind-html="typ.name | highlight: $select.search"></div>
+                        &lt;!&ndash; /Name&ndash;&gt;
+
+                        &lt;!&ndash;Subject&ndash;&gt;
+                        <div ng-if="typ.company_name"
+                             ng-bind-html="typ.company_name | truncate : 40 | highlight: $select.search"></div>
+                        &lt;!&ndash;/Subject&ndash;&gt;
+
+                        &lt;!&ndash;Subject&ndash;&gt;
+                        <div ng-if="typ.subject" ng-bind-html="typ.subject | truncate : 40 | highlight: $select.search"></div>
+                        &lt;!&ndash;/Subject&ndash;&gt;
+
+                        &lt;!&ndash;Title&ndash;&gt;
+                        <div ng-if="typ.title" ng-bind-html="typ.title | truncate : 40 | highlight: $select.search"></div>
+                        &lt;!&ndash;/Title&ndash;&gt;
+
+                        &lt;!&ndash;Title&ndash;&gt;
+                        <div ng-if="typ.question" ng-bind-html="typ.question | truncate : 40 | highlight: $select.search"></div>
+                        &lt;!&ndash;/Title&ndash;&gt;
+
+                        &lt;!&ndash;Remarks&ndash;&gt;
+                        <div ng-if="typ.remarks" ng-bind-html="typ.remarks | truncate : 40 | highlight: $select.search"></div>
+                        &lt;!&ndash;/Remarks&ndash;&gt;
+
+                        &lt;!&ndash;Access Type&ndash;&gt;
+                        <small class="text-xs font-bold" ng-if="typ.access_type == 1">
+                            Public
+                        </small>
+                        <small class="text-xs font-bold" ng-if="typ.access_type == 2">
+                            Private
+                        </small>
+                        <small class="text-xs font-bold" ng-if="typ._type">
+                            {{typ._type.name}}
+                        </small>
+                        &lt;!&ndash;/Access Type&ndash;&gt;
+
+                        &lt;!&ndash;Location&ndash;&gt;
+                        <small class="text-xs" ng-if="typ.location">
+                            -at {{typ.location}}
+                        </small>
+                        &lt;!&ndash;/Location&ndash;&gt;
+
+                        &lt;!&ndash;Phone / Cell&ndash;&gt;
+                        <small class="text-xs" ng-if="typ.emails || typ.mobiles">
+                            {{typ.emailId}}<span ng-if="typ.emailId && typ.cell">&nbsp;&nbsp;</span>{{typ.cell}}
+                        </small>
+                        &lt;!&ndash;/ Phone / Cell&ndash;&gt;
+
+                    </ui-select-choices>
+                    &lt;!&ndash;<ui-select-footer>Bottom of the list.</ui-select-footer>
+                    <ui-select-no-choice>
+                        We couldn't find any search
+                    </ui-select-no-choice>
+
+                    <ui-select-choices-static>
+                        <button ng-click="fetchFromServer($select.search)">Search more results on server</button>
+                    </ui-select-choices-static>&ndash;&gt;
+
+                </ui-select>-->
+
+                <!--<span class="input-group-btn1">
+
+                    <button style="height:32px;border-radius: 0px 25px 25px 0px !important;"
+                            ui-sref="apps.searchAll({'search':searchChar})" class="btn btn-sm bg-white rounded"><i
+                            class="fa fa-search"></i></button>
+                </span>-->
+            </div>
+        </div>
+    </form>
+    <!-- / search form -->
+    <!-- / buttons -->
+
+    <!-- link and dropdown -->
+    <!--<ul class="nav navbar-nav hidden-sm">3
+      <li class="dropdown pos-stc" uib-dropdown>
+        <a href class="dropdown-toggle" uib-dropdown-toggle>
+          <span>Mega</span>
+          <span class="caret"></span>
+        </a>
+        <div class="dropdown-menu wrapper w-full bg-white">
+          <div class="row">
+            <div class="col-sm-4">
+              <div class="m-l-xs m-t-xs m-b-xs font-bold">Pages <span class="badge badge-sm bg-success">10</span></div>
+              <div class="row">
+                <div class="col-xs-6">
+                  <ul class="list-unstyled l-h-2x">
+                    <li>
+                      <a href><i class="fa fa-fw fa-angle-right text-muted m-r-xs"></i>Profile</a>
+                    </li>
+                    <li>
+                      <a href><i class="fa fa-fw fa-angle-right text-muted m-r-xs"></i>Post</a>
+                    </li>
+                    <li>
+                      <a href><i class="fa fa-fw fa-angle-right text-muted m-r-xs"></i>Search</a>
+                    </li>
+                    <li>
+                      <a href><i class="fa fa-fw fa-angle-right text-muted m-r-xs"></i>Invoice</a>
+                    </li>
+                  </ul>
+                </div>
+                <div class="col-xs-6">
+                  <ul class="list-unstyled l-h-2x">
+                    <li>
+                      <a href><i class="fa fa-fw fa-angle-right text-muted m-r-xs"></i>Price</a>
+                    </li>
+                    <li>
+                      <a href><i class="fa fa-fw fa-angle-right text-muted m-r-xs"></i>Lock screen</a>
+                    </li>
+                    <li>
+                      <a href><i class="fa fa-fw fa-angle-right text-muted m-r-xs"></i>Sign in</a>
+                    </li>
+                    <li>
+                      <a href><i class="fa fa-fw fa-angle-right text-muted m-r-xs"></i>Sign up</a>
+                    </li>
+                  </ul>
+                </div>
+              </div>
+            </div>
+            <div class="col-sm-4 b-l b-light">
+              <div class="m-l-xs m-t-xs m-b-xs font-bold">UI Kits <span class="label label-sm bg-primary">12</span></div>
+              <div class="row">
+                <div class="col-xs-6">
+                  <ul class="list-unstyled l-h-2x">
+                    <li>
+                      <a href><i class="fa fa-fw fa-angle-right text-muted m-r-xs"></i>Buttons</a>
+                    </li>
+                    <li>
+                      <a href><i class="fa fa-fw fa-angle-right text-muted m-r-xs"></i>Icons <span class="badge badge-sm bg-warning">1000+</span></a>
+                    </li>
+                    <li>
+                      <a href><i class="fa fa-fw fa-angle-right text-muted m-r-xs"></i>Grid</a>
+                    </li>
+                    <li>
+                      <a href><i class="fa fa-fw fa-angle-right text-muted m-r-xs"></i>Widgets</a>
+                    </li>
+                  </ul>
+                </div>
+                <div class="col-xs-6">
+                  <ul class="list-unstyled l-h-2x">
+                    <li>
+                      <a href><i class="fa fa-fw fa-angle-right text-muted m-r-xs"></i>Bootstap</a>
+                    </li>
+                    <li>
+                      <a href><i class="fa fa-fw fa-angle-right text-muted m-r-xs"></i>Sortable</a>
+                    </li>
+                    <li>
+                      <a href><i class="fa fa-fw fa-angle-right text-muted m-r-xs"></i>Portlet</a>
+                    </li>
+                    <li>
+                      <a href><i class="fa fa-fw fa-angle-right text-muted m-r-xs"></i>Timeline</a>
+                    </li>
+                  </ul>
+                </div>
+              </div>
+            </div>
+            <div class="col-sm-4 b-l b-light">
+              <div class="m-l-xs m-t-xs m-b-sm font-bold">Analysis</div>
+              <div class="text-center">
+                <div class="inline">
+                  <div ui-jq="easyPieChart" ui-options="{
+                      percent: 65,
+                      lineWidth: 50,
+                      trackColor: '{{app.color.light}}',
+                      barColor: '{{app.color.info}}',
+                      scaleColor: false,
+                      size: 100,
+                      rotate: 90,
+                      lineCap: 'butt',
+                      animate: 2000
+                    }">
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </li>
+      <li class="dropdown" uib-dropdown>
+        <a href class="dropdown-toggle" uib-dropdown-toggle>
+          <i class="fa fa-fw fa-plus visible-xs-inline-block"></i>
+          <span translate="header.navbar.new.NEW">New</span> <span class="caret"></span>
+        </a>
+        <ul class="dropdown-menu" role="menu">
+          <li><a href="#" translate="header.navbar.new.PROJECT">Projects</a></li>
+          <li>
+            <a href>
+              <span class="badge bg-info pull-right">5</span>
+              <span translate="header.navbar.new.TASK">Task</span>
+            </a>
+          </li>
+          <li><a href translate="header.navbar.new.USER">User</a></li>
+          <li class="divider"></li>
+          <li>
+            <a href>
+              <span class="badge bg-danger pull-right">4</span>
+              <span translate="header.navbar.new.EMAIL">Email</span>
+            </a>
+          </li>
+        </ul>
+      </li>
+    </ul>-->
+    <!-- / link and dropdown -->
+
+    <!-- search form -->
+
+    <!-- / search form -->
+
+    <!-- nabar right -->
+    <ul class="nav navbar-nav navbar-right">
+
+        <li>
+            <a class="p1510" ui-sref-active="active" ui-sref="apps.adminSetup.settings"><i class="fa fa-gear"></i></a>
+        </li>
+        <li class="dropdown" uib-dropdown
+            ng-click="markNotificationUnreadFn()">
+            <a uib-tooltip="Notification" ui-sref="apps.adminSetup.notifications" tooltip-placement="bottom" href
+               class="p1510 "
+            >
+                <i class="fa fa-bell"></i>
+                <span class="visible-xs-inline">Notifications</span>
+                <span class="badge badge-sm up bg-danger pull-right-xs"
+                      ng-if="unread_note_count">
+                    {{ unread_note_count }}
+                </span>
+            </a>
+            <!--<div class="dropdown-menu w-xl animated fadeInUp">-->
+            <!--<div class="panel noBoxShadow bg-white">-->
+            <!--<div class="panel-heading b-light bg-light">-->
+            <!--<strong>You have <span>-->
+            <!--{{ unread_note_count || '0' }} unread-->
+            <!--</span> notification</strong>-->
+            <!--</div>-->
+            <!--<div class="list-group" style="max-height: 25em; overflow-y: auto">-->
+            <!--<a href class="list-group-item m-t-xs"-->
+            <!--ng-click="goToNotificationStateFn(value)"-->
+            <!--ng-repeat="(key,value) in notifications">-->
+            <!--<span class="m-l m-t-xs clear block m-b-none"-->
+            <!--ng-click="getSingleNotificationUnread(value.id)"-->
+            <!--ng-class="{'text-success':!value.is_visited || value.is_visited==false}">-->
+            <!--{{value.message}}-->
+            <!--<br>-->
+            <!--<small class="text-muted">-->
+            <!--{{value.createdAt | fromNow}}-->
+            <!--</small>-->
+            <!--</span>-->
+            <!--</a>-->
+            <!--</div>-->
+            <!--<div class="panel-footer text-sm">-->
+            <!--<a href class="pull-right" ui-sref="apps.notification-setting"><i class="fa fa-cog"></i></a>&ndash;&gt;-->
+            <!--<a href="" data-toggle="class:show animated fadeInRight"-->
+            <!--ui-sref="apps.notifications">See all the notifications</a>-->
+            <!--</div>-->
+            <!--</div>-->
+            <!--</div>-->
+        </li>
+        <li class="dropdown" uib-dropdown>
+            <a href class="p1510 dropdown-toggle clear" uib-dropdown-toggle>
+                <span class="thumb-sm avatar pull-right m-t-n-sm m-b-n-sm m-l-sm">
+                    <img ng-src="{{me.image || '/images/common/no-image.jpg'  }}" alt="..."
+                         style="width: 40px !important;
+                                height: 40px !important;">
+                    <i class="on md b-white bottom"></i>
+                </span>
+                <span class="hidden-sm hidden-md">{{me.firstName}} <span
+                        ng-if="me.lastName">{{me.lastName}}</span></span> <b class="caret"></b>
+            </a>
+            <!-- dropdown -->
+            <ul class="dropdown-menu animated fadeInRight w">
+                <!--<li class="wrapper b-b m-b-sm bg-light m-t-n-xs">
+                  <div>
+                    <p>300mb of 500mb used</p>
+                  </div>
+                  <uib-progressbar value="60" class="progress-xs m-b-none bg-white"></uib-progressbar>
+                </li>-->
+                <!--<li>-->
+                <!--<a href>-->
+                <!--&lt;!&ndash;<span class="badge bg-danger pull-right">30%</span>&ndash;&gt;-->
+                <!--<span>Settings</span>-->
+                <!--</a>-->
+                <!--</li>-->
+                <li>
+                    <a class="p1015" ui-sref="apps.adminSetup.users.profile">Profile</a>
+                </li>
+                <!--<li>-->
+                <!--<a ui-sref="app.docs">-->
+                <!--&lt;!&ndash;<span class="label bg-info pull-right">new</span>&ndash;&gt;-->
+                <!--Help-->
+                <!--</a>-->
+                <!--</li>-->
+                <li class="divider m-n"></li>
+                <li>
+                    <a class="p1015" href ng-click="logout()">Logout</a>
+                </li>
+            </ul>
+            <!-- / dropdown -->
+        </li>
+    </ul>
+    <!-- / navbar right -->
+
+</div>
+<!-- / navbar collapse -->

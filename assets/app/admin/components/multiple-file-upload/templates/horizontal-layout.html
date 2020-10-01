@@ -1,0 +1,241 @@
+<style>
+    .image-container {
+        position         : relative;
+        /* box-shadow      : 0px 0px 10px 2px #F3E7DC;*/
+        border           : 1px solid #E2E2E2;
+        padding          : 5px;
+        background-color : #FBFBFB;
+        cursor : zoom-in;
+    }
+
+    .image-container .remove-image-icon, .image-container .remove-image-icon:hover {
+        position         : absolute;
+        top              : 0px;
+        right            : 0px;
+        color            : white;
+        background-color : #F05050;
+        padding          : 0px 3px !important;
+        cursor           : pointer;
+        border-left      : 3px solid #FBFBFB;
+        border-bottom    : 3px solid #FBFBFB;
+    }
+
+    .image-container .sort-icon, .image-container .sort-icon:hover {
+        position         : absolute;
+        top              : 0px;
+        right            : 20px;
+        background-color : #E7E8E8;
+        padding          : 0px 3px !important;
+        border-left      : 3px solid #FBFBFB;
+        border-bottom    : 3px solid #FBFBFB;
+    }
+
+    .hovereffect {
+        width      : 100%;
+        height     : 100%;
+        float      : left;
+        overflow   : hidden;
+        position   : relative;
+        text-align : center;
+        cursor     : default;
+        min-height : 125px;
+    }
+
+    .hovereffect .overlay {
+        position           : absolute;
+        overflow           : hidden;
+        width              : 80%;
+        height             : 80%;
+        left               : 10%;
+        top                : 35%;
+        -webkit-transition : opacity 0.35s, -webkit-transform 0.35s;
+        transition         : opacity 0.35s, transform 0.35s;
+        -webkit-transform  : scale(0, 1);
+        -ms-transform      : scale(0, 1);
+        transform          : scale(0, 1);
+    }
+
+    .hovereffect:hover .overlay {
+        opacity           : 1;
+        filter            : alpha(opacity=100);
+        -webkit-transform : scale(1);
+        -ms-transform     : scale(1);
+        transform         : scale(1);
+    }
+
+    .hovereffect:hover img {
+        filter         : url('data:image/svg+xml;charset=utf-8,<svg xmlns="http://www.w3.org/2000/svg"><filter id="filter"><feComponentTransfer color-interpolation-filters="sRGB"><feFuncR type="linear" slope="0.6" /><feFuncG type="linear" slope="0.6" /><feFuncB type="linear" slope="0.6" /></feComponentTransfer></filter></svg>#filter');
+        filter         : brightness(0.6);
+        -webkit-filter : brightness(0.6);
+    }
+
+    img {
+        cursor : zoom-in !important;
+    }
+
+    .upload-btn-wrapper {
+        position : relative;
+        overflow : hidden;
+        display  : block;
+    }
+
+    .upload-btn-wrapper .btn {
+        cursor : pointer;
+    }
+
+    .upload-btn-wrapper input[type=file] {
+        font-size : 100px;
+        position  : absolute;
+        left      : 0;
+        top       : 0;
+        opacity   : 0;
+    }
+
+    #horizontal-container {
+        display : inline-block;
+    }
+
+    #horizontal-container .as-sortable-item,
+    #horizontal-container .as-sortable-placeholder {
+        display : inline-block;
+        float   : left;
+    }
+
+    #horizontal-container .sortable-row:after {
+        content    : ".";
+        display    : block;
+        clear      : both;
+        visibility : hidden;
+    }
+
+</style>
+<div class="form-group clearfix pull-in">
+    <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12 file-upload-container">
+        <div class="pull-left"
+             id="upload">
+            <label>
+                {{vm.titleName}}
+            </label>
+            <div class="upload-btn-wrapper">
+                <button class="btn btn-default" type="button">Upload Images
+                </button>
+                <input type="file" multiple
+                       class="fileUpload1"
+                       data-classButton="btn btn-default"
+                       accept="image/*"
+                       onchange="angular.element(this).scope().vm.fileUploadFn(this)"
+                       data-classInput="form-control inline v-middle input-s">
+            </div>
+
+            <div class="text-muted m-t-xs text-xs text-italics">{{vm.subtitle}}
+            </div>
+        </div>
+        <div>
+            <img ng-if="vm.uploadLoader" class="m-t-sm"
+                 ng-src="/img/imageLoader.gif" width="60" height="60" />
+
+            <div id="horizontal-container"
+                 class="sortable-row"
+                 is-disabled="!vm.isSortable"
+                 as-sortable="vm.dragControlListeners"
+                 ng-model="vm.file">
+                <div ng-repeat="file in vm.file"
+                     as-sortable-item
+                     class="image-container m3 inline"
+                     ng-if="file && !file.isDeleted">
+                    <span ng-if="!file.imagePath" class="hovereffect">
+                        <span class="popup-gallery">
+                            <img ng-src="{{file}}"
+                                 alt="img"
+                                 height="{{vm.height || '125'}}"
+                                 width="{{vm.width || '125'}}" />
+                        </span>
+                        <!--
+                         <a ng-if="!vm.id || !vm.softDelete" class="remove-image-icon"
+                            ng-click="vm.removeUploadedFileFn(file)">
+                             <i class="fa fa-times"></i>
+                         </a>
+
+                         <a ng-if="vm.id && vm.softDelete" class="remove-image-icon"
+                            ng-click="vm.removeUploadedFileFn(file,true)">
+                             <i class="fa fa-times"></i>
+                         </a>-->
+                       <div class="overlay">
+                           <span>
+                               <button ng-if="!vm.id || !vm.softDelete"
+                                       class="btn btn-xs"
+                                       ng-click="vm.removeUploadedFileFn(file)">
+                                  <i class="fa fa-times"></i>
+                               </button>
+
+                            <button ng-if="vm.id && vm.softDelete"
+                                    class="btn btn-xs"
+                                    ng-click="vm.removeUploadedFileFn(file,true)">
+                                <i class="fa fa-times"></i>
+                            </button>
+
+                               <button class="btn btn-xs popup-gallery"
+                                       ng-click="vm.displayImageFn(vm.file,$index)">
+                                   <i class="glyphicon glyphicon-zoom-out"></i>
+                               </button>
+
+                               <button ng-if="vm.isSortable"
+                                       data-as-sortable-item-handle
+                                       class="btn btn-xs">
+                                  <i class="glyphicon glyphicon-transfer"></i>
+                                </button>
+                           </span>
+                        </div>
+                   </span>
+                    <span ng-if="file.imagePath" class="hovereffect">
+                        <span class="popup-gallery">
+                            <img ng-src="{{file.imagePath}}"
+                                 alt="img"
+                                 height="{{vm.height || '125'}}"
+                                 width="{{vm.width || '125'}}" />
+                        </span>
+                        <!-- <a ng-if="!vm.id || !vm.softDelete" class="remove-image-icon"
+                            ng-click="vm.removeUploadedFileFn(file.imagePath)">
+                              <i class="fa fa-times"></i>
+                          </a>
+
+                          <a ng-if="vm.id && vm.softDelete" class="remove-image-icon"
+                             ng-click="vm.removeUploadedFileFn(file.imagePath,true)">
+                              <i class="fa fa-times"></i>
+                          </a>-->
+                        <div class="overlay">
+                           <span>
+                               <button ng-if="!vm.id || !vm.softDelete"
+                                       class="btn btn-xs"
+                                       ng-click="vm.removeUploadedFileFn(file.imagePath)">
+                                  <i class="fa fa-times"></i>
+                               </button>
+
+                            <button ng-if="vm.id && vm.softDelete"
+                                    class="btn btn-xs"
+                                    ng-click="vm.removeUploadedFileFn(file.imagePath,true)">
+                                <i class="fa fa-times"></i>
+                            </button>
+
+                               <button class="btn btn-xs popup-gallery"
+                                       ng-click="vm.displayImageFn(vm.file,$index)">
+                                   <i class="glyphicon glyphicon-zoom-out"></i>
+                               </button>
+
+                               <button ng-if="vm.isSortable"
+                                       data-as-sortable-item-handle
+                                       class="btn btn-xs">
+                                  <i class="glyphicon glyphicon-transfer"></i>
+                                </button>
+                           </span>
+                        </div>
+
+
+
+                   </span>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>

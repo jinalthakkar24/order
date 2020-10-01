@@ -1,0 +1,80 @@
+<!--Label and required *(star)-->
+<label>
+    Email
+    <span ng-if="vm.isRequired" ng-class="vm.invalidEmails ? 'text-danger' : 'text-success'">*</span>
+</label>
+
+<div ng-repeat="cn in vm.array track by cn.id">
+    <div ng-class="{'m-t-xs':!$first}">
+        <div class="input-group"
+             ng-class="{'err-brd':vm.form.email{{cn.id}}.$error.pattern,
+             'dup-brd':cn.isDuplicate}">
+
+            <!--Primary radio-->
+            <span class="input-group-addon p08">
+                <label class="i-checks m-b-none">
+                      <input type="radio"
+                             ng-disabled="cn.isDuplicate"
+                             checked=""
+                             value="{{$index}}"
+                             ng-model="vm.isPrimaryEmail">
+                      <i></i>
+                  </label>
+            </span>
+
+            <!--Input field-->
+            <input type="text"
+                   class="form-control"
+                   ng-class="{'err-group-input':vm.form.email{{cn.id}}.$error.pattern,
+                   'dup-input':cn.isDuplicate ,
+                   'dup-bg' : cn.isDuplicate,
+                   'err-bg' : vm.form.email{{cn.id}}.$error.pattern
+                   }"
+                   name="email{{cn.id}}"
+                   id="email{{$index}}"
+                   focus-me="vm.focusEmail.email{{$index}}"
+                   my-enter="vm.addNextIfValidFn(cn.email)"
+                   ng-change="vm.changeFn(vm.array, cn)"
+                   ng-pattern="vm.emailPattern"
+                   placeholder="Email {{$index + 1}}"
+                   ng-model="cn.email"
+                   ng-required="vm.isRequired">
+
+            <!--separate required email *(star)-->
+            <span ng-if="vm.isRequired">
+                <span class="text-danger customStar"
+                      ng-show="cn.isDuplicate || vm.form.email{{cn.id}}.$error.required || vm.form.email{{cn.id}}.$error.pattern">*</span>
+                <span class="text-success customStar"
+                  ng-show="!cn.isDuplicate && vm.form.email{{cn.id}}.$valid">*</span>
+            </span>
+
+            <!--Add remove buttons-->
+            <span class="input-group-btn">
+            <button class="btn btn-info p6"
+                    ng-disabled="vm.invalidEmails = !cn.email || vm.isDuplicate || vm.addDisabled"
+                    ng-click="vm.addNextValueFn()">
+                <i class="text-xs fa fa-plus"></i>
+            </button>
+            <button class="btn btn-danger p6"
+                    ng-disabled="!cn.email && vm.array.length == 1 && $first"
+                    ng-click="vm.removeThisValueFn(cn.id, $index, vm.isPrimaryEmail)">
+                <i class="text-xs fa fa-times"></i>
+            </button>
+        </span>
+
+        </div>
+
+        <!--Pattern error message-->
+        <span class="text-danger text-xs"
+              ng-show="vm.form.email{{cn.id}}.$error.pattern">
+            <i class="fa fa-exclamation-triangle"></i> Enter a valid email id
+            <span class="font-bold text-i">Ex. xyz@abc.com</span>
+        </span>
+
+        <!--duplicate email message-->
+        <span class="text-danger text-xs"
+              ng-show="cn.isDuplicate">
+            <i class="fa fa-exclamation-triangle"></i> This is <b>duplicate</b> email id
+        </span>
+    </div>
+</div>

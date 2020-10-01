@@ -1,0 +1,1383 @@
+<style>
+    .list-style-none {
+        list-style : none;
+        margin     : 0 !important;
+    }
+
+    .panel-bg {
+        background-color : #F8F8F8
+    }
+
+    .tab-container .tab-content {
+        padding : 0 !important;
+    }
+
+    #verifyDocumentModal .modal-body {
+        min-height : 120px;
+    }
+
+    .text-25 {
+        font-size : 25px !important;
+    }
+
+    .p-t-0 {
+        padding-top : 0 !important;
+    }
+</style>
+
+<!--Popover job detail template-->
+<script type="text/ng-template" id="review-job-req-popover.html">
+    <span class="popover-icon-close"
+          ng-click="review.isJobReqOpen = false;">
+        <i class="icon-close"></i>
+    </span>
+
+    <div class="">
+        <ul class="list-group list-group-xs m-n">
+            <li class="list-group-item no-border no-padder">
+                <div class="hbox p3">
+                    <div class="col col-sm-12 p03">
+                        <div class="font-bold">
+                            {{review.jobRequestId.serviceId.name}}
+                        </div>
+                        <div>
+                            <i class="fa fa-map-marker text-muted m-r-xs"></i>
+                            <span>{{review.jobRequestId.location.name  || '-'}}</span>
+                        </div>
+                        <div class="">
+                            <i class="fa fa-clock-o text-muted"></i>
+                            {{review.jobRequestId.createdAt | appDateTime}}
+                        </div>
+                    </div>
+                </div>
+            </li>
+        </ul>
+    </div>
+</script>
+<!-- document info popover-->
+<script type="text/ng-template" id="document-popover.html">
+    <span class="popover-icon-close"
+          ng-click="data.isDocumentOpen = false;">
+        <i class="icon-close"></i>
+    </span>
+
+    <div class="wrapper-sm">
+        <ul class="list-group list-group-xs m-n">
+            <li class="list-group-item no-border b-b b-light no-padder">
+                <div class="hbox p3">
+                    <div class="col col-sm-1 text-center text-muted p03">1</div>
+                    <div class="col col-sm-10 p03">
+                        <span class="font-md">Passport Size Photo</span>
+                        <div class="pull-right">
+                          <span ng-if="data.hasPassportPhoto">
+                                  <i class="fa fa-fw fa-check text-success"></i>
+                           </span>
+                            <span ng-if="!data.hasPassportPhoto">
+                               <i class="fa fa-fw fa fa-times text-danger"></i>
+                            </span>
+                        </div>
+                    </div>
+                </div>
+            </li>
+            <li class="list-group-item no-border b-b b-light no-padder m-t">
+                <div class="hbox p3">
+                    <div class="col col-sm-1 text-center text-muted p03">2</div>
+                    <div class="col col-sm-10 p03">
+                        <span class="font-md">Full Name</span>
+                        <div class="pull-right">
+                              <span ng-if="data.hasFullName">
+                                    <i class="fa fa-fw fa-check text-success"></i>
+                              </span>
+                            <span ng-if="!data.hasFullName">
+                                  <i class="fa fa-fw fa fa-times text-danger"></i>
+                             </span>
+                        </div>
+                    </div>
+                </div>
+            </li>
+            <li class="list-group-item no-border b-b b-light no-padder m-t">
+                <div class="hbox p3">
+                    <div class="col col-sm-1 text-center text-muted p03">3</div>
+                    <div class="col col-sm-10 p03">
+                        <span class="font-md">DOB</span>
+                        <div class="pull-right">
+                               <span ng-if="data.hasDOB">
+                              <i class="fa fa-fw fa-check text-success"></i>
+                              </span>
+                            <span ng-if="!data.hasDOB">
+                             <i class="fa fa-fw fa fa-times text-danger"></i>
+                            </span>
+                        </div>
+                    </div>
+                </div>
+            </li>
+        </ul>
+    </div>
+</script>
+<!-- hbox layout -->
+<div class="hbox hbox-auto-xs bg-light " ng-init="
+  app.settings.asideFixed = true;
+  app.settings.asideDock = false;
+  app.settings.container = false;
+  app.hideAside = false">
+    <div class="col">
+        <div class="vbox">
+            <!--Header-->
+            <div id="headerDiv"
+                 class="row m-n wrapper-sm bg-gray b-b animated fade-in">
+                <!--Left side data-->
+                <div class="no-padder pull-left">
+                    <div class="col">
+                        <div class="m-r thumb-sm pull-left">
+                            <div class="popup-gallery"
+                                 ng-if="vm.item.image">
+                                <img class=""
+                                     ng-src="{{ vm.item.image }}"
+                                     ng-click="displayImages([{path:vm.item.image,type:1}], 0);"
+                                     alt="image" />
+                            </div>
+
+                            <ng-avatar width="100%"
+                                       ng-if="!vm.item.image"
+                                       initials="{{ vm.item.name | limitTo: 1 }}"
+                                       img-class="avatar"
+                                       upper-case="true"
+                                       round-shape="true"
+                                       bg-color="lightgray"
+                                       text-color="gray"
+                                       bind="true">
+                            </ng-avatar>
+                        </div>
+
+                        <span class="clear">
+                            <div>
+                                <span class="h4 text-info">
+                                     {{ (vm.item.firstName || '-') | ucfirst }} {{vm.item.lastName | ucfirst}}
+                                </span>
+                                <div class="inline text-white text-sm r-3x p3 m-l-xs bg-danger"
+                                     ng-class="vm.item.isActive ? 'bg-success' : 'bg-danger'">
+
+                                    <div class="ng-scope" ng-if="vm.item.isActive">
+                                      <i class="fa fa-check-circle"></i> Active
+                                   </div>
+                                    <div class="ng-scope" ng-if="!vm.item.isActive">
+                                      <i class="fa fa-times-circle"></i> Deactive
+                                   </div>
+                               </div>
+                            </div>
+                            <div class="clearfix">
+                                <i class="fa fa-fw fa-map-marker"></i>
+                              {{ (vm.item.addresses | primaryAddress: ["city", "state"]) || '-' }}
+                            </div>
+                        </span>
+                    </div>
+                </div>
+
+                <!--Right side data : buttons-->
+                <div class="pull-right">
+                    <div class="btn btn-xs bg-success r-3x"
+                         ng-if="vm.item.experienceLevel && vm.item.experienceLevel.code == 'EXPERT'">
+                        <div class="ng-scope">
+                            <i class="icon-badge text-lg text-white m-r-xs"></i>
+                            <span class="text-sm text-white">{{vm.item.experienceLevel.code}}</span>
+                        </div>
+
+                    </div>
+                    <div class="btn btn-xs bg-primary r-3x"
+                         ng-if="vm.item.experienceLevel && vm.item.experienceLevel.code == 'MIDDLE'">
+                        <div class="ng-scope">
+                            <i class="icon-badge text-lg text-white m-r-xs"></i>
+                            <span class="text-sm text-white">{{vm.item.experienceLevel.code}}</span>
+                        </div>
+                    </div>
+                    <div class="btn btn-xs bg-warning r-3x"
+                         ng-if="vm.item.experienceLevel && vm.item.experienceLevel.code == 'FRESHER'">
+                        <div class="ng-scope">
+                            <i class="icon-badge text-lg text-gray m-r-xs"></i>
+                            <span class="text-sm text-gray">{{vm.item.experienceLevel.code}}</span>
+                        </div>
+                    </div>
+
+                    <button class="btn btn-sm btn-default"
+                            ng-click="vm.goToBackPage()">
+                        <i class="fa fa-arrow-left text-info"></i>
+                        <span class="text-info">Back</span>
+                    </button>
+
+                    <button class="btn btn-sm btn-dark "
+                            ng-click="vm.goToListPage()">
+                        List
+                    </button>
+
+                </div>
+            </div>
+
+            <!--Detailed Header-->
+            <div id="dataDiv" class="wrapper-xs b-b bg-white">
+                <!--Emails-->
+                <div class="inline m-r">
+                    <div class="text-muted">
+                        Email
+                    </div>
+
+                    <div class="inline">
+                        <span ng-click="openCommonPopoverFn('contact-popover.html', 'openEmail', vm.item.emails, 'email')"
+                              uib-popover-template="detailPopover.templateUrl"
+                              popover-title="Emails ({{vm.item.emails.length}})" popover-class="popover-sm"
+                              popover-enable="vm.item.emails.length" popover-is-open="detailPopover.openEmail"
+                              popover-trigger="'outsideClick'" popover-placement="auto bottom"
+                              popover-append-to-body="true">
+                            <span>{{vm.item.emails | arrayPrimaryValue:'email'}}</span>
+                            <span ng-if="vm.item.emails.length">
+                                <i class="fa fa-sort-down"></i>
+                            </span>
+                        </span>
+                    </div>
+                </div>
+
+                <!--Mobiles-->
+                <div class="inline m-r">
+                    <div class="text-muted">
+                        Mobile
+                    </div>
+
+                    <div class="inline">
+                        <span ng-click="openCommonPopoverFn('contact-popover.html', 'openMobile', vm.item.mobiles, 'mobile')"
+                              uib-popover-template="detailPopover.templateUrl"
+                              popover-title="Mobile ({{vm.item.mobiles.length}})" popover-class="popover-sm"
+                              popover-enable="vm.item.mobiles.length" popover-is-open="detailPopover.openMobile"
+                              popover-trigger="'outsideClick'" popover-placement="auto bottom"
+                              popover-append-to-body="true">
+                            <span>{{ vm.item.mobiles | arrayPrimaryValue: 'mobile' }}</span>
+                            <span ng-if="vm.item.mobiles.length">
+                                <i class="fa fa-sort-down"></i>
+                            </span>
+                        </span>
+                    </div>
+                </div>
+
+                <!--Addresses-->
+                <div class="inline m-r">
+                    <div class="text-muted">Address</div>
+
+                    <span ng-hide="true">
+                        {{ pAddressLine1 = (vm.item.addresses | primaryAddress: ["line1"]) }}
+                    </span>
+
+                    <div class="">
+                        <span ng-if="pAddressLine1"
+                              ng-click="openCommonPopoverFn('address-popover.html', 'openAddress', vm.item.addresses)"
+                              uib-popover-template="detailPopover.templateUrl"
+                              popover-title="Locations ({{vm.item.addresses.length}})" popover-class="popover-sm"
+                              popover-is-open="detailPopover.openAddress"
+                              popover-trigger="'outsideClick'" popover-placement="auto bottom"
+                              popover-append-to-body="true">
+                            <span>{{ pAddressLine1 }}</span>
+                            <span>
+                                <i class="fa fa-sort-down"></i>
+                            </span>
+                        </span>
+
+                        <span ng-if="!pAddressLine1">-</span>
+                    </div>
+                </div>
+
+                <!--Right Side-->
+                <div class="pull-right">
+                    <!-- Doc. Point-->
+                    <div class="inline m-r" ng-if="vm.userStatus !== vm.cleanerType.APPROVED">
+                        <div class="text-muted">
+                            Doc. Point
+                        </div>
+                        <div class="h4"
+                             ng-class="vm.item.assignedPoints >= 100 ? 'text-success': 'text-danger'">
+                            {{vm.item.assignedPoints}}
+                        </div>
+                    </div>
+
+                    <!--Rating-->
+                    <div class="inline m-r" ng-if="vm.userStatus === vm.cleanerType.APPROVED">
+                        <div class=""><span class="text-muted">Rating </span><span>({{(vm.item.averageRating.overallRating.rating || 0 ) | number : 0}})</span>
+                        </div>
+
+                        <div class="text-center">
+                            <div class="">
+                                <span class="text-warning"
+                                      ng-model="vm.item.averageRating.overallRating.rating"
+                                      uib-rating max="5"
+                                      read-only="true"></span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!--Registered Time-->
+                    <div class="inline m-r">
+                        <div class="text-muted">
+                            Registered
+                        </div>
+
+                        {{ (vm.item.createdAt || '-') | fromNow }}
+                    </div>
+
+
+                </div>
+            </div>
+
+            <!--Static Tabs-->
+            <div class="bg-white">
+                <ul class="nav nav-tabs" ng-class="vm.userStatus === vm.cleanerType.APPROVED? 'nav-justified custom-tabs':''">
+                    <li ng-if="vm.userStatus === vm.cleanerType.APPROVED"
+                        ng-class="vm.activeTab == 1 ? 'active' : ''">
+                        <a data-toggle="tab" href="#tab-details" target="_self">
+                            <div class="text-md">Details
+                            </div>
+                        </a>
+                    </li>
+                    <li ng-if="vm.userStatus === vm.cleanerType.APPROVED"
+                        ng-class="vm.activeTab == 2 ? 'active' : ''">
+                        <a data-toggle="tab" href="#tab-banks" target="_self">
+                            <div class="text-md">Banks
+                            </div>
+                        </a>
+                    </li>
+                    <li ng-if="vm.userStatus === vm.cleanerType.APPROVED"
+                        ng-class="vm.activeTab == 3 ? 'active' : ''">
+                        <a data-toggle="tab" href="#tab-jobs" target="_self">
+                            <div class="text-md">Jobs</div>
+                        </a>
+                    </li>
+                    <li ng-class="vm.activeTab == 4 ? 'active' : ''">
+                        <a data-toggle="tab" href="#tab-documents" target="_self">
+                            <div class="text-md">Documents <b class="badge m-l-xs">{{vm.uploadedDocuments || 0}}</b>
+                            </div>
+                        </a>
+                    </li>
+                    <li ng-if="vm.userStatus === vm.cleanerType.APPROVED"
+                        ng-class="vm.activeTab == 5 ? 'active' : ''"
+                        ng-click="vm.getComplaintDisputeFn()">
+                        <a data-toggle="tab" href="#tab-complaint" target="_self">
+                            <div class="text-md">Complaint / Dispute
+                            </div>
+                        </a>
+                    </li>
+                    <li ng-if="vm.userStatus === vm.cleanerType.APPROVED"
+                        ng-class="vm.activeTab == 6 ? 'active' : ''"
+                        ng-click="vm.getReviewFn()">
+                        <a data-toggle="tab" href="#tab-ratingReview" target="_self">
+                            <div class="text-md"> Rating /Review
+                            </div>
+                        </a>
+                    </li>
+                    <li class="pull-right m-r m-t-xs"
+                        ng-if="vm.item.id && vm.userStatus == vm.cleanerType.PENDING_APPROVAL">
+                        <button ui-sref="apps.users.documents({userId:vm.item.id})"
+                                class="btn btn-sm btn-default pull-right m-r-xs">
+                            <span class="text-info">Upload Documents</span>
+                        </button>
+                    </li>
+                    <li class="pull-right m-r m-t-xs"
+                        ng-if="vm.userStatus !== vm.cleanerType.APPROVED">
+                        <button type="button"
+                                class="btn btn-sm btn-success"
+                                ng-click="vm.approveDocuments(true)"
+                                ng-disabled="!vm.selectedDocuments || !vm.selectedDocuments.length">
+                            Verify Documents
+                        </button>
+                    </li>
+                </ul>
+            </div>
+
+            <!--Content-->
+            <div class="row-row">
+                <div class="cell" style="overflow: hidden;">
+                    <div class="cell-inner">
+                        <div class="hbox hbox-auto-xs">
+                            <div class="col">
+                                <div class="vbox">
+                                    <div class="tab-content h-full">
+                                        <div id="tab-details"
+                                             class="tab-pane fade in h-full"
+                                             ng-class="vm.activeTab == 1 ? 'active' : ''">
+                                            <div class="hbox hbox-auto-xs">
+                                                <!--/col 1 Services-->
+                                                <div class="col col-xs-8 no-padder">
+                                                    <div class="vbox">
+                                                        <div class="bg-light text-md font-bold b-b wrapper-xs">
+                                                            Service <b class="badge bg-dark text-white m-l-xs">{{vm.item.services.length
+                                                            || 0}}</b>
+                                                        </div>
+
+                                                        <div class="row-row bg-white">
+                                                            <div class="cell">
+                                                                <div class="cell-inner">
+
+                                                                    <div class="list-group list-group-md m-n"
+                                                                         ng-if="vm.item.services && vm.item.services.length">
+                                                                        <div class="list-group-item clearfix ng-scope"
+                                                                             ng-repeat="data in vm.item.services">
+                                                                            <div class="row">
+                                                                                <div class="hbox">
+                                                                                    <!--Col 1-->
+                                                                                    <div class="col col-md-5 col-sm-6 b-r no-padder">
+                                                                                        <div class="hbox">
+                                                                                            <!--Index-->
+                                                                                            <div class="col v-middle text-center thumb-xs">
+                                                                                                <span class="text-muted">{{$index + 1}}</span>
+                                                                                            </div>
+
+                                                                                            <!--Name,icon,Open to travel-->
+                                                                                            <div class="col v-middle">
+                                                                                                <div class="m-r thumb-sm pull-left">
+                                                                                                    <div class="popup-gallery"
+                                                                                                         ng-if="data.icon">
+                                                                                                        <img class=""
+                                                                                                             ng-src="{{ data.icon }}"
+                                                                                                             ng-click="displayImages([{path:data.icon,type:1}], 0);"
+                                                                                                             alt="image" />
+                                                                                                    </div>
+
+                                                                                                    <ng-avatar
+                                                                                                            width="100%"
+                                                                                                            ng-if="!data.icon"
+                                                                                                            initials="{{ data.name | limitTo: 1 }}"
+                                                                                                            img-class="avatar"
+                                                                                                            upper-case="true"
+                                                                                                            round-shape="true"
+                                                                                                            bg-color="lightgray"
+                                                                                                            text-color="gray"
+                                                                                                            bind="true">
+                                                                                                    </ng-avatar>
+                                                                                                </div>
+
+                                                                                                <span class="clear">
+                                                                                                    <div>
+                                                                                                     <span class="text-md">
+                                                                                                        {{(data.name || '-') | ucfirst }}
+                                                                                                       </span>
+                                                                                                    </div>
+                                                                                                    <div class="clearfix">
+                                                                                                        <span class="text-muted">Open to travel:</span>
+                                                                                                        <span>{{data.travelRadius || 0 }} km</span>
+                                                                                                    </div>
+                                                                                                </span>
+                                                                                            </div>
+                                                                                        </div>
+                                                                                    </div>
+
+                                                                                    <!--Col 2-->
+                                                                                    <div class="col col-md-4 col-sm-3">
+
+                                                                                        <div class="row m-t-xs ">
+                                                                                            <!--Col 2-->
+                                                                                            <div class=" col-md-4 col-sm-6 b-r no-padder">
+                                                                                                <div class="text-center">
+                                                                                                    <span class="text-lg m-r-sm text-info ng-binding">{{data.jobDetail.totalJobs || 0}}</span>
+                                                                                                    <div class="text-xs text-muted">
+                                                                                                        Total
+                                                                                                        Job
+                                                                                                    </div>
+                                                                                                </div>
+                                                                                            </div>
+
+                                                                                            <!--Col 3-->
+                                                                                            <div class=" col-md-4 col-sm-6 b-r no-padder">
+                                                                                                <div class="text-center">
+                                                                                                    <span class="text-lg m-r-sm text-success ng-binding">{{data.jobDetail.completedJobs || 0}}</span>
+                                                                                                    <div class="text-xs text-muted">
+                                                                                                        Completed Job
+                                                                                                    </div>
+                                                                                                </div>
+                                                                                            </div>
+
+                                                                                            <div class=" col-md-4 col-sm-6 no-padder">
+                                                                                                <div class="text-center">
+                                                                                                    <span class="text-lg m-r-sm text-danger ng-binding">{{data.jobDetail.cancelledJobs || 0}}</span>
+                                                                                                    <div class="text-xs text-muted">
+                                                                                                        Cancel job
+                                                                                                    </div>
+                                                                                                </div>
+                                                                                            </div>
+                                                                                        </div>
+                                                                                    </div>
+
+                                                                                    <!--Col 3-->
+                                                                                    <div class="col col-md-2 col-sm-3 b-l v-middle">
+
+                                                                                        <div class="text-center text-primary h3">
+                                                                                            {{data.jobDetail.totalRevenue
+                                                                                            | currency}}
+                                                                                        </div>
+                                                                                        <div class=" text-center text-xs  text-muted">
+                                                                                            Total
+                                                                                            Revenue
+                                                                                        </div>
+                                                                                    </div>
+
+                                                                                </div>
+                                                                            </div>
+                                                                        </div>
+                                                                    </div>
+                                                                    <div ng-if="!vm.item.services || !vm.item.services.length">
+                                                                        <div class="text-muted wrapper-lg text-center">
+                                                                            No record found!
+                                                                        </div>
+                                                                    </div>
+
+                                                                </div>
+                                                            </div>
+                                                            <!--/cell-->
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <!--/col 1-->
+
+                                                <!--col 2: Reset password -->
+                                                <div class="col col-xs-4 no-padder b-l">
+                                                    <div class="vbox">
+                                                        <div class="bg-light text-md font-bold b-b wrapper-xs">
+                                                            Password
+                                                        </div>
+                                                        <div class="row-row bg-white">
+                                                            <div class="cell">
+                                                                <div class="cell-inner">
+                                                                    <div class="wrapper-sm">
+                                                                        <form name="resetPasswordForm"
+                                                                              novalidate>
+                                                                            <!--Password-->
+                                                                            <div class="form-group">
+                                                                                <label class="w-full">
+                                                                                    New Password
+                                                                                    <i class="fa fa-info-circle text-info"
+                                                                                       uib-tooltip-html="passwordGuideline"
+                                                                                       tooltip-append-to-body="true"></i>
+
+                                                                                    <span id="password-strength-label"
+                                                                                          class="text-xs pull-right"></span>
+                                                                                </label>
+
+                                                                                <div class="input-group">
+                                                                                    <input type="password"
+                                                                                           name="newPassword"
+                                                                                           class="form-control"
+                                                                                           ng-attr-type="{{ vm.passForm.showPassword ? 'text' : 'password' }}"
+                                                                                           ng-model="vm.passForm.newPassword"
+                                                                                           ok-password
+                                                                                           placeholder="Enter New Password"
+                                                                                           required />
+
+                                                                                    <a href=""
+                                                                                       class="input-group-addon"
+                                                                                       ng-click="vm.passForm.showPassword = !vm.passForm.showPassword"
+                                                                                       uib-tooltip="{{ 'Click to ' + (vm.passForm.showPassword ? 'hide' : 'show') + ' password' }}"
+                                                                                       tooltip-append-to-body="true"
+                                                                                       tooltip-placement="auto">
+                                                                                        <i class="fa"
+                                                                                           ng-class="vm.passForm.showPassword ? 'fa-eye' : 'fa-eye-slash'"></i>
+                                                                                    </a>
+                                                                                </div>
+
+                                                                                <!--Strength meter-->
+                                                                                <div class="strength-meter">
+                                                                                    <div class="strength-meter-fill"
+                                                                                         data-strength="{{passwordStrength}}"></div>
+                                                                                </div>
+                                                                            </div>
+
+                                                                            <!--Confirm Password-->
+                                                                            <div class="form-group">
+                                                                                <label class="w-full">
+                                                                                    Confirm Password
+                                                                                    <span class="text-xs text-danger font-bold pull-right"
+                                                                                          ng-show="vm.passForm.newPassword && vm.passForm.confirm_password && (vm.passForm.newPassword != vm.passForm.confirm_password)">
+                                                                                        <i class="fa fa-warning"></i>
+                                                                                        Password Mismatch
+                                                                                    </span>
+                                                                                </label>
+                                                                                <input type="password"
+                                                                                       name="confirm_password"
+                                                                                       class="form-control"
+                                                                                       ng-model="vm.passForm.confirm_password"
+                                                                                       placeholder="Enter Confirm Password" />
+                                                                            </div>
+
+                                                                            <!--Actions-->
+                                                                            <div class="form-group">
+                                                                                <button type="button"
+                                                                                        class="btn btn-sm w-full btn-default"
+                                                                                        ng-disabled="resetPasswordForm.$invalid ||
+                                                                                        vm.passForm.newPassword != vm.passForm.confirm_password ||
+                                                                                        vm.passForm.newPassword.length < 8"
+                                                                                        ng-click="vm.changePasswordFn(vm.passForm.newPassword);">
+                                                                                    <span class="text-sm">Reset Password</span>
+                                                                                </button>
+                                                                            </div>
+                                                                        </form>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                            <!--cell-->
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <!--/col 2-->
+
+
+                                            </div>
+                                        </div>
+
+                                        <div id="tab-banks"
+                                             class="tab-pane fade in h-full"
+                                             ng-class="vm.activeTab == 2 ? 'active' : ''">
+                                            <div class="hbox hbox-auto-xs">
+                                                <div class="col">
+                                                    <div class="vbox">
+                                                        <div class="row-row">
+                                                            <div class="cell">
+                                                                <div class="cell-inner">
+                                                                    <div class="wrapper">
+                                                                        <div class="col-md-12 col-sm-12 col-xs-12"
+                                                                             ng-if="vm.item.bankAccountDetails && vm.item.bankAccountDetails.length">
+                                                                            <div class="col-sm-4 m-b-sm"
+                                                                                 ng-repeat="item in vm.item.bankAccountDetails track by $index">
+                                                                                <div class="panel  panel-default">
+                                                                                    <div class="panel-heading no-padder">
+                                                                                        <!--Details-->
+                                                                                        <div class="text-lg wrapper-xs clearfix">
+                                                                                             <span class="pull-left">
+                                                                                                 <i class="text-muted fa fa-th-large"></i>
+                                                                                                 <span class="m-l-xs">Bank : {{$index + 1}}</span>
+                                                                                             </span>
+                                                                                            <span ng-if="item.isPrimary"
+                                                                                                  class="pull-right label text-sm bg-success inline">Primary</span>
+                                                                                        </div>
+                                                                                    </div>
+                                                                                    <div class="panel-body no-padder">
+                                                                                        <!--Fixed Div-->
+                                                                                        <div class="col-md-12 col-sm-12 col-lg-12 col-xs-12">
+                                                                                            <!--name-->
+                                                                                            <div class="m-b-xs clearfix">
+                                                                                                <div class="col  text-muted pull-left">
+                                                                                                    Name :
+                                                                                                </div>
+                                                                                                <div class="col p-l-xs">
+                                                                                                    {{item.accountHolderName
+                                                                                                    || '-'}}
+                                                                                                </div>
+                                                                                            </div>
+
+                                                                                            <!--accountNumber-->
+                                                                                            <div class="m-b-xs clearfix">
+                                                                                                <div class="col text-muted pull-left">
+                                                                                                    Account Number:
+                                                                                                </div>
+                                                                                                <div class="col p-l-xs">
+                                                                                                    {{item.accountNumber||'-'}}
+                                                                                                </div>
+                                                                                            </div>
+                                                                                        </div>
+
+                                                                                    </div>
+                                                                                </div>
+                                                                            </div>
+                                                                        </div>
+                                                                        <div ng-if="!vm.item.bankAccountDetails || !vm.item.bankAccountDetails.length">
+                                                                            <div class="text-muted wrapper-lg text-center">
+                                                                                No record found!
+                                                                            </div>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <div id="tab-jobs"
+                                             class="tab-pane fade in h-full"
+                                             ng-class="vm.activeTab == 3 ? 'active' : ''">
+                                            <div class="hbox hbox-auto-xs">
+                                                <!--col 1: Summary-->
+                                                <div class="col col-xs-8 no-padder">
+                                                    <div class="vbox">
+                                                        <div class="row-row bg-white">
+                                                            <div class="cell">
+                                                                <div class="cell-inner">
+                                                                    <div class="wrapper">
+                                                                        <div class="panel m-b-none panel-default">
+                                                                            <div class="panel-heading no-padder">
+                                                                                <!--Details-->
+                                                                                <div class="text-lg wrapper-xs clearfix">
+                                                                                         <span class="pull-left">
+                                                                                             <i class="text-muted fa fa-tasks"></i>
+                                                                                             <span class="m-l-xs h4">Job Summary</span>
+                                                                                         </span>
+                                                                                </div>
+                                                                            </div>
+                                                                            <div class="panel-body no-padder">
+
+                                                                                <!--Fixed Div-->
+                                                                                <div class="col-md-12 col-sm-12 col-lg-12 col-xs-12 no-padder">
+                                                                                    <div class="wrapper-sm">
+                                                                                        <div class="col-md-12 col-sm-12 col-lg-12 col-xs-12 no-padder">
+                                                                                            <div class="col-md-4 col-sm-4 col-lg-4 col-xs-6 text-center">
+                                                                                                <div class="panel padder-v b-a item">
+                                                                                                    <div class="h1 text-info font-thin h1">
+                                                                                                        {{vm.totalJob ||
+                                                                                                        0}}
+                                                                                                    </div>
+                                                                                                    <span class="text-muted text-sm">Total</span>
+                                                                                                </div>
+                                                                                            </div>
+                                                                                            <div class="col-md-4 col-sm-4 col-lg-4 col-xs-6 text-center">
+                                                                                                <div class="panel padder-v b-a item">
+                                                                                                    <div class="h1 text-success font-thin h1">
+                                                                                                        <a href=""
+                                                                                                           target="_blank"
+                                                                                                           ng-if="vm.totalCompletedJob > 0"
+                                                                                                           ui-sref="apps.jobs.jobHistory({status:vm.jobStatus.COMPLETED,cleanerId:vm.userId,name:vm.item.firstName})">{{vm.totalCompletedJob}}
+                                                                                                        </a>
+                                                                                                        <span ng-if="!vm.totalCompletedJob ||vm.totalCompletedJob <= 0">0</span>
+
+                                                                                                    </div>
+                                                                                                    <span class="text-muted text-sm">Completed</span>
+                                                                                                </div>
+                                                                                            </div>
+                                                                                            <div class="col-md-4 col-sm-4 col-lg-4 col-xs-6 text-center">
+                                                                                                <div class="panel padder-v b-a item">
+                                                                                                    <div class="h1 text-danger font-thin h1">
+                                                                                                        <a href=""
+                                                                                                           target="_blank"
+                                                                                                           ng-if="vm.totalCancelledJob > 0"
+                                                                                                           ui-sref="apps.jobs.jobHistory({status:vm.jobStatus.CANCELLED,cleanerId:vm.userId,name:vm.item.firstName})">{{vm.totalCancelledJob}}
+                                                                                                        </a>
+                                                                                                        <span ng-if="!vm.totalCancelledJob  || vm.totalCancelledJob <= 0">0</span>
+                                                                                                    </div>
+                                                                                                    <span class="text-muted text-sm">Cancel</span>
+                                                                                                </div>
+                                                                                            </div>
+                                                                                        </div>
+
+                                                                                        <div class="col-md-12 col-sm-12 col-lg-12 col-xs-12">
+                                                                                            <div class="panel panel-bg padder-v b-a item text-center">
+                                                                                                <div class="text-primary-dk font-thin h1">
+                                                                                                    <span>{{(vm.item.totalRevenue || 0) | currency}}</span>
+                                                                                                </div>
+                                                                                                <span class="text-muted text-sm">Revenue</span>
+                                                                                            </div>
+
+                                                                                        </div>
+                                                                                    </div>
+                                                                                </div>
+
+                                                                            </div>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+
+                                                <!--col 2: Current Jobs-->
+                                                <div class="col col-xs-4 no-padder b-l">
+                                                    <div class="vbox">
+                                                        <div class="bg-light text-md font-bold b-b wrapper-xs">
+                                                            Current Jobs <b class="badge bg-dark text-white m-l-xs">{{vm.item.activeOrUpComingJobRequests.length
+                                                            || 0}}</b>
+                                                        </div>
+
+                                                        <div class="row-row bg-white">
+                                                            <div class="cell">
+                                                                <div class="cell-inner">
+                                                                    <div class="">
+                                                                        <ul class="list-group list-group-xs m-n"
+                                                                            ng-if="vm.item.activeOrUpComingJobRequests.length">
+                                                                            <li class="list-group-item no-border no-padder"
+                                                                                ng-repeat="cj in vm.item.activeOrUpComingJobRequests">
+                                                                                <div class="hbox p3"
+                                                                                     ng-class="$last ? '' : 'm-b-xs b-b b-light'">
+                                                                                    <div class="col col-sm-1 text-center text-muted p03">
+                                                                                        ({{ $index + 1 }})
+                                                                                    </div>
+                                                                                    <div class="col col-sm-10 p03">
+                                                                                        <span class="font-bold">
+                                                                                            <a class="ahover"
+                                                                                               ui-sref="apps.jobs.jobDetails({jobId:cj.id})">#{{ cj.reqNumber | uppercase }}</a>
+                                                                                        </span>
+                                                                                        <div class="pull-right">
+                                                                                            <span class="label bg-primary text-xs p3 inline wrapper-xs">
+                                                                                                {{ cj.totalCharge | currency }}
+                                                                                            </span>
+                                                                                        </div>
+
+                                                                                        <div>
+                                                                                            {{ cj.serviceId.name }}
+                                                                                            <div class="text-muted pull-right">
+                                                                                                {{ cj.jobStartDateTime |
+                                                                                                appDateTime }}
+                                                                                            </div>
+                                                                                        </div>
+                                                                                    </div>
+                                                                                </div>
+                                                                            </li>
+                                                                        </ul>
+
+                                                                        <div class="m-lg"
+                                                                             ng-if="!vm.item.activeOrUpComingJobRequests.length">
+                                                                            <div class="text-center text-muted">
+                                                                                No Current Jobs
+                                                                            </div>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                            <!--/cell-->
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <!--/col 2-->
+
+                                            </div>
+                                        </div>
+
+                                        <div id="tab-documents"
+                                             class="tab-pane fade in h-full"
+                                             ng-class="vm.activeTab == 4 ? 'active' : ''">
+                                            <div class="hbox hbox-auto-xs">
+                                                <div class="col col-xs-9 no-padder">
+                                                    <div class="vbox">
+                                                        <div class="row-row bg-white">
+                                                            <div class="cell">
+                                                                <div class="cell-inner">
+                                                                    <div class="wrapper-sm">
+                                                                        <div ng-if="(vm.item.uploadedDocuments  | json) != '{}'  || (vm.item.uploadedDocuments  | json) != '[]' ">
+                                                                            <fieldset
+                                                                                    ng-repeat="(key,documents) in vm.item.uploadedDocuments">
+                                                                                <legend>
+                                                                                    {{vm.getDocumentCategoryNameFn(key)}}
+                                                                                </legend>
+                                                                                <div class="panel no-border m-n">
+                                                                                    <div class="list-group list-group-md m-n">
+                                                                                        <div class="list-group-item clearfix ng-scope"
+                                                                                             ng-repeat="data in documents">
+                                                                                            <div class="row">
+                                                                                                <div class="hbox">
+                                                                                                    <!--Col 1-->
+                                                                                                    <div class="col col-md-6 col-sm-6  no-padder">
+                                                                                                        <div class="hbox">
+                                                                                                            <!--Index-->
+                                                                                                            <div class="col text-center thumb-xs">
+                                                                                                                <span class="text-muted">{{$index + 1}}</span>
+                                                                                                            </div>
+                                                                                                            <!--Checkbox-->
+                                                                                                            <div class="col text-center thumb-xs"
+                                                                                                                 ng-if="data.status === vm.UploadDocumentStatus.SUBMITTED && vm.userType !== vm.cleanerType.APPROVED">
+                                                                                                                <div class="checkbox m-n">
+                                                                                                                    <label class="i-checks">
+                                                                                                                        <input type="checkbox"
+                                                                                                                               ng-change="vm.checkDocumentFn(data)"
+                                                                                                                               ng-model="data.isChecked"
+                                                                                                                               class="ng-pristine ng-untouched ng-valid ng-empty"
+                                                                                                                               aria-invalid="false">
+                                                                                                                        <i></i>
+                                                                                                                    </label>
+                                                                                                                </div>
+                                                                                                            </div>
+
+                                                                                                            <!--Name-->
+                                                                                                            <div class="col">
+                                                                                                                {{vm.getDocumentTypeNameFn(data.type)}}
+                                                                                                                <i class="fa fa-info-circle"
+                                                                                                                   uib-popover-template="'document-popover.html'"
+                                                                                                                   popover-class="jobReq-popover"
+                                                                                                                   popover-placement="auto bottom"
+                                                                                                                   popover-trigger="'mouseenter'"
+                                                                                                                   popover-is-open="data.isDocumentOpen"
+                                                                                                                   popover-title="{{vm.getDocumentTypeNameFn(data.type)}}"
+                                                                                                                   popover-append-to-body="true">
+                                                                                                                </i>
+                                                                                                            </div>
+                                                                                                        </div>
+                                                                                                    </div>
+
+                                                                                                    <div class="col ">
+                                                                                                       <span ng-repeat="path in data.paths">
+                                                                                                           <span ng-if="path.attachFileType === 'image'"
+                                                                                                                 class="popup-gallery">
+                                                                                                               <img class="m-r-sm"
+                                                                                                                    ng-src="{{ path.path }}"
+                                                                                                                    height="40"
+                                                                                                                    width="40"
+                                                                                                                    ng-click="displayImages([{path:path.path,type:1}], 0);"
+                                                                                                                    alt="image" />
+                                                                                                            </span>
+                                                                                                             <a ng-if="path.attachFileType !== 'image'"
+                                                                                                                ng-click="vm.openDocumentViewModelFn(path.path)"
+                                                                                                                target="_blank"
+                                                                                                                class="m-r-sm">
+                                                                                                                 <img height="40"
+                                                                                                                      width="40"
+                                                                                                                      ng-if="path.attachFileType == 'pdf'"
+                                                                                                                      ng-src="/images/common/attachments/pdf.png"
+                                                                                                                      alt="pdf" />
+                                                                                                                 <img height="40"
+                                                                                                                      width="40"
+                                                                                                                      ng-if="path.attachFileType == 'excel'"
+                                                                                                                      ng-src="/images/common/attachments/excel.png"
+                                                                                                                      alt="excel" />
+                                                                                                                 <img height="40"
+                                                                                                                      width="40"
+                                                                                                                      ng-if="path.attachFileType == 'txt'"
+                                                                                                                      ng-src="/images/common/attachments/text.png"
+                                                                                                                      alt="txt" />
+                                                                                                                 <img height="40"
+                                                                                                                      width="40"
+                                                                                                                      ng-if="path.attachFileType == 'word'"
+                                                                                                                      ng-src="/images/common/attachments/word.png"
+                                                                                                                      alt="wprd" />
+                                                                                                                 <img height="40"
+                                                                                                                      width="40"
+                                                                                                                      ng-if="path.attachFileType == 'zip'"
+                                                                                                                      ng-src="/images/common/attachments/zip.png"
+                                                                                                                      alt="zip" />
+                                                                                                                 <img height="40"
+                                                                                                                      width="40"
+                                                                                                                      ng-if="path.attachFileType == 'extra'"
+                                                                                                                      ng-src="/images/common/attachments/file.jpg"
+                                                                                                                      alt="extra" />
+                                                                                                             </a>
+                                                                                                        </span>
+                                                                                                    </div>
+
+                                                                                                    <!--Col 2-->
+                                                                                                    <div class="col b-l v-middle">
+
+                                                                                                        <div class="text-center  text-success h3">
+                                                                                                            {{data.assignedPoints}}
+                                                                                                        </div>
+                                                                                                        <div class="text-xs text-center text-muted">
+                                                                                                            Doc.
+                                                                                                            points
+                                                                                                        </div>
+                                                                                                    </div>
+
+                                                                                                    <!--Col 4-->
+                                                                                                    <div class="col col-md-2 col-sm-2 b-l no-padder">
+                                                                                                        <div class="m-t-sm text-center">
+                                                                                                            <button type="button"
+                                                                                                                    class="btn btn-sm btn-default "
+                                                                                                                    ng-click="data.isChecked= true; vm.checkDocumentFn(data); vm.approveDocuments(true)"
+                                                                                                                    ng-if="data.status === vm.UploadDocumentStatus.SUBMITTED">
+                                                                                                                <span class="text-primary">Approval Pending</span>
+                                                                                                            </button>
+
+                                                                                                            <button type="button"
+                                                                                                                    class="btn btn-sm btn-default"
+                                                                                                                    ng-if="data.status ===vm.UploadDocumentStatus.APPROVED">
+                                                                                                                <span class="text-success">Approved</span>
+                                                                                                            </button>
+
+                                                                                                            <button type="button"
+                                                                                                                    class="btn btn-sm btn-default"
+                                                                                                                    ng-if="data.status === vm.UploadDocumentStatus.REJECTED">
+                                                                                                                <span class="text-danger">Rejected</span>
+                                                                                                            </button>
+                                                                                                        </div>
+                                                                                                    </div>
+                                                                                                </div>
+                                                                                            </div>
+                                                                                        </div>
+                                                                                    </div>
+                                                                                </div>
+                                                                            </fieldset>
+                                                                        </div>
+                                                                        <div ng-if="!vm.item.uploadedDocuments || (vm.item.uploadedDocuments  | json) == '{}' || (vm.item.uploadedDocuments  | json) == '[]'">
+                                                                            <div class="text-muted wrapper-lg text-center">
+                                                                                No record found!
+                                                                            </div>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+
+                                                <div class="col col-xs-3 no-padder b-l">
+                                                    <div class="vbox">
+                                                        <div class="bg-light text-md font-bold b-b wrapper-xs">
+                                                            Verification Criteria
+                                                        </div>
+                                                        <div class="row-row bg-white">
+                                                            <div class="cell">
+                                                                <div class="cell-inner">
+                                                                    <div class="wrapper-sm">
+                                                                        <ul class="list-group list-group-xs m-n">
+                                                                            <li class="list-group-item no-border b-b b-light no-padder">
+                                                                                <div class="hbox p3">
+                                                                                    <div class="col col-sm-1 text-center text-muted p03">
+                                                                                        1
+                                                                                    </div>
+                                                                                    <div class="col col-sm-10 p03">
+                                                                                        <span class="font-md">
+                                                                                           Passport Size Photo
+                                                                                        </span>
+                                                                                        <div class="pull-right">
+                                                                                            <span ng-if="vm.item.documentCriteria.hasPassportPhoto">
+                                                                                                <i class="fa fa-fw fa-check text-success"></i>
+                                                                                            </span>
+                                                                                            <span ng-if="!vm.item.documentCriteria.hasPassportPhoto">
+                                                                                                <i class="fa fa-fw fa fa-times text-danger"></i>
+                                                                                            </span>
+                                                                                        </div>
+                                                                                    </div>
+                                                                                </div>
+                                                                            </li>
+                                                                            <li class="list-group-item no-border b-b b-light no-padder m-t">
+                                                                                <div class="hbox p3">
+                                                                                    <div class="col col-sm-1 text-center text-muted p03">
+                                                                                        2
+                                                                                    </div>
+                                                                                    <div class="col col-sm-10 p03">
+                                                                                        <span class="font-md">
+                                                                                           Full Name
+                                                                                        </span>
+                                                                                        <div class="pull-right">
+                                                                                            <span ng-if="vm.item.documentCriteria.hasFullName">
+                                                                                                <i class="fa fa-fw fa-check text-success"></i>
+                                                                                            </span>
+                                                                                            <span ng-if="!vm.item.documentCriteria.hasFullName">
+                                                                                                <i class="fa fa-fw fa fa-times text-danger"></i>
+                                                                                            </span>
+                                                                                        </div>
+                                                                                    </div>
+                                                                                </div>
+                                                                            </li>
+                                                                            <li class="list-group-item no-border b-b b-light no-padder m-t">
+                                                                                <div class="hbox p3">
+                                                                                    <div class="col col-sm-1 text-center text-muted p03">
+                                                                                        3
+                                                                                    </div>
+                                                                                    <div class="col col-sm-10 p03">
+                                                                                        <span class="font-md">
+                                                                                          DOB
+                                                                                        </span>
+                                                                                        <div class="pull-right">
+                                                                                            <span ng-if="vm.item.documentCriteria.hasDOB">
+                                                                                                <i class="fa fa-fw fa-check text-success"></i>
+                                                                                            </span>
+                                                                                            <span ng-if="!vm.item.documentCriteria.hasDOB">
+                                                                                                <i class="fa fa-fw fa fa-times text-danger"></i>
+                                                                                            </span>
+                                                                                        </div>
+                                                                                    </div>
+                                                                                </div>
+                                                                            </li>
+                                                                            <li class="list-group-item no-border b-b b-light no-padder m-t">
+                                                                                <div class="hbox p3">
+                                                                                    <div class="col col-sm-1 text-center text-muted p03">
+                                                                                        4
+                                                                                    </div>
+                                                                                    <div class="col col-sm-10 p03">
+                                                                                        <span class="font-md">
+                                                                                        100 Points
+                                                                                        </span>
+                                                                                        <div class="pull-right">
+                                                                                            <span ng-if="vm.item.documentCriteria.crossedHundredPoints">
+                                                                                                <i class="fa fa-fw fa-check text-success"></i>
+                                                                                            </span>
+                                                                                            <span ng-if="!vm.item.documentCriteria.crossedHundredPoints">
+                                                                                                <i class="fa fa-fw fa fa-times text-danger"></i>
+                                                                                            </span>
+                                                                                        </div>
+                                                                                    </div>
+                                                                                </div>
+                                                                            </li>
+                                                                        </ul>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <div id="tab-complaint"
+                                             class="tab-pane fade in h-full"
+                                             ng-class="vm.activeTab == 5 ? 'active' : ''">
+                                            <div class="hbox hbox-auto-xs"
+                                                 ng-include="'/app/admin/users/jobComplaintDispute/jobComplaintDispute.html'"></div>
+                                        </div>
+
+                                        <div id="tab-ratingReview"
+                                             class="tab-pane fade in h-full"
+                                             ng-class="vm.activeTab == 6 ? 'active' : ''">
+                                            <div class="hbox hbox-auto-xs">
+
+                                                <!--col 1: Review-->
+                                                <div class="col col-xs-7 no-padder">
+                                                    <div class="vbox">
+                                                        <div class="bg-light text-md font-bold b-b wrapper-xs">
+                                                            Reviews
+                                                        </div>
+                                                        <div class="row-row bg-white">
+                                                            <div class="cell">
+                                                                <div class="cell-inner">
+                                                                    <div class="wrapper-sm">
+                                                                        <div class="">
+                                                                            <ul class="list-group list-group-xs m-n"
+                                                                                ng-if="vm.reviews.length">
+                                                                                <li class="list-group-item no-border no-padder m-t-xs"
+                                                                                    ng-class="$last ? '' : 'm-b-xs b-b b-light'"
+                                                                                    ng-repeat="review in vm.reviews">
+                                                                                    <div class="row">
+                                                                                        <div class="hbox">
+                                                                                            <!--Col 1-->
+                                                                                            <div class="col col-md-12 col-sm-12  no-padder">
+                                                                                                <div class="hbox m-b-xs">
+                                                                                                    <!--Index-->
+                                                                                                    <div class="col v-middle text-center thumb-xs">
+                                                                                                        <span class="text-muted">{{$index + 1}}</span>
+                                                                                                    </div>
+
+                                                                                                    <!--Name,image-->
+                                                                                                    <div class="col v-middle">
+                                                                                                        <div class="m-r thumb-sm pull-left">
+                                                                                                            <div class="popup-gallery"
+                                                                                                                 ng-if="review.addedBy.image">
+                                                                                                                <img class=""
+                                                                                                                     ng-src="{{ review.addedBy.image }}"
+                                                                                                                     ng-click="displayImages([{path:review.addedBy.image,type:1}], 0);"
+                                                                                                                     alt="image" />
+                                                                                                            </div>
+
+                                                                                                            <ng-avatar
+                                                                                                                    width="100%"
+                                                                                                                    ng-if="!review.addedBy.image"
+                                                                                                                    initials="{{ review.addedBy.name | limitTo: 1 }}"
+                                                                                                                    img-class="avatar"
+                                                                                                                    upper-case="true"
+                                                                                                                    round-shape="true"
+                                                                                                                    bg-color="lightgray"
+                                                                                                                    text-color="gray"
+                                                                                                                    bind="true">
+                                                                                                            </ng-avatar>
+                                                                                                        </div>
+
+                                                                                                        <span class="clear">
+                                                                                                    <div>
+                                                                                                     <span>
+                                                                                                        <span class="text-md">{{(review.addedBy.name || '-') | ucfirst }} </span>
+                                                                                                         (<i class="fa fa-envelope text-muted m-r-xs"></i>{{review.addedBy.emails | arrayPrimaryValue : 'email'}})
+                                                                                                       </span>
+                                                                                                        <span class="pull-right m-r"
+                                                                                                              ng-if="review.jobRequestId && review.jobRequestId.reqNumber"
+                                                                                                              uib-popover-template="'review-job-req-popover.html'"
+                                                                                                              popover-class="jobReq-popover"
+                                                                                                              popover-placement="auto bottom"
+                                                                                                              popover-trigger="'mouseenter'"
+                                                                                                              popover-is-open="review.isJobReqOpen"
+                                                                                                              popover-title="#{{review.jobRequestId.reqNumber || '-'}}"
+                                                                                                              popover-append-to-body="true">
+                                                                                                            <a href=""
+                                                                                                               class="text-dark"
+                                                                                                               ui-sref="apps.jobs.jobDetails({jobId:review.jobRequestId.id})">
+                                                                                                                 #{{review.jobRequestId.reqNumber}}</a>
+                                                                                                        </span>
+
+                                                                                                    </div>
+                                                                                                    <div class="clearfix">
+                                                                                                        <span class="text-muted">Comment:</span>
+                                                                                                        <span>{{review.review || 0 }}</span>
+                                                                                                          <span class="pull-right m-r">
+                                                                                                            <i class="fa fa-clock-o text-muted m-r-xs"></i>{{review.createdAt | appDateTime}}
+                                                                                                        </span>
+                                                                                                    </div>
+                                                                                                </span>
+                                                                                                    </div>
+                                                                                                </div>
+                                                                                            </div>
+                                                                                        </div>
+                                                                                    </div>
+                                                                                </li>
+                                                                                <li class="list-group-item text-center no-border no-padder b-t b-light"
+                                                                                    ng-if="vm.totalJobReviewCount > vm.reviews.length">
+                                                                                    <button class="btn btn-sm btn-info m-t"
+                                                                                            ng-click="vm.viewMoreReviewFn()">
+                                                                                        View More
+                                                                                    </button>
+                                                                                </li>
+                                                                            </ul>
+
+                                                                            <div class="m-lg"
+                                                                                 ng-if="!vm.reviews.length">
+                                                                                <div class="text-center text-muted">
+                                                                                    No records found!
+                                                                                </div>
+                                                                            </div>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+
+                                                <!--col 2: Ratings-->
+                                                <div class="col col-xs-5 no-padder b-l">
+                                                    <div class="vbox">
+                                                        <div class="bg-light text-md font-bold b-b wrapper-xs">
+                                                            Ratings
+                                                        </div>
+                                                        <div class="row-row bg-white">
+                                                            <div class="cell">
+                                                                <div class="cell-inner">
+                                                                    <div class="list-group list-group-md m-n"
+                                                                         ng-if="vm.item.averageRating && vm.item.averageRating.averageRatings && vm.item.averageRating.averageRatings.length">
+                                                                        <div class="list-group-item clearfix no-border ng-scope p-t-0"
+                                                                             ng-repeat="avgRating in vm.item.averageRating.averageRatings">
+                                                                            <div class="row"
+                                                                                 ng-if="avgRating.ratingParams && avgRating.ratingParams.length"
+                                                                                 ng-repeat="data in avgRating.ratingParams">
+                                                                                <div class="panel m-b-none panel-default">
+                                                                                    <div class="panel-heading no-padder">
+                                                                                        <span class="text-md m-l">{{vm.getRatingParamsName(data.ratingType)}}</span>
+                                                                                    </div>
+                                                                                    <div class="panel-body no-padder">
+                                                                                        <div class="col-md-12 col-sm-12 col-lg-12 col-xs-12 no-padder m-b-xs">
+                                                                                            <!--Col 1-->
+                                                                                            <div class="col-md-9 col-sm-9 col-lg-9 col-xs-9 no-padder m-t b-r b-light">
+                                                                                                <div class="inline text-center"
+                                                                                                     ng-repeat="ratingRange in vm.ratingRange">
+                                                                                                    <div class="panel w-xxs b-a item"
+                                                                                                         ng-class="$first ? 'm-l':''"
+                                                                                                         style="padding: 5px !important;">
+                                                                                                        <div class="h4">
+                                                                                                            {{data.userCountByRating[ratingRange]||
+                                                                                                            0}}
+                                                                                                        </div>
+                                                                                                        <span class="text-sm">{{ratingRange}}<span
+                                                                                                                class="glyphicon glyphicon-star m-l-xs"></span></span>
+                                                                                                    </div>
+                                                                                                </div>
+                                                                                            </div>
+                                                                                            <!--Col 2-->
+                                                                                            <div class="col-md-3 col-sm-3 col-lg-3 col-xs-3 no-padder m-t text-center">
+                                                                                                <div class="text-25 text-bold">
+                                                                                                    {{data.avgRating}}
+                                                                                                </div>
+                                                                                                <div class="text-sm text-muted">
+                                                                                                    Avg. Rating
+                                                                                                </div>
+                                                                                            </div>
+                                                                                        </div>
+                                                                                    </div>
+                                                                                </div>
+                                                                            </div>
+                                                                        </div>
+                                                                    </div>
+                                                                    <div class="m-lg"
+                                                                         ng-if="!vm.item.averageRating || !vm.item.averageRating.averageRatings || !vm.item.averageRating.averageRatings.length">
+                                                                        <div class="text-center text-muted">
+                                                                            No records found!
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <!--/col 2-->
+
+                                            </div>
+                                        </div>
+
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!--Bulk Active Deactive Modal-->
+<div id="verifyDocumentModal" class="modal fade" role="dialog">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <!--Content-->
+            <div class="modal-body">
+                <h3 class="text-center">What action you want to perform for selected Document?</h3>
+                <h3 class="text-center">
+                    <label class="i-checks i-checks-success text-success">
+                        <input type="radio" name="activeAction"
+                               ng-model="vm.verifyAction"
+                               value="{{vm.uploadDocumentAction.APPROVED}}">
+                        <i></i> Approve
+                    </label>
+
+                    <label class="i-checks i-checks-danger text-danger m-l">
+                        <input type="radio" name="activeAction"
+                               ng-model="vm.verifyAction"
+                               value="{{vm.uploadDocumentAction.REJECTED}}">
+                        <i></i> Reject
+                    </label>
+                </h3>
+            </div>
+
+            <!--Footer-->
+            <div class="modal-footer">
+                <div class="text-center">
+                    <button type="button" class="btn btn-sm btn-default" data-dismiss="modal">
+                        Cancel
+                    </button>
+                    <button type="button" class="btn btn-sm btn-success"
+                            ng-click="vm.approveDocuments();">
+                        Submit
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div id="documentViewModal" class="modal fade" role="dialog">
+    <div class="modal-dialog modal-md">
+        <div class="modal-content">
+            <div class="modal-header">
+                <span class="h4">Document</span>
+                <button type="button"
+                        class="close"
+                        data-dismiss="modal">
+                    &times;
+                </button>
+            </div>
+
+            <!--Content-->
+            <div class="modal-body text-center" style="height: {{vm.height}};">
+                <iframe style="width: 100%;height: 99%;border: none"
+                        src="{{vm.documentPath}}"></iframe>
+            </div>
+
+            <!--Footer-->
+            <div class="modal-footer">
+                <div class="text-right">
+                    <button type="button" class="btn btn-sm btn-default" data-dismiss="modal">
+                        Cancel
+                    </button>
+                    <a type="button"
+                       class="btn btn-sm btn-info"
+                       href="{{vm.documentPath}}"
+                       target="_blank">
+                        <i class="fa fa-download"></i> Download
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

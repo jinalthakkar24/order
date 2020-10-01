@@ -1,0 +1,30 @@
+<div class="hbox hbox-auto-xs bg-light " ng-init="
+  app.settings.asideFixed = true;
+  app.settings.asideDock = false;
+  app.settings.container = false;
+  app.hideAside = false;
+  ">
+    <div class="col">
+        <div class="vbox">
+            <div class="wrapper clearfix bg-gray b-b b-ligh">
+                <div class=" col-lg-3 col-md-3 col-sm-4 col-xs-6 font-thin h4 m-t-xs"> {{vm.moduleData.title}}
+                </div>
+            </div>
+            <!--header-->
+            <div class="row-row">
+                <div class="cell">
+                    <div class="cell-inner">
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<confirm-delete
+        message="Are you sure you want to {{vm.deleteData.message}} ?"
+        visible="vm.showModal"
+        confirm-delete-fn="vm.confirmedClickFn(vm.deleteData.type)"
+        cancel-delete-fn="vm.showModal = false">
+</confirm-delete>

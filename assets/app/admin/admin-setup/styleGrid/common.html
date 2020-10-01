@@ -1,0 +1,275 @@
+<div id="topCommon" class="col-lg-12 col-md-12 col-xs-12 col-sm-12 no-padder">
+    <div id="component-id" class="form-group clearfix m-b-none p-t">
+        <div class="m-b-sm h4">Components</div>
+
+        <ul class="list-group list-group-sm m-b-none">
+            <!--Action Buttons-->
+            <li id="action-btn-id" class="list-group-item">
+                <div class="m-b-sm h4">Action Buttons</div>
+
+                <div class="clearfix m-b-xs">
+                    <i class="fa fa-hand-o-right"></i>
+                    Set <code>has-type-permission | has-type-module</code> as per permissions.
+                </div>
+
+                <div class="clearfix m-b-xs">
+                    <i class="fa fa-hand-o-right"></i>
+                    Set expression type as follows: <br />
+                    <code class="m-l">*-exp-type="'fn'"</code> // For functions <br />
+                    <code class="m-l">*-exp-type="'sref'"</code> // For new state
+                </div>
+
+                <!--Live Example-->
+                <div class="inline m-b-xs">
+                    <action-buttons
+                            has-type-permission="{
+                                add : insertPermission,
+                                clone : insertPermission,
+                                edit : updatePermission,
+                                delete : deletePermission
+                            }"
+                            has-type-module="{all : '<module name>'}"
+                            view-exp-type="'sref'"
+                            clone-exp-type="'sref'"
+                            edit-exp-type="'sref'"
+                            delete-exp-type="'fn'"
+                            view="{sref:'apps.viewDesignAccessPermissions',params:{id:item.id}}"
+                            clone="{sref:'apps.addDesignAccessPermissions',params:{id:item.id,isClone:true}}"
+                            edit="{sref:'apps.addDesignAccessPermissions',params:{id:item.id}}"
+                            delete-fn="vm.deleteItemFn(false, item.id)">
+                    </action-buttons>
+                </div>
+
+                <!--Sample Code-->
+                <copy-btn copy-to-clipboard-fn="vm.copyToClipboardFn(null,vm.actionBtnComponent)"></copy-btn>
+                <div render-nested-html>
+                    {{vm.actionBtnComponent}}
+                </div>
+            </li>
+
+            <!--Excel Import/Export DD-->
+            <li id="excel-dd" class="list-group-item">
+                <div class="m-b-sm h4">Excel Import/Export Dropdown</div>
+
+                <div class="clearfix m-b-xs">
+                    <i class="fa fa-hand-o-right"></i>
+                    Set <code>grid</code> (optional) value to '<strong><em>true</em></strong>' to export specific
+                    columns from the collection; '<strong><em>false</em></strong>' for all columns.
+                </div>
+
+                <div class="clearfix m-b-xs">
+                    <i class="fa fa-hand-o-right"></i>
+                    Set <code>callback</code> (optional) function for future processing of data.
+                </div>
+
+                <!--Live Example-->
+                <div class="inline">
+                    <excel-operation model="'event'" sample-url="'/sample-files/event.xlsx'"
+                                     grid="'true'"
+                                     callback="vm.callbackFn(data)">
+                    </excel-operation>
+                </div>
+
+                <!--Sample Code-->
+                <copy-btn copy-to-clipboard-fn="vm.copyToClipboardFn(null,vm.excelBtnComponent)"></copy-btn>
+                <div render-nested-html>
+                    {{vm.excelBtnComponent}}
+                </div>
+            </li>
+
+            <!--Loader Component-->
+            <li id="content-loader" class="list-group-item">
+                <div class="m-b-sm h4">Content Loader</div>
+
+                <div class="inline clearfix m-b-xs">
+                    <i class="fa fa-hand-o-right"></i>
+                    Set <code>message</code> (optional) to set custom message.
+                    Default is <strong><em>'No Records Found!'</em></strong>
+                </div>
+
+                <!--Sample Code-->
+                <copy-btn copy-to-clipboard-fn="vm.copyToClipboardFn(null,vm.loaderComponent)"></copy-btn>
+                <div render-nested-html>
+                    {{vm.loaderComponent}}
+                </div>
+            </li>
+
+            <!--URL Binder-->
+            <li id="url-binder" class="list-group-item">
+                <div class="m-b-sm h4">URL Binder</div>
+
+                <!--Live Example-->
+                <div class="inline w-xxl">
+                    <url-protocol title=""
+                                  placeholder="'Enter Url'"
+                                  link-model="location.url">
+                    </url-protocol>
+                </div>
+
+                <!--Sample Code-->
+                <copy-btn copy-to-clipboard-fn="vm.copyToClipboardFn(null,vm.urlProtocolComponent)"></copy-btn>
+                <div render-nested-html>
+                    {{vm.urlProtocolComponent}}
+                </div>
+            </li>
+
+            <!--Copy to Clipboard Button-->
+            <li id="copy-btn" class="list-group-item">
+                <div class="m-b-sm h4">Copy to Clipboard Button</div>
+
+                <div class="clearfix m-b-xs">
+                    <i class="fa fa-hand-o-right"></i>
+                    Set <code>vm.copyToClipboardFn = CommonService.copyToClipboardFn;</code> this line in your
+                    controller.
+                </div>
+
+                <div class="clearfix m-b-xs">
+                    <i class="fa fa-hand-o-right"></i>
+                    <code>vm.copyToClipboardFn(null, 'pass data to be copied')</code>
+                </div>
+
+                <!--Live Example-->
+                <div class="inline w-xxl">
+                    <url-protocol title=""
+                                  placeholder="'Enter Url'"
+                                  link-model="location.url">
+                    </url-protocol>
+                </div>
+
+                <!--Sample Code-->
+                <copy-btn copy-to-clipboard-fn="vm.copyToClipboardFn(null,vm.copyBtnComponent)"></copy-btn>
+                <div render-nested-html>
+                    {{vm.copyBtnComponent}}
+                </div>
+            </li>
+
+            <!--File Upload-->
+            <li id="file-upload-id" class="list-group-item">
+                <div class="m-b-sm h4">File Upload</div>
+
+                <div class="clearfix m-b-xs">
+                    <i class="fa fa-hand-o-right"></i>
+                    Set <code>btn-text</code> value to your desired name. Default is
+                    '<strong><em>{{vm.fuTypeArr[vm.fuType - 1].defaultBtnText}}</em></strong>'
+                </div>
+
+                <div class="clearfix m-b-xs">
+                    <i class="fa fa-hand-o-right"></i>
+                    Set <code>folder</code> value to your given folder name.
+                </div>
+
+                <div class="btn-group inline m-b-xs">
+                    <button class="btn btn-xs"
+                            ng-disabled="vm.fuType == btn.id"
+                            ng-class="(vm.fuType == btn.id ? 'btn-expand' : 'btn-default bg-white')"
+                            ng-repeat="btn in vm.fuTypes"
+                            ng-model="vm.fuType"
+                            uib-btn-radio="'{{btn.id}}'">
+                        <i class="fa fa-check text-active"></i>
+                        {{btn.name}}
+                    </button>
+                </div>
+
+                <!--Sample Code-->
+                <copy-btn
+                        copy-to-clipboard-fn="vm.copyToClipboardFn(null,vm.fuTypeArr[vm.fuType - 1].content)"></copy-btn>
+
+                <div render-nested-html>
+                    {{vm.fuTypeArr[vm.fuType - 1].content}}
+                </div>
+            </li>
+
+            <!--Pagination-->
+            <li id="pagination-id" class="list-group-item">
+                <div class="m-b-sm h4">
+                    Pagination
+                    <!--Sample Code-->
+                    <copy-btn copy-to-clipboard-fn="vm.copyToClipboardFn(null,vm.paginationComponent)"></copy-btn>
+                </div>
+
+                <div render-nested-html>
+                    {{vm.paginationComponent}}
+                </div>
+            </li>
+        </ul>
+    </div>
+
+    <hr />
+
+    <!--App Layouts-->
+    <div class="col-lg-12 col-md-12 col-xs-12 col-sm-12 no-padder">
+        <div id="layout-id" class="form-group clearfix p-t">
+            <div class="m-b-sm h4">
+                App Layouts
+            </div>
+
+            <ul class="list-group list-group-sm m-b-none">
+                <!--List Layout-->
+                <li id="list-layout" class="list-group-item">
+                    <div class="m-b-sm h4">List Layout</div>
+
+                    <div class="clearfix m-b-xs">
+                        <i class="fa fa-hand-o-right"></i>
+                        Set layout as per your requirement.
+
+                        <div class="btn-group inline m-b-xs">
+                            <button class="btn btn-xs"
+                                    ng-disabled="vm.listLayoutType == btn.id"
+                                    ng-class="(vm.listLayoutType == btn.id ? 'btn-expand' : 'btn-default bg-white')"
+                                    ng-repeat="btn in vm.listLayoutTypes"
+                                    ng-model="vm.listLayoutType"
+                                    uib-btn-radio="'{{btn.id}}'">
+                                <i class="fa fa-check text-active"></i>
+                                {{btn.name}}
+                            </button>
+                        </div>
+
+                        <!--Sample Code-->
+                        <copy-btn
+                                copy-to-clipboard-fn="vm.copyToClipboardFn(null,vm.listLayoutArr[vm.listLayoutType - 1].content)"></copy-btn>
+                    </div>
+
+                    <div class="clearfix text-muted m-b-xs">
+                        <i class="fa fa-info-circle text-info"></i>
+                        {{vm.listLayoutArr[vm.listLayoutType - 1].instructions}}
+                    </div>
+                </li>
+
+                <!--View Layout-->
+                <li id="view-layout" class="list-group-item">
+                    <div class="m-b-sm h4">View Layout</div>
+
+                    <div class="clearfix m-b-xs">
+                        <i class="fa fa-hand-o-right"></i>
+                        Set layout as per your requirement.
+
+                        <div class="inline clearfix m-b-xs">
+                            <i class="fa fa-hand-o-right"></i>
+                            Refer <strong><em>Questionnaire</em></strong> module for content to be arranged in two
+                            portion, also refer how it is working based on permissions.
+                        </div>
+
+                        <!--Sample Code-->
+                        <copy-btn
+                                copy-to-clipboard-fn="vm.copyToClipboardFn(null,vm.viewAppLayout)"></copy-btn>
+                    </div>
+                </li>
+
+                <!--Form with Table layout-->
+                <li id="form-table-layout" class="list-group-item">
+                    <div class="m-b-sm h4">Form with Table layout</div>
+
+                    <div class="clearfix m-b-xs">
+                        <i class="fa fa-hand-o-right"></i>
+                        Refer <strong><em>Questionnaire</em></strong> module for content to be arranged in two
+                        portion, also refer how it is working based on permissions.
+
+                        <!--Sample Code-->
+                        <copy-btn
+                                copy-to-clipboard-fn="vm.copyToClipboardFn(null,vm.formWithTableLayout)"></copy-btn>
+                    </div>
+                </li>
+            </ul>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,117 @@
+<style>
+    .actionButton {
+        margin-left      : 0px;
+        border           : 1px solid #BBC9D1;
+        padding          : 0px 3px !important;
+        background-color : #F2F2F2;
+    }
+
+    .editBtn:hover {
+        color        : #1797BE !important;
+        border-color : #1797BE;
+    }
+
+    .viewBtn:hover {
+        color        : #7266BA !important;
+        border-color : #7266BA;
+    }
+
+    .deleteBtn:hover {
+        color        : #F05050 !important;
+        border-color : #F05050;
+    }
+
+    .cloneBtn:hover {
+        color        : #555555 !important;
+        border-color : #555555;
+    }
+</style>
+
+<!------------------------------------- VIEW ------------------------------------------------->
+
+<!--View state-->
+<button class="btn btn-default viewBtn actionButton"
+        has-module="{{vm.hasTypeModule.all}}"
+        has-permission="{{vm.hasTypePermission.view}}"
+        uib-tooltip="View"
+        tooltip-placement="auto top"
+        tooltip-append-to-body="true"
+        ng-if="vm.viewExpType === 'sref'"
+        ng-click="vm.redirect(vm.view)">
+    <i class="fa fa-eye"></i></button>
+
+<!--View function-->
+<button class="btn btn-default viewBtn actionButton"
+        has-module="{{vm.hasTypeModule.all}}"
+        has-permission="{{vm.hasTypePermission.view}}"
+        uib-tooltip="View"
+        tooltip-placement="auto top"
+        tooltip-append-to-body="true"
+        ng-if="vm.viewExpType === 'fn'"
+        ng-click="vm.viewFn()">
+    <i class="fa fa-eye"></i></button>
+
+<!------------------------------------- CLONE ------------------------------------------------->
+
+<!--Clone state-->
+<button class="btn btn-default cloneBtn actionButton"
+        has-permission="{{vm.hasTypePermission.add}}" has-module="{{vm.hasTypeModule.all}}"
+        uib-tooltip="Clone"
+        tooltip-placement="auto top"
+        tooltip-append-to-body="true"
+        ng-if="vm.cloneExpType === 'sref'"
+        ng-click="vm.redirect(vm.clone)">
+    <i class="fa fa-copy"></i></button>
+
+<!--Clone function-->
+<button class="btn btn-default cloneBtn actionButton"
+        has-permission="{{vm.hasTypePermission.add}}" has-module="{{vm.hasTypeModule.all}}"
+        uib-tooltip="Clone"
+        tooltip-placement="auto top"
+        tooltip-append-to-body="true"
+        ng-if="vm.cloneExpType === 'fn'"
+        ng-click="vm.cloneFn()">
+    <i class="fa fa-copy"></i></button>
+
+<!------------------------------------- EDIT ------------------------------------------------->
+
+<!--Edit state-->
+<button class="btn btn-default editBtn actionButton"
+        has-permission="{{vm.hasTypePermission.edit}}" has-module="{{vm.hasTypeModule.all}}"
+        uib-tooltip="Edit"
+        tooltip-placement="auto top"
+        tooltip-append-to-body="true"
+        ng-if="vm.editExpType === 'sref'"
+        ng-click="vm.redirect(vm.edit)">
+    <i class="fa fa-edit"></i></button>
+
+<!--Edit function -->
+<button class="btn btn-default editBtn actionButton"
+        has-permission="{{vm.hasTypePermission.edit}}" has-module="{{vm.hasTypeModule.all}}"
+        uib-tooltip="Edit"
+        tooltip-placement="auto top"
+        tooltip-append-to-body="true"
+        ng-if="vm.editExpType === 'fn'"
+        ng-click="vm.editFn()">
+    <i class="fa fa-edit"></i></button>
+
+<!------------------------------------- DELETE ------------------------------------------------->
+<!--Delete state-->
+<button class="btn btn-default deleteBtn actionButton"
+        has-permission="{{vm.hasTypePermission.delete}}" has-module="{{vm.hasTypeModule.all}}"
+        uib-tooltip="Delete"
+        tooltip-placement="auto top"
+        tooltip-append-to-body="true"
+        ng-if="vm.deleteExpType === 'sref'"
+        ng-click="vm.redirect(vm.delete)">
+    <i class="fa fa-trash"></i></button>
+
+<!--Delete function-->
+<button class="btn btn-default deleteBtn actionButton"
+        has-permission="{{vm.hasTypePermission.delete}}" has-module="{{vm.hasTypeModule.all}}"
+        uib-tooltip="Delete"
+        tooltip-placement="auto top"
+        tooltip-append-to-body="true"
+        ng-if="vm.deleteExpType === 'fn'"
+        ng-click="vm.deleteFn()">
+    <i class="fa fa-trash"></i></button>

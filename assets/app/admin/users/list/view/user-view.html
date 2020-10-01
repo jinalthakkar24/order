@@ -1,0 +1,211 @@
+<div class="modal-header wrapper-sm">
+    <div class="modal-title">
+        <!--Left side data-->
+        <div class="no-padder pull-left">
+            <div class="col">
+                <div class="m-r thumb-sm pull-left">
+                    <div class="popup-gallery"
+                         ng-if="vm.item.image">
+                        <img class=""
+                             ng-src="{{vm.item.image }}"
+                             ng-click="displayImages([{path:vm.item.image,type:1}], 0);"
+                             alt="image" />
+                    </div>
+
+                    <div ng-if="!vm.item.image">
+                        <ng-avatar width="100%"
+
+                                   initials="{{vm.item.name | limitTo: 1 }}"
+                                   img-class="avatar"
+                                   upper-case="true"
+                                   round-shape="true"
+                                   bg-color="lightgray"
+                                   text-color="gray"
+                                   bind="true">
+                        </ng-avatar>
+                    </div>
+                </div>
+
+                <span class="clear">
+                            <div>
+                                <span class="h4 text-info">
+                                     {{(vm.item.name || '-') | ucfirst }}
+                                </span>
+                                <div class="inline text-white text-sm r-3x p3 m-l-xs bg-danger"
+                                     ng-class="vm.item.isActive ? 'bg-success' : 'bg-danger'">
+
+                                    <div class="ng-scope" ng-if="vm.item.isActive">
+                                      <i class="fa fa-check-circle"></i> Active
+                                   </div>
+                                    <div class="ng-scope" ng-if="!vm.item.isActive">
+                                      <i class="fa fa-times-circle"></i> Deactive
+                                   </div>
+                               </div>
+                            </div>
+                            <div class="clearfix">
+                                <i class="fa fa-fw fa-map-marker"></i>
+                              {{ (vm.item.addresses | primaryAddress: ["city", "state"]) || '-' }}
+                            </div>
+                        </span>
+            </div>
+        </div>
+
+        <button type="button"
+                class="close"
+                ng-click="vm.closeModal();">
+            &times;
+        </button>
+    </div>
+</div>
+
+
+<div class="modal-body">
+    <!--Detailed Header-->
+    <div class="wrapper-xs b-b bg-white">
+        <!--Emails-->
+        <div class="inline m-r">
+            <div class="text-muted">
+                Email
+            </div>
+
+            <div class="inline">
+                <a ng-click="vm.openCommonPopoverFn('contact-popover.html', 'openEmail', vm.item.emails, 'email')"
+                   uib-popover-template="detailPopover.templateUrl"
+                   popover-title="Emails ({{vm.item.emails.length}})" popover-class="popover-sm"
+                   popover-enable="vm.item.emails.length" popover-is-open="detailPopover.openEmail"
+                   popover-trigger="'outsideClick'" popover-placement="auto bottom"
+                   popover-append-to-body="true">
+                    <span>{{vm.item.emails | arrayPrimaryValue:'email'}}</span>
+                    <span ng-if="vm.item.emails.length">
+                                <i class="fa fa-sort-down"></i>
+                    </span>
+                </a>
+            </div>
+        </div>
+
+        <!--Mobiles-->
+        <div class="inline m-r">
+            <div class="text-muted">
+                Mobile
+            </div>
+
+            <div class="inline">
+                <a ng-click="vm.openCommonPopoverFn('contact-popover.html', 'openMobile', vm.item.mobiles, 'mobile')"
+                   uib-popover-template="detailPopover.templateUrl"
+                   popover-title="Mobile ({{vm.item.mobiles.length}})" popover-class="popover-sm"
+                   popover-enable="vm.item.mobiles.length" popover-is-open="detailPopover.openMobile"
+                   popover-trigger="'outsideClick'" popover-placement="auto bottom"
+                   popover-append-to-body="true">
+                    <span>{{ vm.item.mobiles | arrayPrimaryValue: 'mobile' }}</span>
+                    <span ng-if="vm.item.mobiles.length">
+                                <i class="fa fa-sort-down"></i>
+                            </span>
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <div class="hbox hbox-auto-xs">
+        <div class="col col-xs-12 no-padder">
+            <div class="vbox">
+                <div class="row-row">
+                    <div class="cell" id="cell_div">
+                        <div class="cell-inner m-xs">
+                            <div ng-if="vm.item.addresses && vm.item.addresses.length">
+                                <div class="col-sm-6 col-lg-4 col-md-4 col-xs-6"
+                                     ng-repeat="item in vm.item.addresses track by $index">
+                                    <div class="panel panel-default">
+                                        <div class="panel-heading">
+                                            <i class="fa fa-th-large"></i>
+                                            Address: {{$index + 1}}
+
+                                            <div class="pull-right" style="margin-top: -2px;" ng-if="item.isPrimary">
+                                                <!--Primary-->
+                                                <button type="button"
+                                                        class="btn btn-success btn-xs b-a-dark">
+                                                    Primary
+                                                </button>
+                                            </div>
+                                        </div>
+
+                                        <div class="panel-body">
+                                            <!--Address-->
+                                            <div class="m-b-xs clearfix"
+                                                 ng-if="item && item.line1">
+                                                <div class="col-sm-4 no-padder text-muted">
+                                                    Address :
+                                                </div>
+                                                <div class="col-sm-8 no-padder">
+                                                    {{item.line1}}
+                                                </div>
+                                            </div>
+
+                                            <!--City-->
+                                            <div class="m-b-xs clearfix"
+                                                 ng-if="item && item.city">
+                                                <div class="col-sm-4 no-padder text-muted">
+                                                    City :
+                                                </div>
+                                                <div class="col-sm-8 no-padder">
+                                                    {{item.city}}
+                                                </div>
+                                            </div>
+
+                                            <!--State-->
+                                            <div class="m-b-xs clearfix"
+                                                 ng-if="item && item.state">
+                                                <div class="col-sm-4 no-padder text-muted">
+                                                    State :
+                                                </div>
+                                                <div class="col-sm-8 no-padder">
+                                                    {{item.state}}
+                                                </div>
+                                            </div>
+
+                                            <!--Country-->
+                                            <div class="m-b-xs clearfix"
+                                                 ng-if="item && item.country">
+                                                <div class="col-sm-4 no-padder text-muted">
+                                                    Country :
+                                                </div>
+                                                <div class="col-sm-8 no-padder">
+                                                    {{item.country}}
+                                                </div>
+                                            </div>
+
+                                            <!--pin code-->
+                                            <div class="m-b-xs clearfix"
+                                                 ng-if="item && item.pincode">
+                                                <div class="col-sm-4 no-padder text-muted">
+                                                    pin code :
+                                                </div>
+                                                <div class="col-sm-8 no-padder">
+                                                    {{item.pincode}}
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div ng-if="!vm.item.addresses || !vm.item.addresses.length">
+                                <div class="text-muted wrapper-lg text-center">
+                                    No address details found!
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<div class="modal-footer wrapper-sm">
+    <button type="button"
+            ng-if="vm.item.id"
+            class="btn btn-sm btn-default" ng-click="vm.closeModal();">
+        Cancel
+    </button>
+</div>
+

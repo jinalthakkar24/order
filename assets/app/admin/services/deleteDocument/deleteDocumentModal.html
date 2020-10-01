@@ -1,0 +1,90 @@
+<style>
+    .list-style-type {
+        list-style-type: none;
+        padding: 0px;
+    }
+
+    .table > thead > tr > th {
+        text-transform: capitalize !important;
+    }
+
+    .delete-dependent-modal .panel-group .panel-heading + .panel-collapse .panel-body {
+        padding: 0px !important;
+    }
+</style>
+<div class="delete-dependent-modal modal-content">
+    <div class="modal-header">
+        <button type="button" class="close" ng-click="vm.close()">&times;</button>
+        <h4 class="modal-title">Dependency Tree</h4>
+    </div>
+    <div class=" col-md-12 m-t-md">
+        <div class="row-row">
+            <div class="cell">
+                <div class="cell-inner">
+                    <div class="wrapper-xs p-t-none">
+                        <div class="p3 b3 delete-dep-uib-accordion" ng-if="vm.models && vm.models.length">
+                            <uib-accordion close-others="oneAtATime">
+                                <div uib-accordion-group class="panel-default" heading="{{data.title}}"
+                                     ng-repeat="data in vm.models">
+                                    <uib-accordion close-others="oneAtATime">
+                                        <div uib-accordion-group class="panel-default"
+                                             ng-click="dependent.showing = !dependent.showing;vm.getDependencies(dependent,data.id );"
+                                             ng-repeat="dependent in data.dependents">
+                                            <uib-accordion-heading class="col-md-12">
+                                               <span>
+                                                   {{dependent.humanizeName}}
+                                               </span>
+                                                <span class="badge pull-right bg-default text-dark m-l-xs ng-binding">
+                            {{dependent.count || 0}} </span>
+                                            </uib-accordion-heading>
+                                            <table class="table m-b-none">
+                                                <thead>
+                                                <tr>
+                                                    <th>#</th>
+                                                    <th class="capitalize" ng-if="key !== 'id'"
+                                                        ng-repeat="(key,value) in dependent.dependentRecords[0] track by $index">
+                                                        {{key}}
+                                                    </th>
+                                                </tr>
+                                                </thead>
+                                                <tbody>
+                                                <tr ng-repeat="record in dependent.dependentRecords track by $index">
+                                                    <td>
+                                                        {{$index +1}}
+                                                    </td>
+                                                    <td ng-if="key !== 'id'" ng-repeat="(key,value) in record">
+                                                        <span >{{value}}</span>
+                                                    </td>
+                                                </tr>
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                    </uib-accordion>
+                                </div>
+                            </uib-accordion>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-12 col-md-12 col-sm-12 no-padder" style="height:250px;overflow:auto;">
+
+        </div>
+    </div>
+    <div class="modal-footer">
+        <button type="button" class="btn btn-danger"
+                ng-click="vm.showConfirmDeleteModal();">
+            Force
+            Destroy
+        </button>
+        <button type="button" class="btn btn-default" ng-click="vm.close()">Close</button>
+    </div>
+</div>
+
+<script type="text/ng-template" id="tpl.html">
+    <ul class="list-style-type">
+        <li ng-if="key !== 'id'" ng-repeat="(key,value) in record.data track by $index">
+            <strong>{{key}}</strong> : {{value}}
+        </li>
+    </ul>
+</script>

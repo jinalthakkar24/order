@@ -1,0 +1,446 @@
+<style>
+    .tab-pane-users div {
+        text-align : right;
+    }
+
+    .right-container {
+        position : absolute;
+        right    : 14px;
+        top      : -2px;
+    }
+
+    .panel-default-info {
+        border-color : #23B7E5 !important;
+    }
+</style>
+<!-- hbox layout -->
+
+<div class="hbox hbox-auto-xs bg-light " ng-init="
+  app.settings.asideFixed = true;
+  app.settings.asideDock = false;
+  app.settings.container = false;
+  app.hideAside = false;
+  ">
+    <div class="col">
+        <div class="vbox">
+            <!--header-->
+            <div class="wrapper clearfix bg-gray b-b b-ligh">
+
+                <div class="h4 pull-left"> {{vm.moduleData.title}}
+                </div>
+            </div>
+            <div class="row-row">
+                <div class="cell">
+                    <div class="cell-inner">
+                        <!--body-->
+                        <div class="wrapper col-md-12 ">
+                            <uib-tabset active="active">
+                                <uib-tab index="0" heading="Basic Details"
+                                         ng-click="vm.currentTab = vm.tab.basic">
+                                    <div class="wrapper-sm">
+                                        <form name="form" novalidate>
+                                            <div class="wrapper-sm clearfix">
+                                                <!--Basic Detail-->
+                                                <div class="form-group clearfix">
+                                                    <fieldset>
+                                                        <legend>Basic Details</legend>
+
+                                                        <div class="form-group clearfix">
+
+                                                            <!--Fname-->
+                                                            <div class="col-lg-4 col-md-4 col-sm-4 col-xs-12">
+                                                                <label>
+                                                                    First Name
+                                                                    <span class="text-danger"
+                                                                          ng-show="form.firstName.$error.required">*</span>
+                                                                    <span class="text-success"
+                                                                          ng-show="form.firstName.$valid">*</span>
+                                                                </label>
+                                                                <!-- /btn-group -->
+                                                                <input type="text" class="form-control" name="firstName"
+                                                                       ng-model="vm.user.firstName"
+                                                                       placeholder="Enter First Name"
+                                                                       required>
+                                                            </div>
+
+                                                            <!--Lname-->
+                                                            <div class="col-lg-4 col-md-4 col-sm-4 col-xs-12">
+                                                                <label>
+                                                                    Last Name
+                                                                    <span class="text-danger"
+                                                                          ng-show="form.lastName.$error.required">*</span>
+                                                                    <span class="text-success"
+                                                                          ng-show="form.lastName.$valid">*</span>
+                                                                </label>
+                                                                <input type="text" class="form-control" name="lastName"
+                                                                       ng-model="vm.user.lastName"
+                                                                       placeholder="Enter Last Name"
+                                                                       required />
+                                                            </div>
+                                                        </div>
+
+                                                        <!--Image, Mobile, Email-->
+                                                        <div class="form-group clearfix">
+                                                            <!--Image-->
+                                                            <div class="col-lg-4 col-md-4 col-sm-4 col-xs-12">
+                                                                <label>Image</label>
+
+                                                                <div class="row">
+                                                                    <file-upload display-fn="displayImages(array, ind)"
+                                                                                 width="'75'"
+                                                                                 height="'75'"
+                                                                                 layout-type="'horizontal'"
+                                                                                 accept="['image']"
+                                                                                 folder="'user'"
+                                                                                 file="vm.user.image"
+                                                                                 remove="vm.removeImage"></file-upload>
+                                                                </div>
+                                                            </div>
+
+                                                            <!--Mobile-->
+                                                            <div class="col-lg-4 col-md-4 col-sm-4 col-xs-12">
+                                                                <multiple-mobiles form="form"
+                                                                                  array="vm.mobiles"
+                                                                                  array-list="vm.mobilesRequest"
+                                                                                  is-primary-mobile="vm.is_primary_mobile"
+                                                                                  is-required="true"
+                                                                                  id="vm.user.id">
+                                                                </multiple-mobiles>
+                                                            </div>
+
+                                                            <!--Emails-->
+                                                            <div class="col-lg-4 col-md-4 col-sm-4 col-xs-12">
+                                                                <multiple-emails form="form"
+                                                                                 array="vm.emails"
+                                                                                 is-primary-email="vm.is_primary_email"
+                                                                                 is-required="true"
+                                                                                 id="vm.user.id">
+                                                                </multiple-emails>
+                                                            </div>
+                                                        </div>
+                                                    </fieldset>
+                                                </div>
+
+                                                <!--Address-->
+                                                <div class="form-group clearfix">
+                                                    <fieldset>
+                                                        <legend>Address</legend>
+
+                                                        <div>
+                                                            <div class="form-group clearfix">
+                                                                <div class="col-lg-3 col-md-3 col-sm-3 col-xs-12 ">
+                                                                    <label>
+                                                                        Address
+                                                                    </label>
+                                                                    <input type="text" class="form-control"
+                                                                           name="address"
+                                                                           ng-model="vm.address.line1"
+                                                                           placeholder="Enter Address Line 1" />
+                                                                </div>
+                                                                <div class="col-lg-3 col-md-3 col-sm-3 col-xs-12 ">
+                                                                    <label>
+                                                                        Address 2
+                                                                    </label>
+                                                                    <input type="text" class="form-control"
+                                                                           name="address2"
+                                                                           ng-model="vm.address.line2"
+                                                                           placeholder="Enter Address Line 2" />
+                                                                </div>
+                                                                <div class="col-lg-3 col-md-3 col-sm-3 col-xs-12 ">
+                                                                    <label>
+                                                                        City
+                                                                    </label>
+                                                                    <input type="text" class="form-control" name="city"
+                                                                           ng-model="vm.address.city"
+                                                                           placeholder="Enter City" />
+                                                                </div>
+                                                                <div class="col-lg-3 col-md-3 col-sm-3 col-xs-12 ">
+                                                                    <label>
+                                                                        State
+                                                                    </label>
+                                                                    <input type="text" class="form-control" name="state"
+                                                                           ng-model="vm.address.state"
+                                                                           placeholder="Enter State" />
+                                                                </div>
+                                                            </div>
+
+                                                            <div class="form-group clearfix">
+                                                                <div class="col-lg-3 col-md-3 col-sm-3 col-xs-12">
+                                                                    <label>
+                                                                        Country
+                                                                    </label>
+                                                                    <input type="text" class="form-control"
+                                                                           name="country"
+                                                                           ng-model="vm.address.country"
+                                                                           placeholder="Enter Country">
+                                                                </div>
+                                                                <div class="col-lg-3 col-md-3 col-sm-3 col-xs-12">
+                                                                    <label>
+                                                                        Postal Code
+                                                                    </label>
+                                                                    <input type="text" class="form-control"
+                                                                           name="postal_code"
+                                                                           nks-only-number
+                                                                           allow-negative="false"
+                                                                           allow-zero="false"
+                                                                           allow-decimal="false"
+                                                                           ng-model="vm.address.pincode"
+                                                                           placeholder="Enter Postal Code">
+                                                                </div>
+                                                            </div>
+
+                                                            <!--Actions-->
+                                                            <div class="form-group clearfix">
+                                                                <div class="col-sm-12">
+                                                                    <button class="btn btn-sm btn-info"
+                                                                            ng-click="vm.resetAddressFn();">
+                                                                        Reset
+                                                                    </button>
+
+                                                                    <button class="btn btn-sm btn-success"
+                                                                            ng-disabled="vm.address | isEmpty"
+                                                                            ng-click="vm.saveAddress();">
+                                                                        Save
+                                                                    </button>
+                                                                </div>
+                                                            </div>
+
+                                                            <div class="form-group clearfix">
+                                                                <div ng-if="vm.userAddress && vm.userAddress.length">
+                                                                    <div class="col-sm-4"
+                                                                         ng-repeat="item in vm.userAddress track by $index">
+                                                                        <div class="panel panel-default">
+                                                                            <div class="panel-heading">
+                                                                                <i class="fa fa-th-large"></i>
+                                                                                Address: {{$index + 1}}
+
+                                                                                <div class="pull-right"
+                                                                                     style="margin-top: -2px;">
+                                                                                    <!--Primary-->
+                                                                                    <button type="button"
+                                                                                            uib-tooltip="Click to set as primary"
+                                                                                            ng-class="item.isPrimary ? 'btn-success':'btn-default'"
+                                                                                            ng-click="vm.setAddressAsPrimary($index)"
+                                                                                            class="btn btn-xs b-a-dark">
+                                                                                        Primary
+                                                                                    </button>
+
+                                                                                    <action-buttons
+                                                                                            edit-exp-type="'fn'"
+                                                                                            edit-fn="vm.editSingleAddress($index)"
+                                                                                            delete-exp-type="'fn'"
+                                                                                            delete-fn="vm.showDelModalFn($index);">
+                                                                                    </action-buttons>
+                                                                                </div>
+                                                                            </div>
+
+                                                                            <div class="panel-body">
+                                                                                <!--Address-->
+                                                                                <div class="m-b-xs clearfix"
+                                                                                     ng-if="item && item.line1">
+                                                                                    <div class="col-sm-4 no-padder text-muted">
+                                                                                        Address :
+                                                                                    </div>
+                                                                                    <div class="col-sm-6 no-padder">
+                                                                                        {{item.line1}}
+                                                                                    </div>
+                                                                                </div>
+
+                                                                                <!--City-->
+                                                                                <div class="m-b-xs clearfix"
+                                                                                     ng-if="item && item.city">
+                                                                                    <div class="col-sm-4 no-padder text-muted">
+                                                                                        City :
+                                                                                    </div>
+                                                                                    <div class="col-sm-6 no-padder">
+                                                                                        {{item.city}}
+                                                                                    </div>
+                                                                                </div>
+
+                                                                                <!--State-->
+                                                                                <div class="m-b-xs clearfix"
+                                                                                     ng-if="item && item.state">
+                                                                                    <div class="col-sm-4 no-padder text-muted">
+                                                                                        State :
+                                                                                    </div>
+                                                                                    <div class="col-sm-6 no-padder">
+                                                                                        {{item.state}}
+                                                                                    </div>
+                                                                                </div>
+
+                                                                                <!--Country-->
+                                                                                <div class="m-b-xs clearfix"
+                                                                                     ng-if="item && item.country">
+                                                                                    <div class="col-sm-4 no-padder text-muted">
+                                                                                        Country :
+                                                                                    </div>
+                                                                                    <div class="col-sm-6 no-padder">
+                                                                                        {{item.country}}
+                                                                                    </div>
+                                                                                </div>
+
+                                                                                <!--Postal code-->
+                                                                                <div class="m-b-xs clearfix"
+                                                                                     ng-if="item && item.pincode">
+                                                                                    <div class="col-sm-4 no-padder text-muted">
+                                                                                        Postal Code :
+                                                                                    </div>
+                                                                                    <div class="col-sm-6 no-padder">
+                                                                                        {{item.pincode}}
+                                                                                    </div>
+                                                                                </div>
+                                                                            </div>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </fieldset>
+                                                </div>
+                                            </div>
+                                        </form>
+                                        <!--<table class="table table-bordered">
+                                            <tr>
+                                                <td>Name :</td>
+                                                <td>{{vm.user.name}}</td>
+                                            </tr>
+                                            <tr>
+                                                <td>Email :</td>
+                                                <td>{{vm.user.email}}</td>
+                                            </tr>
+                                            <tr>
+                                                <td>Mobile :</td>
+                                                <td>{{vm.user.mobile}}</td>
+                                            </tr>
+                                        </table>-->
+                                    </div>
+                                </uib-tab>
+                                <uib-tab index="1" heading="Change Password"
+                                         ng-click="vm.currentTab = vm.tab.password">
+                                    <div class="wrapper-sm">
+                                        <form name="resetPasswordForm"
+                                              ng-submit="vm.changePasswordFn(vm.newPassword)">
+                                            <div class="form-group pull-in clearfix">
+                                                <div class="col-lg-12 col-md-12 col-sm-12 no-padder">
+                                                    <div class="col-lg-3 col-md-3 col-sm-6 col-xs-6 text-right">
+                                                        <label>New Password
+                                                            <span class="error"
+                                                                  ng-show="form.newPassword.$error.required"
+                                                                  style="color:RED">*</span>
+                                                            <span class="valid"
+                                                                  ng-show="form.newPassword.$valid"
+                                                                  style="color:#31B404">*</span>
+                                                            <span class="pull-right m-l-sm">
+                                                                <i class="fa fa-info-circle"
+                                                                   uib-tooltip-html="passwordGuideline"></i>
+                                                            </span>
+                                                        </label>
+                                                    </div>
+                                                    <div class="col-lg-4 col-md-4 col-sm-5 no-padder">
+                                                        <div class="input-group">
+                                                            <div class="input-group-addon">
+                                                                <span
+                                                                        class="	fa fa-sign-in"></span>
+                                                            </div>
+                                                            <input ng-attr-type="{{ showPassword ? 'text' : 'password' }}"
+                                                                   class="form-control"
+                                                                   name="newPassword"
+                                                                   ok-password
+                                                                   ng-model="vm.newPassword"
+                                                                   required>
+                                                            <span tabindex="100"
+                                                                  title="Click here show/hide password"
+                                                                  class="add-on input-group-addon"
+                                                                  ng-click="showPassword = !showPassword"
+                                                                  style="cursor: pointer;">
+                                                                <i class="fa"
+                                                                   ng-class="showPassword ? 'fa-eye-slash' : 'fa-eye'"></i>
+                                                            </span>
+                                                        </div>
+                                                        <div class="strength-meter">
+                                                            <div class="strength-meter-fill"
+                                                                 data-strength="{{passwordStrength}}"></div>
+                                                        </div>
+
+                                                        <!--<span class="error"
+                                                              ng-show="vm.newPassword
+                                                                       && vm.newPassword.length<6"
+                                                              style="color:RED">*minimum
+                                                                                        length 6
+                                                                                        characters</span>-->
+                                                    </div>
+                                                    <div class="col-lg-2 col-md-2 col-sm-2 col-xs-2">
+                                                        <div class="m-t-xs">
+                                                            <span id="password-strength-label"
+                                                                  class="text-xs"></span>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="form-group pull-in clearfix">
+                                                <div class="col-lg-12 col-md-12 col-sm-12 no-padder">
+                                                    <div class="col-lg-3 col-md-3 col-sm-6 col-xs-6 text-right">
+                                                        <label>Confirm Password
+                                                            <span class="error"
+                                                                  ng-show="form.confirm_password.$error.required"
+                                                                  style="color:RED">*</span>
+                                                            <span class="valid"
+                                                                  ng-show="form.confirm_password.$valid"
+                                                                  style="color:#31B404">*</span>
+                                                        </label>
+                                                    </div>
+                                                    <div class="input-group col-lg-4 col-md-4 col-sm-5">
+                                                        <input type="password"
+                                                               class="form-control"
+                                                               name="confirm_password"
+                                                               ng-model="vm.confirm_password"
+                                                               required>
+
+                                                        <span class="error"
+                                                              ng-show="vm.newPassword && vm.confirm_password &&
+                                                                        (vm.newPassword != vm.confirm_password)"
+                                                              style="color:RED"> Password
+                                                            Mismatch.
+                                                        </span>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="form-group pull-in clearfix">
+                                                <div class="col-lg-12 col-md-12 col-sm-12">
+
+                                                    <div class="col-lg-3 col-md-3 col-sm-6">
+                                                        &nbsp;
+                                                    </div>
+                                                    <div class="input-group col-lg-4 col-md-4 col-sm-5">
+                                                        <button type="submit"
+                                                                ng-disabled="resetPasswordForm.$invalid
+                                                                                || vm.newPassword != vm.confirm_password
+                                                                                || vm.newPassword.length<6"
+                                                                class="btn btn-reset form-control">
+                                                            Reset Password
+                                                        </button>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </form>
+                                    </div>
+                                </uib-tab>
+                            </uib-tabset>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!--Fix row-->
+            <div class="col-md-12 wrapper-xs"
+                 ng-if="vm.user.id && vm.currentTab == vm.tab.basic">
+
+                <button type="button"
+                        class="btn btn-success btn-sm pull-right"
+                        ng-click="vm.isContinue = false;vm.updateUserFn()">
+                    Update
+                </button>
+            </div>
+            <!-- /Fix row-->
+        </div>
+    </div>
+</div>

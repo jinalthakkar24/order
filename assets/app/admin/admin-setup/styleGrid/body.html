@@ -1,0 +1,970 @@
+<div id="topBody" class="col-lg-12 col-md-12 col-xs-12 col-sm-12 no-padder">
+    <div id="button-id"
+         ng-class="{'backHightLight':vm.activeBody.id == 'button-id'}"
+         class="form-group clearfix m-b-none wrapper-sm">
+        <div class="m-b-sm h4">
+            Buttons
+            <a href="http://192.168.0.117/new-angular-b/angular/#/app/ui/buttons"
+               target="_blank" class="b-b b-info text-sm">
+                <i class="fa fa-external-link-square text-info-dker"></i>
+                <i class="text-info-dker">Button full demo</i>
+            </a>
+        </div>
+
+        <div class="clearfix m-b-xs">
+            <i class="fa fa-hand-o-right"></i>
+            <b>Add</b> form actions sequence :
+            <copy-btn copy-to-clipboard-fn="vm.copyToClipboardFn(null,vm.addActionButtons)"></copy-btn>
+
+            <button ng-click="vm.cancelFn()" class="btn btn-sm btn-default">Cancel</button>
+            <button ng-click="vm.resetFn()" class="btn btn-sm btn-info">Reset</button>
+            <button ng-click="vm.saveFn(true)" class="btn btn-sm btn-success">Save & Continue</button>
+            <button ng-click="vm.saveFn()" class="btn btn-sm btn-success">Save</button>
+
+        </div>
+        <div class="clearfix m-b-xs">
+            <i class="fa fa-hand-o-right"></i>
+            <b>Update</b> form actions sequence :
+            <button class="btn btn-sm btn-default">Cancel</button>
+            <button class="btn btn-sm btn-success">Update</button>
+        </div>
+        <ul class="list-group list-group-sm m-b-none">
+            <li class="list-group-item">
+                <div class="row">
+                    <div class="col-sm-6">
+                        Regular Button <code>btn btn-sm btn-default</code>
+                        <button class="btn btn-sm btn-default m-l-xs">btn-sm</button>
+                    </div>
+                    <div class="col-sm-6">
+                        Small Button <code>btn btn-xs btn-default</code>
+                        <button class="btn btn-xs btn-default m-l-xs">btn-xs</button>
+                    </div>
+                </div>
+
+            </li>
+            <li class="list-group-item">
+                For save / save & continue / update use class <code>btn btn-sm btn-success</code>
+                <button class="btn btn-sm btn-success m-l-xs">Save / Save & Continue / Update</button>
+            </li>
+            <li class="list-group-item">
+                For list / add use class <code>btn btn-sm btn-dark</code>
+                <button class="btn btn-sm btn-dark m-l-xs">List / Add</button>
+            </li>
+            <li class="list-group-item">
+                For clear / cancel / close use class <code>btn btn-sm btn-default</code>
+                <button class="btn btn-sm btn-default m-l-xs">Clear / Cancel / Close</button>
+            </li>
+            <li class="list-group-item">
+                For reset use class <code>btn btn-sm btn-info</code>
+                <button class="btn btn-sm btn-info m-l-xs">Reset</button>
+            </li>
+            <li class="list-group-item">
+                For radio button group
+                <copy-btn copy-to-clipboard-fn="vm.copyToClipboardFn(null,vm.btnGroupHtml)"></copy-btn>
+                <div class="btn-group m-l-xs">
+                    <button class="btn btn-sm"
+                            ng-disabled="vm.gender == btn.id"
+                            ng-class="(vm.gender == btn.id ? 'btn-expand' : 'btn-default bg-white')"
+                            ng-repeat="btn in vm.buttons"
+                            ng-model="vm.gender"
+                            uib-btn-radio="'{{btn.id}}'">
+                        <i class="fa fa-check text-active"></i>
+                        {{btn.name}}
+                    </button>
+                </div>
+            </li>
+            <li class="list-group-item">
+                For checkbox button group
+                <copy-btn copy-to-clipboard-fn="vm.copyToClipboardFn(null,vm.multiCheckBoxBtnHtml)"></copy-btn>
+                <div class="btn-group">
+                    <label class="btn btn-sm btn-default" ng-model="vm.checkModel.left" uib-btn-checkbox>
+                        <i ng-if="vm.checkModel.left" class="fa fa-check"></i>Left</label>
+                    <label class="btn btn-sm btn-default" ng-model="vm.checkModel.middle" uib-btn-checkbox>
+                        <i ng-if="vm.checkModel.middle" class="fa fa-check"></i>Middle</label>
+                    <label class="btn btn-sm btn-default" ng-model="vm.checkModel.right" uib-btn-checkbox>
+                        <i ng-if="vm.checkModel.right" class="fa fa-check"></i>Right</label>
+                </div>
+            </li>
+
+        </ul>
+    </div>
+    <hr />
+
+    <div id="tooltip-id"
+         ng-class="{'backHightLight':vm.activeBody.id == 'tooltip-id'}"
+         class="form-group clearfix m-b-none wrapper-sm">
+        <div class="m-b-sm h4">
+            Tooltip
+            <a href="http://angular-ui.github.io/bootstrap/#!#tooltip"
+               target="_blank" class="b-b b-info text-sm">
+                <i class="fa fa-external-link-square text-info-dker"></i>
+                <i class="text-info-dker">Tooltip full documentation</i>
+            </a>
+        </div>
+
+        <div class="clearfix m-b-xs">
+            <i class="fa fa-hand-o-right"></i>
+            <b>tooltip-placement</b> should be <code>auto bottom</code>
+        </div>
+        <div class="clearfix m-b-xs">
+            <i class="fa fa-hand-o-right"></i>
+            <b>tooltip-class</b> should be <code>customTooltipClass</code>
+        </div>
+        <div class="clearfix m-b-xs">
+            <i class="fa fa-hand-o-right"></i>
+            <b>tooltip-append-to-body</b> should be <code>true</code>
+        </div>
+
+        <ul class="list-group list-group-sm m-b-none">
+            <li class="list-group-item">
+                General tooltip :
+                <b class="text-info"
+                   uib-tooltip="You are viewing tooltip!"
+                   tooltip-append-to-body="true"
+                   tooltip-placement="auto bottom">Common (See here)</b>
+            </li>
+            <li class="list-group-item">
+                I can even contain <b>HTML</b> as a :
+                <b class="text-info"
+                   uib-tooltip-html="'static. {{vm.dynamicTooltipText}}. <b>bold.</b>'"
+                   tooltip-append-to-body="true"
+                   tooltip-placement="auto bottom">Inline string (See here)</b>
+                <i class="fa fa-long-arrow-right"></i>
+                <code>{{vm.uibTooltipHtml}}</code>
+            </li>
+            <li class="list-group-item">
+                I can have a custom class :
+                <b class="text-info"
+                   uib-tooltip="I can have a custom class applied to me!"
+                   tooltip-class="customTooltipClass"
+                   tooltip-append-to-body="true"
+                   tooltip-placement="auto bottom">Custom class (See here)</b>
+                <i class="fa fa-long-arrow-right"></i>
+                <code>{{vm.uibTooltipClass}}</code>
+            </li>
+
+        </ul>
+    </div>
+    <hr />
+
+    <div id="popover-id"
+         ng-class="{'backHightLight':vm.activeBody.id == 'popover-id'}"
+         class="form-group clearfix m-b-none wrapper-sm">
+        <div class="m-b-sm h4">
+            Popover
+            <a href="http://angular-ui.github.io/bootstrap/#!#popover"
+               target="_blank" class="b-b b-info text-sm">
+                <i class="fa fa-external-link-square text-info-dker"></i>
+                <i class="text-info-dker">Popover full documentation</i>
+            </a>
+        </div>
+
+        <div class="clearfix m-b-xs">
+            <i class="fa fa-hand-o-right"></i>
+            <b>popover-title</b> must be <i>as per popover content as possible</i>
+        </div>
+        <div class="clearfix m-b-xs">
+            <i class="fa fa-hand-o-right"></i>
+            <b>popover-placement</b> should be <code>auto bottom</code>
+        </div>
+        <div class="clearfix m-b-xs">
+            <i class="fa fa-hand-o-right"></i>
+            <b>popover-class</b> should be <code>customPopoverClass</code>
+        </div>
+        <div class="clearfix m-b-xs">
+            <i class="fa fa-hand-o-right"></i>
+            <b>popover-is-open</b> should be <i>as per need</i>
+        </div>
+        <div class="clearfix m-b-xs">
+            <i class="fa fa-hand-o-right"></i>
+            <b>popover-append-to-body</b> should be <code>true</code>
+        </div>
+        <div class="clearfix m-b-xs">
+            <i class="fa fa-hand-o-right"></i>
+            <b>popover-trigger</b> should be <i>as per need</i> <code>mouseenter / click / outsideClick</code>
+        </div>
+
+        <ul class="list-group list-group-sm m-b-none">
+            <li class="list-group-item">
+                General popover opens on <i>mouseenter</i> <b>uib-popover</b> :
+                <b class="text-info"
+                   uib-popover="I appeared on mouse enter!"
+                   popover-title="Title Here"
+                   popover-trigger="'mouseenter'"
+                   popover-append-to-body="true"
+                   popover-placement="auto bottom">Common (See here)</b>
+            </li>
+            <li class="list-group-item">
+                General popover <b>uib-popover-template</b> :
+
+                <b class="text-info"
+                   uib-popover-template="vm.dynamicPopover.templateUrl"
+                   popover-title="Title Here"
+                   popover-append-to-body="true"
+                   popover-placement="auto bottom"
+                   popover-is-open="vm.dynamicPopover.isOpen"
+                   popover-trigger="'outsideClick'">Template popover (See here)</b>
+                <i class="fa fa-long-arrow-right"></i>
+                <code>{{vm.uibPopoverTemplate}}</code>
+            </li>
+            <li class="list-group-item">
+                General popover <b>uib-popover-html</b> :
+                <b class="text-info"
+                   uib-popover-html="'<b>HTML</b>, <i>inline</i>'"
+                   popover-append-to-body="true"
+                   popover-placement="auto bottom"
+                   popover-trigger="'outsideClick'">HTML inline popover (See here)</b>
+                <i class="fa fa-long-arrow-right"></i>
+                <code>{{vm.uibPopoverHtml}}</code>
+            </li>
+
+        </ul>
+    </div>
+    <hr />
+
+    <div id="ui-select-id"
+         ng-class="{'backHightLight':vm.activeBody.id == 'ui-select-id'}"
+         class="form-group clearfix m-b-none wrapper-sm">
+        <div class="m-b-sm h4">
+            Ui-select
+            <a href="https://github.com/angular-ui/ui-select/wiki/ui-select"
+               target="_blank" class="b-b b-info text-sm">
+                <i class="fa fa-external-link-square text-info-dker"></i>
+                <i class="text-info-dker">Ui select full documentation</i>
+            </a>
+
+            <a href="https://angular-ui.github.io/ui-select/#examples"
+               target="_blank" class="b-b b-info text-sm m-l">
+                <i class="fa fa-external-link-square text-info-dker"></i>
+                <i class="text-info-dker">Examples</i>
+            </a>
+        </div>
+
+        <ul class="list-group list-group-sm m-b-none">
+            <li ng-class="{'backHightLight':vm.activeBody.id == 'single-select-id'}" id="single-select-id"
+                class="list-group-item">
+                <div class="m-b-sm h4">Single selection</div>
+                <div class="clearfix m-b-xs">
+                    <i class="fa fa-hand-o-right"></i>
+                    <b>class</b> for different height add class in ui-select as per need Ex:
+                    <i class="fa fa-long-arrow-right"></i>
+                    <code>class="uiselect-30"</code>
+                </div>
+                <div class="w inline">
+                    <label>Default (34px height)</label>
+                    <ui-select ng-model="vm.type"
+                               ng-change="vm.changeFn()"
+                               theme="bootstrap">
+                        <ui-select-match allow-clear="true"
+                                         placeholder="Select type">
+                            {{$select.selected.name}}
+                        </ui-select-match>
+                        <ui-select-choices
+                                repeat="type.id as type in vm.mainTypes | filter: $select.search">
+                            <div ng-bind-html="type.name | highlight: $select.search"></div>
+                        </ui-select-choices>
+                    </ui-select>
+                </div>
+
+                <div class="w inline m-l-sm">
+                    <label>30px height <code>uiselect-30</code></label>
+                    <ui-select ng-model="vm.type"
+                               class="uiselect-30"
+                               ng-change="vm.changeFn()"
+                               theme="bootstrap">
+                        <ui-select-match allow-clear="true"
+                                         placeholder="Select type">
+                            {{$select.selected.name}}
+                        </ui-select-match>
+                        <ui-select-choices
+                                repeat="type.id as type in vm.mainTypes | filter: $select.search">
+                            <div ng-bind-html="type.name | highlight: $select.search"></div>
+                        </ui-select-choices>
+                    </ui-select>
+                </div>
+
+                <div class="w inline m-l-sm">
+                    <label>24px height <code>uiselect-24</code></label>
+                    <ui-select ng-model="vm.type"
+                               class="uiselect-24"
+                               ng-change="vm.changeFn()"
+                               theme="bootstrap">
+                        <ui-select-match allow-clear="true"
+                                         placeholder="Select type">
+                            {{$select.selected.name}}
+                        </ui-select-match>
+                        <ui-select-choices
+                                repeat="type.id as type in vm.mainTypes | filter: $select.search">
+                            <div ng-bind-html="type.name | highlight: $select.search"></div>
+                        </ui-select-choices>
+                    </ui-select>
+                </div>
+
+                <copy-btn copy-to-clipboard-fn="vm.copyToClipboardFn(null,vm.singleUiSelect)"></copy-btn>
+                <div render-nested-html>
+                    {{vm.singleUiSelect}}
+                </div>
+            </li>
+
+            <li ng-class="{'backHightLight':vm.activeBody.id == 'multi-select-id'}" id="multi-select-id"
+                class="list-group-item">
+                <div class="m-b-sm">
+                    <span class="h4">Multiple selection</span>
+                </div>
+                <div class="clearfix m-b-xs">
+                    <i class="fa fa-hand-o-right"></i>
+                    Closes a multi-select upon selection
+                    <i class="fa fa-long-arrow-right"></i>
+                    <code>close-on-select="false"</code>
+                </div>
+                <div class="clearfix m-b-xs">
+                    <i class="fa fa-hand-o-right"></i>
+                    Appends the dropdown to the box vs relative
+                    <i class="fa fa-long-arrow-right"></i>
+                    <code>append-to-body="true"</code>
+                </div>
+                <div class="clearfix m-b-xs">
+                    <i class="fa fa-hand-o-right"></i>
+                    Clears the search box after selecting an option
+                    <i class="fa fa-long-arrow-right"></i>
+                    <code>reset-search-input="false"</code>
+                </div>
+                <div class="clearfix m-b-xs">
+                    <i class="fa fa-hand-o-right"></i>
+                    Occurs when an item was removed Event :
+                    <i class="fa fa-long-arrow-right"></i>
+                    <code>on-remove="someFunction($item, $model)"</code>
+                </div>
+                <div class="clearfix m-b-xs">
+                    <i class="fa fa-hand-o-right"></i>
+                    Occurs when an item was removed Event :
+                    <i class="fa fa-long-arrow-right"></i>
+                    <code>on-select="someFunction($item, $model)"</code>
+                </div>
+                <div class="clearfix m-b-xs">
+                    <i class="fa fa-hand-o-right"></i>
+                    Examples: Set focus
+                    <div render-nested-html>
+                        {{vm.setFocus}}
+                        function MyCtrl(){
+                        $scope.setInputFocus = function(){
+                        $scope.$broadcast('SetFocus');
+                        }
+                        }
+                    </div>
+                </div>
+                <div class="clearfix m-b-xs">
+                    <i class="fa fa-hand-o-right"></i>
+                    Examples: Refresh Ui-select
+                    <copy-btn copy-to-clipboard-fn="vm.copyToClipboardFn(null,vm.refreshUiSelect)"></copy-btn>
+                    <div render-nested-html>
+                        {{vm.refreshUiSelect}}
+                    </div>
+                </div>
+                <div class="clearfix m-b-xs">
+                    <i class="fa fa-hand-o-right"></i>
+                    You can set some options at the global level using the uiSelectConfig constant like
+                    <copy-btn copy-to-clipboard-fn="vm.copyToClipboardFn(null,vm.uiSelectConfig)"></copy-btn>
+                    <div render-nested-html>
+                        {{vm.uiSelectConfig}}
+                    </div>
+                </div>
+                <div class="clearfix m-b-xs">
+                    <div class="w inline">
+                        <ui-select ng-model="vm.tags"
+                                   theme="bootstrap"
+                                   close-on-select="false"
+                                   reset-search-input="false"
+                                   append-to-body="true"
+                                   multiple>
+                            <ui-select-match placeholder="Select Types">
+                                {{$item.name}}
+                            </ui-select-match>
+                            <ui-select-choices
+                                    repeat="tag.id as tag in vm.mainTypes | filter: $select.search">
+                                <div>
+                                    {{tag.name | highlight: $select.search}}
+                                </div>
+                            </ui-select-choices>
+                        </ui-select>
+                    </div>
+                    <div class="btn-group m-l-xs inline v-top">
+                        <button class="btn btn-sm"
+                                ng-disabled="vm.uiSelectType == btn.id"
+                                ng-class="(vm.uiSelectType == btn.id ? 'btn-expand' : 'btn-default bg-white')"
+                                ng-repeat="btn in vm.uiSelectTypes"
+                                ng-model="vm.uiSelectType"
+                                uib-btn-radio="'{{btn.id}}'">
+                            <i class="fa fa-check text-active"></i>
+                            {{btn.name}}
+                        </button>
+                    </div>
+
+
+                    <copy-btn ng-if="vm.uiSelectType == 1"
+                              copy-to-clipboard-fn="vm.copyToClipboardFn(null,vm.multiUiSelect)"></copy-btn>
+
+                    <copy-btn ng-if="vm.uiSelectType == 2"
+                              copy-to-clipboard-fn="vm.copyToClipboardFn(null,vm.multiUiSelectApi)"></copy-btn>
+
+                </div>
+                <div ng-if="vm.uiSelectType == 1">
+                    <div render-nested-html>
+                        {{vm.multiUiSelect}}
+                    </div>
+                </div>
+                <div ng-if="vm.uiSelectType == 2">
+                    <div render-nested-html>
+                        {{vm.multiUiSelectApi}}
+                    </div>
+                </div>
+
+
+            </li>
+        </ul>
+    </div>
+    <hr />
+
+    <div id="display-id"
+         ng-class="{'backHightLight':vm.activeBody.id == 'display-id'}"
+         class="form-group clearfix m-b-none wrapper-sm">
+        <div class="m-b-sm h4">Display Element
+        </div>
+
+        <ul class="list-group list-group-sm m-b-none">
+            <li ng-class="{'backHightLight':vm.activeBody.id == 'list-id'}" id="list-id"
+                class="list-group-item clearfix">
+                <div class="m-b-xs">
+                    <span class="h4">Listing table/block view</span>
+                </div>
+                <div class="popup-gallery sampleImage">
+                    <figure><img src="/styleGrid/list.png"
+                                 ng-click="displayImages([{path:'/styleGrid/list.png',type:1}], 0)"
+                                 width="200" />
+                        <figcaption>Fig. Listing demo</figcaption>
+                    </figure>
+                </div>
+                <div class="clearfix m-b-xs">
+                    <i class="fa fa-hand-o-right"></i>
+                    Add class <code>text-muted</code> for index number
+                </div>
+                <div class="clearfix m-b-xs">
+                    <i class="fa fa-hand-o-right"></i>
+                    Sequence must be <b> number </b> | <b>checkbox</b> | <b>image</b> and then other details
+                </div>
+                <div class="clearfix m-b-xs">
+                    <i class="fa fa-hand-o-right"></i>
+                    If image is not exist then put <b>avatar</b> with title letters
+                </div>
+                <div class="clearfix m-b-xs">
+                    <i class="fa fa-hand-o-right"></i>
+                    Add class <code>ahover</code> to name/title where <b>view link</b> will be place
+                </div>
+                <div class="clearfix m-b-xs">
+                    <i class="fa fa-hand-o-right"></i>
+                    Image for the listing will be circle <code>40x40</code>, it should be open on click
+                </div>
+                <div class="clearfix m-b-xs">
+                    <i class="fa fa-hand-o-right"></i>
+                    Phone & email
+                    <ul>
+                        <li>No need to use icon in listing for email and phone</li>
+                        <li>Email always show in lowercase</li>
+                        <li>Cell number always show with '+' country code</li>
+                        <li>Use a single columns for email and phone if columns are more</li>
+                    </ul>
+                </div>
+                <div class="clearfix m-b-xs">
+                    <i class="fa fa-hand-o-right"></i>
+                    Date format : use following filters
+                    <ul>
+                        <li>Date and time : <code>appDate</code> <i class="fa fa-long-arrow-right"></i>
+                            {{vm.today | appDate}}
+                        </li>
+                        <li>Only date : <code>appOnlyDate</code> <i class="fa fa-long-arrow-right"></i>
+                            {{vm.today | appOnlyDate}}
+                        </li>
+                        <li>Only time : <code>onlyTime</code> <i class="fa fa-long-arrow-right"></i> {{vm.today |
+                            onlyTime}}
+                        </li>
+                    </ul>
+                </div>
+                <div class="clearfix m-b-xs">
+                    <i class="fa fa-hand-o-right"></i>
+                    Put following columns center only; use class <code>text-center</code>
+                    <ul>
+                        <li># (number), checkbox, image</li>
+                        <li>true/false/radio icons</li>
+                        <li>action buttons</li>
+                    </ul>
+                </div>
+            </li>
+            <li ng-class="{'backHightLight':vm.activeBody.id == 'desc-id'}" id="desc-id"
+                class="list-group-item clearfix">
+                <div class="m-b-xs">
+                    <span class="h4">Description</span>
+                    <div class="btn-group m-l-xs inline v-top">
+                        <button class="btn btn-xs"
+                                ng-disabled="vm.descType == btn.id"
+                                ng-class="(vm.descType == btn.id ? 'btn-expand' : 'btn-default bg-white')"
+                                ng-repeat="btn in vm.descTypes"
+                                ng-model="vm.descType"
+                                uib-btn-radio="'{{btn.id}}'">
+                            <i class="fa fa-check text-active"></i>
+                            {{btn.name}}
+                        </button>
+                    </div>
+
+                    <copy-btn ng-if="vm.descType == 1"
+                              copy-to-clipboard-fn="vm.copyToClipboardFn(null,vm.descHtml)"></copy-btn>
+                    <copy-btn ng-if="vm.descType == 2"
+                              copy-to-clipboard-fn="vm.copyToClipboardFn(null,vm.descHtmlTruncate)"></copy-btn>
+                    <copy-btn ng-if="vm.descType == 3"
+                              copy-to-clipboard-fn="vm.copyToClipboardFn(null,vm.descListHtml)"></copy-btn>
+                </div>
+
+                <div>
+                    <div ng-if="vm.descType == 1">
+                        <div ng-if="vm.desc"
+                             class="col-md-12 col-sm-12 p3 b-a descBlock m-t-xs">
+                            <div class="form-group m-b-xs text-md text-muted">Description</div>
+
+                            <pre>{{vm.desc}}</pre>
+                        </div>
+                    </div>
+
+                    <div ng-if="vm.descType == 2">
+                        <pre uib-popover-template="'description-popover.html'"
+                             popover-enable="{{vm.desc.length > 225}}"
+                             popover-class="desc-popover"
+                             popover-placement="auto bottom"
+                             popover-trigger="'outsideClick'"
+                             popover-is-open="vm.isOpen"
+                             popover-title="Description"
+                             popover-append-to-body="true">
+                        {{vm.desc | truncate: 225 }}
+                            <span class="font-bold"
+                                  ng-if="vm.desc.length > 225">Read More</span>
+                        </pre>
+                    </div>
+
+                    <div ng-if="vm.descType == 3 ">
+                       <pre class="b-a wrapper-xs pre-desc"
+                            ng-if="vm.desc.length">
+                            {{vm.desc}}
+                       </pre>
+                    </div>
+                </div>
+            </li>
+            <li ng-class="{'backHightLight':vm.activeBody.id == 'link-id'}" id="link-id"
+                class="list-group-item clearfix">
+                <div class="m-b-xs">
+                    <span class="h4">Link</span>
+                    <span class="text-xs">(Website link or etc.)</span>
+                </div>
+
+                <div class="clearfix m-b-xs">
+                    <i class="fa fa-hand-o-right"></i>
+                    Add class must be <code>link</code>
+                </div>
+                <div class="clearfix m-b-xs">
+                    <i class="fa fa-hand-o-right"></i>
+                    Use anchor tag with <code>target="_blank"</code>
+                </div>
+
+                <div class="clearfix m-b-xs">
+                    Example :
+                    <span>
+                        <a href="http://angular-ui.github.io/bootstrap/" target="_blank" class="link">
+                            Bootstrap components written in pure AngularJS by the AngularUI Team
+                        </a>
+                    </span>
+                </div>
+            </li>
+            <li ng-class="{'backHightLight':vm.activeBody.id == 'date-id'}" id="date-id"
+                class="list-group-item clearfix">
+                <div class="m-b-xs">
+                    <span class="h4">Date format</span>
+                </div>
+                <div class="clearfix m-b-xs">
+                    <i class="fa fa-hand-o-right"></i>
+                    Date format : use following filters
+                    <ul>
+                        <li>Date and time : <code>appDate</code> <i class="fa fa-long-arrow-right"></i>
+                            {{vm.today | appDate}}
+                        </li>
+                        <li>Only date : <code>appOnlyDate</code> <i class="fa fa-long-arrow-right"></i>
+                            {{vm.today | appOnlyDate}}
+                        </li>
+                        <li>Only time : <code>onlyTime</code> <i class="fa fa-long-arrow-right"></i> {{vm.today |
+                            onlyTime}}
+                        </li>
+                    </ul>
+                </div>
+            </li>
+            <li ng-class="{'backHightLight':vm.activeBody.id == 'image-id'}" id="image-id"
+                class="list-group-item clearfix">
+                <div class="m-b-xs">
+                    <span class="h4">Image</span>
+                </div>
+                <div class="clearfix m-b-xs">
+                    <i class="fa fa-hand-o-right"></i>
+                    Put <code>figcaption</code> after <code>img</code> tag and give description of image.
+                </div>
+                <div class="clearfix m-b-xs">
+                    <i class="fa fa-hand-o-right"></i> Add class <code>img-md</code> into img tag
+                    <div ng-repeat="file in vm.files" class="image-container m3 inline">
+
+                        <span class="popup-gallery">
+                            <figcaption>Image {{$index + 1}}</figcaption>
+                            <img ng-src="{{file.path}}"
+                                 ng-click="displayImages(vm.files, $index)"
+                                 class="img-md"
+                                 alt="img" />
+
+                        </span>
+
+                        <a class="remove-image-icon">
+                            <i class="fa fa-times"></i>
+                        </a>
+                    </div>
+                </div>
+                <div class="clearfix m-b-xs">
+                    <i class="fa fa-hand-o-right"></i> Add class <code>img-sm</code> into img tag
+                    <div ng-repeat="file in vm.files" class="image-container m3 inline">
+
+                        <span class="popup-gallery">
+                            <img ng-src="{{file.path}}"
+                                 ng-click="displayImages(vm.files, $index)"
+                                 class="img-sm"
+                                 alt="img" />
+                            <figcaption>Image {{$index + 1}}</figcaption>
+                        </span>
+
+                        <a class="remove-image-icon">
+                            <i class="fa fa-times"></i>
+                        </a>
+                    </div>
+                </div>
+
+                <div class="clearfix m-b-xs">
+                    <i class="fa fa-hand-o-right"></i> Add class <code>img-xs</code> into img tag
+                    <div ng-repeat="file in vm.files" class="image-container m3 inline">
+
+                        <span class="popup-gallery">
+                            <img ng-src="{{file.path}}"
+                                 ng-click="displayImages(vm.files, $index)"
+                                 class="img-xs"
+                                 alt="img" />
+                            <figcaption>Image {{$index + 1}}</figcaption>
+                        </span>
+
+                        <a class="remove-image-icon">
+                            <i class="fa fa-times"></i>
+                        </a>
+                    </div>
+                </div>
+
+                <div class="clearfix m-b-xs">
+                    <i class="fa fa-hand-o-right"></i> Add class <code>img-list</code> into img tag
+                    <div class="inline">
+                        <span class="popup-gallery">
+                            <img ng-src="/sampleImgs/1.jpg"
+                                 ng-click="displayImages([{path:'/sampleImgs/1.jpg',type:1}], 0)"
+                                 class="img-list"
+                                 alt="img" />
+                            <figcaption>Title Image</figcaption>
+                        </span>
+                    </div>
+                </div>
+            </li>
+        </ul>
+        <hr />
+
+        <div id="input-id"
+             ng-class="{'backHightLight':vm.activeBody.id == 'input-id'}"
+             class="form-group clearfix m-b-none wrapper-sm">
+            <div class="m-b-sm h4">Input element
+            </div>
+
+            <ul class="list-group list-group-sm m-b-none">
+                <li ng-class="{'backHightLight':vm.activeBody.id == 'cell-id'}"
+                    id="cell-id" class="list-group-item clearfix">
+                    <div class="m-b-xs">
+                        <span class="h4">Cell number</span>
+                        <a href="https://github.com/jackocnr/intl-tel-input"
+                           target="_blank" class="b-b b-info text-sm m-l">
+                            <i class="fa fa-external-link-square text-info-dker"></i>
+                            <i class="text-info-dker">intl-tel-input library</i>
+                        </a>
+                        <div class="inline m-l">
+                            <input type="text"
+                                   id="cell"
+                                   name="cell"
+                                   class="form-control"
+                                   ng-model="vm.cell"
+                                   ng-intl-tel-input />
+                        </div>
+                    </div>
+                    <div class="clearfix m-b-xs">
+                        <i class="fa fa-hand-o-right"></i>
+                        Use library <code>ng-intl-tel-input</code>
+                    </div>
+                    <div class="clearfix m-b-xs">
+                        <i class="fa fa-hand-o-right"></i>
+                        Use uniq id and name compulsory
+                    </div>
+
+                    <span><i class="fa fa-hand-o-right"></i>
+                    Form input <b>HTML</b></span>
+
+                    <copy-btn copy-to-clipboard-fn="vm.copyToClipboardFn(null,vm.cellNumber)"></copy-btn>
+                    <div render-nested-html>
+                        {{vm.cellNumber}}
+                    </div>
+
+                    <span><i class="fa fa-hand-o-right"></i>
+                    For add time request <b>JS</b></span>
+                    <copy-btn copy-to-clipboard-fn="vm.copyToClipboardFn(null,vm.addCellReqJs)"></copy-btn>
+                    <div render-nested-html>
+                        {{vm.addCellReqJs}}
+                    </div>
+
+                    <span><i class="fa fa-hand-o-right"></i>
+                    For edit time request <b>JS</b></span>
+                    <copy-btn copy-to-clipboard-fn="vm.copyToClipboardFn(null,vm.editCellReqJs)"></copy-btn>
+                    <div render-nested-html>
+                        {{vm.editCellReqJs}}
+                    </div>
+
+                </li>
+                <li ng-class="{'backHightLight':vm.activeBody.id == 'date-picker-id'}"
+                    id="date-picker-id" class="list-group-item clearfix">
+                    <div class="m-b-sm">
+                        <span class="h4">Date picker</span>
+                        <a href="https://angular-ui.github.io/bootstrap/#!#datepicker"
+                           target="_blank" class="b-b b-info text-sm">
+                            <i class="fa fa-external-link-square text-info-dker"></i>
+                            <i class="text-info-dker">Date Picker Documentation</i>
+                        </a>
+                    </div>
+
+                    <div class="m-b-sm clearfix">
+                        <div class="btn-group">
+                            <button class="btn btn-sm"
+                                    ng-disabled="vm.datPickerType == dp.id"
+                                    ng-class="(vm.datPickerType == dp.id ? 'btn-expand' : 'btn-default bg-white')"
+                                    ng-repeat="dp in vm.datPickerTypes"
+                                    ng-model="vm.datPickerType"
+                                    uib-btn-radio="'{{dp.id}}'">
+                                <i class="fa fa-check text-active"></i>
+                                {{dp.name}}
+                            </button>
+                        </div>
+
+                        <copy-btn ng-if="vm.datPickerType == 1"
+                                  copy-to-clipboard-fn="vm.copyToClipboardFn(null,vm.onlyDateHtml)"></copy-btn>
+                        <copy-btn ng-if="vm.datPickerType == 2"
+                                  copy-to-clipboard-fn="vm.copyToClipboardFn(null,vm.startEndDateHtml)"></copy-btn>
+
+                    </div>
+                    <div class="clearfix m-b-xs" ng-if="vm.datPickerType == 1">
+                        <form name="basicForm">
+                            <div class="col-sm-4 no-padder">
+                                <label>Date
+                                    <span ng-class="basicForm.start_date.$error.required ? 'text-danger' : 'text-success'">*</span>
+                                </label>
+                                <span class="input-group"
+                                      ng-init="openea = false">
+                            <input type="text"
+                                   class="form-control"
+                                   name="start_date"
+                                   datepicker-append-to-body="true"
+                                   placeholder="DD-MM-YYYY"
+                                   uib-datepicker-popup
+                                   ng-model="vm.date"
+                                   is-open="openea"
+                                   readonly="true"
+                                   datepicker-options="vm.dateOptionsFrom"
+                                   required />
+                            <span class="input-group-btn">
+                                <button type="button"
+                                        class="btn btn-default"
+                                        ng-click="open($event); openea = !openea">
+                                    <i class="glyphicon glyphicon-calendar"></i>
+                                </button>
+                            </span>
+                        </span>
+                            </div>
+                        </form>
+
+                    </div>
+
+                    <div class="clearfix m-b-xs" ng-if="vm.datPickerType == 2">
+                        <!--Start date-->
+                        <div class="col-sm-4 p-l-none">
+                            <label>Start Date
+                                <span ng-class="basicForm.start_date.$error.required ? 'text-danger' : 'text-success'">*</span>
+                            </label>
+                            <span class="input-group"
+                                  ng-init="openea = false">
+                            <input type="text"
+                                   class="form-control"
+                                   name="start_date"
+                                   datepicker-append-to-body="true"
+                                   placeholder="DD-MM-YYYY"
+                                   uib-datepicker-popup
+                                   ng-model="vm.item.start_date"
+                                   ng-change="vm.dateChangeFn(vm.item.start_date,vm.item.end_date);"
+                                   is-open="openea"
+                                   readonly="true"
+                                   datepicker-options="vm.dateOptionsFrom"
+                                   required />
+                            <span class="input-group-btn">
+                                <button type="button"
+                                        class="btn btn-default"
+                                        ng-click="open($event); openea = !openea">
+                                    <i class="glyphicon glyphicon-calendar"></i>
+                                </button>
+                            </span>
+                        </span>
+                        </div>
+
+                        <!--End date-->
+                        <div class="col-sm-4 p-l-none">
+                            <label>End Date
+                                <span ng-class="basicForm.end_date.$error.required ? 'text-danger' : 'text-success'">*</span>
+                            </label>
+                            <span class="input-group">
+                            <input type="text"
+                                   class="form-control"
+                                   name="end_date"
+                                   ng-disabled="!vm.item.start_date"
+                                   datepicker-append-to-body="true"
+                                   placeholder="DD-MM-YYYY"
+                                   uib-datepicker-popup
+                                   ng-model="vm.conference.end_date"
+                                   ng-change="vm.dateChangeFn(vm.item.start_date,vm.item.end_date);"
+                                   is-open="openEndDate"
+                                   readonly="true"
+                                   datepicker-options="vm.dateOptionsTo"
+                                   required />
+                            <span class="input-group-btn">
+                                <button type="button"
+                                        class="btn btn-default"
+                                        ng-click="open($event); openEndDate = !openEndDate">
+                                    <i class="glyphicon glyphicon-calendar"></i>
+                                </button>
+                            </span>
+                        </span>
+                        </div>
+                    </div>
+
+                    <div ng-if="vm.datPickerType == 1" class="clearfix">
+                    <span><i class="fa fa-hand-o-right"></i>
+                    For edit time request <b>JS</b></span>
+                        <copy-btn copy-to-clipboard-fn="vm.copyToClipboardFn(null,vm.dateJs)"></copy-btn>
+                        <div render-nested-html>
+                            {{vm.dateJs}}
+                        </div>
+                    </div>
+
+                    <div ng-if="vm.datPickerType == 2" class="clearfix">
+                    <span><i class="fa fa-hand-o-right"></i>
+                    For edit time request <b>JS</b></span>
+                        <copy-btn copy-to-clipboard-fn="vm.copyToClipboardFn(null,vm.dateRangeJs)"></copy-btn>
+                        <div render-nested-html>
+                            {{vm.dateRangeJs}}
+                        </div>
+                    </div>
+
+
+                </li>
+                <li ng-class="{'backHightLight':vm.activeBody.id == 'date-range-id'}"
+                    id="date-range-id" class="list-group-item clearfix">
+                    <div class="m-b-xs">
+                        <span class="h4">Date range picker</span>
+                        <a href="http://www.daterangepicker.com/"
+                           target="_blank" class="b-b b-info text-sm m-l">
+                            <i class="fa fa-external-link-square text-info-dker"></i>
+                            <i class="text-info-dker">Date Range Picker Library</i>
+                        </a>
+
+                        <a href="https://github.com/fragaria/angular-daterangepicker"
+                           target="_blank" class="b-b b-info text-sm m-l">
+                            <i class="fa fa-external-link-square text-info-dker"></i>
+                            <i class="text-info-dker">Date Range Picker Library</i>
+                        </a>
+                        <div class="inline m-l">
+                            <div class="drpicker w">
+                                <input type="text"
+                                       class="form-control input-sm"
+                                       ng-model="vm.questDateRange"
+                                       date-range-picker
+                                       options="vm.filterDateOptions"
+                                       placeholder="Select date range"
+                                       readonly />
+                                <i class="glyphicon glyphicon-calendar"></i>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="clearfix m-b-xs">
+                        <i class="fa fa-hand-o-right"></i>
+                        Use library <code>ng-intl-tel-input</code>
+                    </div>
+                    <div class="clearfix m-b-xs">
+                        <i class="fa fa-hand-o-right"></i>
+                        Add class <code>drpicker</code> to parent div
+                    </div>
+                    <div class="clearfix m-b-xs">
+                        <i class="fa fa-hand-o-right"></i>
+                        Add following code in js and add options object
+                        <ul>
+                            <li>
+                                <code>$scope.bindDateRangePickerClick();</code>
+                            </li>
+                        </ul>
+                    </div>
+
+                    <span><i class="fa fa-hand-o-right"></i>
+                    Form input <b>HTML</b></span>
+
+                    <copy-btn copy-to-clipboard-fn="vm.copyToClipboardFn(null,vm.dateRangeHtml)"></copy-btn>
+                    <div render-nested-html>
+                        {{vm.dateRangeHtml}}
+                    </div>
+
+                    <span><i class="fa fa-hand-o-right"></i>
+                    Put this code in <b>JS</b></span>
+                    <copy-btn copy-to-clipboard-fn="vm.copyToClipboardFn(null,vm.dateRangeJs)"></copy-btn>
+                    <div render-nested-html>
+                        {{vm.dateRangeJs}}
+                    </div>
+
+                </li>
+                <li ng-class="{'backHightLight':vm.activeBody.id == 'date-time-picker-id'}"
+                    id="date-time-picker-id" class="list-group-item clearfix">
+                    <div class="m-b-sm">
+                        <span class="h4">Date Time picker</span>
+
+                        <a href="https://www.npmjs.com/package/angular-ui-bootstrap-datetimepicker"
+                           target="_blank" class="b-b b-info text-sm m-l m-r">
+                            <i class="fa fa-external-link-square text-info-dker"></i>
+                            <i class="text-info-dker">Angular UI Bootstrap Date Time Picker</i>
+                        </a>
+
+                        <datetimepicker ng-model="date"
+                                        date-format="dd-MMM-yyyy"
+                                        date-options="dateOptions"
+                                        date-disabled="isDisabledDate(date, mode)">
+                        </datetimepicker>
+                        <copy-btn copy-to-clipboard-fn="vm.copyToClipboardFn(null,vm.datetimeHtml)"></copy-btn>
+                    </div>
+
+                </li>
+            </ul>
+        </div>
+        <hr />
+
+    </div>
+

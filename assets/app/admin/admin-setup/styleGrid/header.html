@@ -1,0 +1,189 @@
+<div id="top" class="col-lg-12 col-md-12 col-xs-12 col-sm-12 no-padder">
+    <div class="form-group clearfix m-b-none p-t">
+        <div class="m-b-sm h4">Main Header div
+            <copy-btn copy-to-clipboard-fn="vm.copyToClipboardFn(null,vm.mainHeaderDiv)"></copy-btn></div>
+        <div render-nested-html>
+            {{vm.mainHeaderDiv}}
+        </div>
+    </div>
+
+    <div id="left-side-id" class="well m-t bg-light lt wrapper-xs">
+
+        <div class="m-b-sm h3">
+            <b>Left side div</b>
+            <small class="text-muted">(Name, total count, refresh button)</small>
+        </div>
+
+        <div id="total-id" class="form-group clearfix m-b-none p-t">
+            <div class="m-b-sm h4">Total count (badge)</div>
+            <ul>
+                <li>
+                    Example :
+                    <copy-btn copy-to-clipboard-fn="vm.copyToClipboardFn(null,vm.badgeCount)"></copy-btn>
+                    <div render-nested-html>
+                        {{vm.badgeCount}}
+                    </div>
+                </li>
+            </ul>
+        </div>
+
+        <div id="refresh-id" class="form-group clearfix m-b-none p-t">
+            <div class="m-b-sm h4">Refresh Button</div>
+            <ul>
+                <li>Full page refresh</li>
+                <li>Flag is <b>'vm.refreshLoader'</b> <span class="text-xs text-i">(Refresh icon will spin during request-response)</span>
+                </li>
+                <li>
+                    Example :
+                    <copy-btn copy-to-clipboard-fn="vm.copyToClipboardFn(null,vm.refreshButton)"></copy-btn>
+                    <div render-nested-html>
+                        {{vm.refreshButton}}
+                    </div>
+                </li>
+            </ul>
+        </div>
+
+        <div id="full-left-id" class="form-group clearfix m-b-none p-t">
+            <div class="clearfix">
+                <div class="h4 text-info pull-left">Full Left Side Div Example</div>
+
+                <copy-btn copy-to-clipboard-fn="vm.copyToClipboardFn(null,vm.leftSide)"></copy-btn>
+            </div>
+            <div class="text-xs"><i class="fa fa-info-circle"></i> Put this div into main header div</div>
+
+
+            <div>
+<textarea rows="5" class="code form-control" readonly>
+{{vm.leftSide}}
+</textarea>
+            </div>
+        </div>
+
+    </div>
+
+    <div id="right-side-id" class="well m-t bg-light lt wrapper-xs">
+
+        <div class="m-b-sm h3">
+            <b>Right side</b>
+            <small class="text-muted">(Filter, Search, Import/Export, Other button)</small>
+        </div>
+        <ul>
+            <li>Button common class should be <code>btn btn-sm</code></li>
+        </ul>
+
+        <div id="search-id" class="form-group clearfix m-b-none p-t">
+            <div class="m-b-sm h4">Search</div>
+            <ul>
+                <li>search should be as per <b class="text-primary">conference</b> module</li>
+                <li>search must be done <b>on enter, on click</b></li>
+                <li>search must have <b>reset option</b></li>
+                <li>search box width may vary as per header complexity</li>
+                <li>Placeholder must be only tags with saperator like <code class="text-muted">Name / Email</code></li>
+                <li>
+                    Example :
+                    <copy-btn copy-to-clipboard-fn="vm.copyToClipboardFn(null,vm.searchButton)"></copy-btn>
+                    <div render-nested-html>
+                        {{vm.searchButton}}
+                    </div>
+                </li>
+            </ul>
+        </div>
+
+
+        <div id="filter-id" class="form-group clearfix m-b-none p-t">
+            <div class="m-b-sm h4">Filter in header</div>
+            <ul>
+                <li>filter should be as per <b class="text-primary">conference</b> module</li>
+                <li>filter must be as <b>popover</b></li>
+                <li>filter must be close on outside click on any button</li>
+                <li>
+                    Example :
+                    <copy-btn copy-to-clipboard-fn="vm.copyToClipboardFn(null,vm.filterButton)"></copy-btn>
+                    <div render-nested-html>
+                        {{vm.filterButton}}
+                    </div>
+                </li>
+            </ul>
+        </div>
+
+
+        <div id="filter-btn-group-id" class="form-group clearfix m-b-none p-t">
+            <div class="m-b-sm h4">Filter with button group (btn-group)</div>
+            <ul>
+                <li>filter should be as per <b class="text-primary">conference</b> module</li>
+                <li>use ng-class as <code>ng-class=&quot;(vm.conferenceFilterType == filter.id ? 'btn-expand' :
+                    'btn-default
+                    bg-white')&quot;</code></li>
+                <li>
+                    Example :
+                    <copy-btn copy-to-clipboard-fn="vm.copyToClipboardFn(null,vm.btnGroupFilter)"></copy-btn>
+                    <div render-nested-html>
+                        {{vm.btnGroupFilter}}
+                    </div>
+                </li>
+            </ul>
+        </div>
+
+
+        <div id="excel-id" class="form-group clearfix m-b-none p-t">
+            <div class="m-b-sm h4">Excel import/export <b class="text-info">(component)</b></div>
+            <ul>
+                <li>This is <code class="text-info">excel-operation</code> component</li>
+                <li>Excel import/export should be as per <b class="text-primary">committee</b> module</li>
+                <li>
+                    Example :
+                    <copy-btn copy-to-clipboard-fn="vm.copyToClipboardFn(null,vm.excelImport)"></copy-btn>
+                    <div render-nested-html>
+                        {{vm.excelImport}}
+                    </div>
+                </li>
+            </ul>
+        </div>
+        <div id="multiple-btn-id" class="form-group clearfix m-b-none p-t">
+            <div class="m-b-sm h4">Multiple Action Button</div>
+            <ul>
+                <li>
+                    Example :
+                    <copy-btn copy-to-clipboard-fn="vm.copyToClipboardFn(null,vm.multipleActionButton)"></copy-btn>
+                    <div render-nested-html>
+                        {{vm.multipleActionButton}}
+                    </div>
+                </li>
+            </ul>
+        </div>
+
+        <div id="full-right-id" class="form-group clearfix m-b-none p-t">
+            <div class="clearfix">
+                <div class="m-b-sm h4 text-info pull-left">Full Right Side Example</div>
+
+                <copy-btn copy-to-clipboard-fn="vm.copyToClipboardFn(null,vm.rightSide)"></copy-btn>
+            </div>
+            <div class="text-xs"><i class="fa fa-info-circle"></i>
+                This includes <i>Add, Search, Filter, multiple Action, Import/Export</i>
+            </div>
+
+
+            <div>
+<textarea rows="5" class="code form-control" readonly>
+{{vm.rightSide}}
+</textarea>
+
+            </div>
+        </div>
+
+    </div>
+
+    <div id="full-hdr-id" class="form-group clearfix m-b-none p-t">
+        <div class="m-b-sm">
+            <b class="h4">Full Header div</b>
+            <copy-btn copy-to-clipboard-fn="vm.copyToClipboardFn(null,vm.fullHeaderDiv)"></copy-btn>
+        </div>
+
+
+        <div class="clearfix" render-nested-html>
+            {{vm.fullHeaderDiv}}
+        </div>
+
+
+    </div>
+</div>

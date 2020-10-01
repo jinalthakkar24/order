@@ -1,0 +1,11 @@
+<label>
+    Code
+</label>
+<span class="error"
+      ng-show="!vm.ngModel"
+      style="color:RED">*</span>
+<span class="valid" ng-show="vm.ngModel"
+      style="color:#31B404">*</span>
+<input type="text"
+       ng-model="vm.ngModel"
+       class="form-control" required>

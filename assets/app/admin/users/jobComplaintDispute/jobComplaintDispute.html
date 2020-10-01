@@ -1,0 +1,263 @@
+<style>
+    .address-popover {
+        min-width : 480px;
+    }
+
+    .jobReq-popover {
+        min-width : 300px;
+    }
+
+    pre {
+        padding : 0 !important;
+        color   : inherit !important;
+    }
+
+    .tl-wrap {
+        margin-left: 10em !important;
+        padding: 5px 0 5px 20px !important;
+    }
+
+    .tl-date {
+        width: 12.5em !important;
+        margin-left: -15.5em !important;
+    }
+
+    .panel-body {
+        padding: 5px !important;
+    }
+
+    .tl-content {
+        margin-top: 5px !important;
+        margin-bottom: 5px !important;
+    }
+    .m-b-25 {
+        margin-bottom: 25px !important;
+    }
+
+</style>
+
+<!--Popover status track template-->
+<script type="text/ng-template" id="status-track-popover.html">
+    <span class="popover-icon-close"
+          ng-click="data.isStatusTrackOpen = false;">
+        <i class="icon-close"></i>
+    </span>
+
+    <div class="">
+        <ul class="list-group list-group-xs m-n">
+            <li class="list-group-item no-border no-padder"
+                ng-repeat="track in data.statusTrack track by $index">
+                <div class="hbox p3"
+                     ng-class="$last ? '' : 'm-b-xs b-b b-light'">
+                    <div class="col col-sm-1 text-center text-muted p03">
+                        ({{ $index + 1 }})
+                    </div>
+                    <div class="col col-sm-11 p03">
+                        <div>
+                            {{track.userId.name}}
+                            <span ng-if="track.status === vm.JobCompalintDisputeStatus.SUBMITTED"
+                                  class="pull-right label inline bg-primary">
+                                 Submitted
+                            </span>
+                            <span ng-if="track.status === vm.JobCompalintDisputeStatus.IN_PROCESS"
+                                  class="pull-right label inline bg-info">
+                                 In Process
+                            </span>
+                            <span ng-if="track.status === vm.JobCompalintDisputeStatus.RESOLVED"
+                                  class="pull-right label inline bg-success">
+                                 Resolved
+                            </span>
+                            <span ng-if="track.status === vm.JobCompalintDisputeStatus.CANCELLED"
+                                  class="pull-right label inline bg-danger">
+                                 Cancelled
+                            </span>
+                        </div>
+                        <div>
+                            <i class="fa fa-envelope text-muted  m-r-xs"></i>{{track.userId.emails |
+                            arrayPrimaryValue:'email'}}
+                            <span class="pull-right">
+                                <i class="fa fa-clock-o text-muted"></i>
+                              {{track.dateTime | appDateTime}}
+                            </span>
+                        </div>
+                        <div ng-if="track.remark">
+                            <span class="text-muted">Remark:</span> {{track.remark}}
+                        </div>
+
+                    </div>
+                </div>
+            </li>
+        </ul>
+    </div>
+</script>
+
+<!--Popover job detail template-->
+<script type="text/ng-template" id="job-req-popover.html">
+    <span class="popover-icon-close"
+          ng-click="data.isJobReqOpen = false;">
+        <i class="icon-close"></i>
+    </span>
+
+    <div class="">
+        <ul class="list-group list-group-xs m-n">
+            <li class="list-group-item no-border no-padder">
+                <div class="hbox p3">
+                    <div class="col col-sm-12 p03">
+                        <div class="font-bold">
+                            {{data.jobRequestId.serviceId.name}}
+                        </div>
+                        <div>
+                            <i class="fa fa-map-marker text-muted m-r-xs"></i>
+                            <span>{{data.jobRequestId.location.name  || '-'}}</span>
+                        </div>
+                        <div class="">
+                            <i class="fa fa-clock-o text-muted"></i>
+                            {{data.jobRequestId.createdAt | appDateTime}}
+                        </div>
+                    </div>
+                </div>
+            </li>
+        </ul>
+    </div>
+</script>
+
+<!--Popover user detail template-->
+<script type="text/ng-template" id="user-detail.html">
+    <span class="popover-icon-close"
+          ng-click="data.isUserDetail = false;">
+        <i class="icon-close"></i>
+    </span>
+
+    <div class="">
+        <ul class="list-group list-group-xs m-n">
+            <li class="list-group-item no-border no-padder">
+                <div class="hbox p3">
+                    <div class="col col-sm-12 p03">
+                        <div>
+                            <i class="fa fa-envelope text-muted  m-r-xs"></i>
+                            {{data.userId.emails | arrayPrimaryValue:'email'}}
+                        </div>
+                        <div>
+                            <i class="fa fa-phone text-muted m-r-xs"></i>
+                            {{data.userId.mobiles | arrayPrimaryValue:'mobile'}}
+                        </div>
+                    </div>
+                </div>
+            </li>
+        </ul>
+    </div>
+</script>
+
+<div class="col">
+    <div class="vbox" >
+        <div class="row-row bg-white">
+            <div class="cell" id="complaintScroll">
+                <div class="cell-inner">
+                    <div class="wrapper">
+                        <div ng-if="vm.complaintDisputeList && vm.complaintDisputeList.length"
+                             infinite-scroll="vm.viewMoreComplaintFn()"
+                             infinite-scroll-distance="0.3"
+                             infinite-scroll-disabled="vm.disabled"
+                             infinite-scroll-parent="true"
+                             infinite-scroll-immediate-check="false"
+                             infinite-scroll-container="'#complaintScroll'">
+                            <ul class="streamline">
+                                <li class="tl-item tl-left"
+                                    ng-repeat="data in vm.complaintDisputeList">
+                                    <div class="tl-wrap b-{{data.displayStatus.displayClass}}">
+                                        <span class="tl-date"><i class="fa fa-clock-o m-r-xs"></i>{{data.createdAt | appDateTime}}</span>
+                                        <div class="tl-content panel padder b-a block">
+                                            <span class="arrow left pull-up hidden-left"></span>
+                                            <span class="arrow right pull-up visible-left"></span>
+                                            <div class="text-lt m-b-25">
+                                                 <span class="col-md-4 col-lg-4 col-sm-4 col-xs-4 no-padder">
+                                                    <span uib-popover-template="'status-track-popover.html'"
+                                                          popover-enable="{{data.statusTrack.length}}"
+                                                          popover-class="address-popover"
+                                                          popover-placement="auto bottom"
+                                                          popover-trigger="'outsideClick'"
+                                                          popover-is-open="data.isStatusTrackOpen"
+                                                          popover-title="Status Track"
+                                                          popover-append-to-body="true"
+                                                          uib-tooltip="Click here to view status track"
+                                                          tooltip-append-to-body="true">
+                                                        #{{data.uniqNumber}}</span>
+                                                     </span>
+                                                <span class="col-md-4 col-lg-4 col-sm-4 col-xs-4 no-padder"
+                                                      ng-if="!data.isFromJobRequest">
+                                                    <span uib-popover-template="'job-req-popover.html'"
+                                                          popover-enable="{{data.jobRequestId}}"
+                                                          popover-class="jobReq-popover"
+                                                          popover-placement="auto bottom"
+                                                          popover-trigger="'mouseenter'"
+                                                          popover-is-open="data.isJobReqOpen"
+                                                          popover-title="#{{data.jobRequestId.reqNumber || '-'}}"
+                                                          popover-append-to-body="true"
+                                                          ng-mouseover="vm.closeAllPopoverFn()">
+                                                        <span class="text-muted">Job Req.Number:</span>
+                                                        <a href="" class="text-dark"
+                                                           ui-sref="apps.jobs.jobDetails({jobId:data.jobRequestId.id})">
+                                                            #{{data.jobRequestId.reqNumber || '-'}}</a>
+                                                    </span>
+                                                </span>
+                                                <span class="col-md-4 col-lg-4 col-sm-4 col-xs-4 no-padder"
+                                                      ng-if="data.isFromJobRequest">
+                                                    <span uib-popover-template="'user-detail.html'"
+                                                          popover-enable="{{data.userId}}"
+                                                          popover-class="jobReq-popover"
+                                                          popover-placement="auto bottom"
+                                                          popover-trigger="'mouseenter'"
+                                                          popover-is-open="data.isUserDetail"
+                                                          popover-title="{{data.userId.name}}"
+                                                          popover-append-to-body="true"
+                                                          ng-mouseover="vm.closeAllPopoverFn()">
+                                                        <a href="" class="text-dark"
+                                                           ng-if="data.userId.type == vm.userType.CLEANER"
+                                                           ui-sref="apps.users.cleanerDetails({userId:data.userId.id,userStatus:data.userId.status})">
+                                                               {{data.userId.name || '-'}}
+                                                            <span class="m-l-xs label inline bg-primary">Cleaner</span>
+                                                        </a>
+                                                        <a href="" class="text-dark"
+                                                           ng-if="data.userId.type == vm.userType.CUSTOMER"
+                                                           ui-sref="apps.users.customerView({userId:data.userId.id})">
+                                                               {{data.userId.name || '-'}}
+                                                            <span class="m-l-xs  label inline bg-info">Customer</span>
+                                                        </a>
+                                                    </span>
+                                                </span>
+                                                <span class="col-md-4 col-lg-4 col-sm-4 col-xs-4 no-padder">
+                                                     <span class="pull-right label  bg-{{data.displayStatus.displayClass}} inline"
+                                                           ng-if="data.displayStatus">
+                                                       {{data.displayStatus.name}}
+                                                    </span>
+                                                </span>
+                                            </div>
+                                            <div class="panel-body pull-in b-t b-light">
+                                                <div class="col-md-12 no-padder">
+                                                    <span class="col-md-1 no-padder text-muted"
+                                                          style="width: 3% !important;">Q:</span>
+                                                    <span class="col-md-11 no-padder">{{data.question}}</span>
+                                                </div>
+                                                <div class="col-md-12 no-padder m-t-xs">
+                                                    <span class="col-md-1 no-padder text-muted"
+                                                          style="width: 3% !important;">A:</span>
+                                                    <span class="col-md-11 no-padder"><pre
+                                                            class="p0">{{data.answer}}</pre></span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </li>
+                            </ul>
+                        </div>
+                        <div ng-if="!vm.complaintDisputeList || !vm.complaintDisputeList.length">
+                            <div class="text-muted wrapper-lg text-center">
+                                No record found!
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

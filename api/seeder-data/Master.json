@@ -1,0 +1,30 @@
+[
+  {
+    "isActive": true,
+    "name": "Test",
+    "code": "TEST",
+    "slug": "test",
+    "normalizeName": "test",
+    "group": "",
+    "description": "",
+    "image": "",
+    "icon": "",
+    "parentId": null,
+    "isDeleted": false,
+    "children": [
+      {
+        "isActive": true,
+        "name": "Test1",
+        "code": "TEST1",
+        "slug": "test1",
+        "normalizeName": "test1",
+        "group": "",
+        "description": "",
+        "image": "",
+        "icon": "",
+        "likeKeyWords": null,
+        "isDeleted": false
+      }
+    ]
+  }
+]

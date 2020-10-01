@@ -1,0 +1,144 @@
+<style>
+    .tab-pane-notifications div {
+        text-align : right;
+    }
+
+    /*.nav-tabs > li:hover > a, .nav-tabs > li.active > a, .nav-tabs > li.active > a:hover, .nav-tabs > li.active > a:focus {*/
+    /*border-top: 0px;*/
+    /*border-left: 0px;*/
+    /*border-right: 0px;*/
+    /*border-bottom: 1px solid #f05050;*/
+    /*}*/
+
+    /*.nav-tabs > li.active > a, .nav-tabs > li.active > a:hover, .nav-tabs > li.active > a:focus {*/
+    /*background-color: transparent;*/
+    /*}*/
+</style>
+<!-- hbox layout -->
+
+<div class="hbox hbox-auto-xs bg-light " ng-init="
+  app.settings.asideFixed = true;
+  app.settings.asideDock = false;
+  app.settings.container = false;
+  app.hideAside = false;
+  ">
+    <div class="col">
+        <div class="vbox">
+            <!--header-->
+            <div class="wrapper clearfix bg-gray b-b b-ligh">
+
+                <div class=" col-lg-3 col-md-3 col-sm-4 col-xs-6 font-thin h4 m-t-xs"> {{vm.moduleData.title}} <br />
+                    <!--<span class="badge countBadge-red pull-right-xs "> {{vm.totalCount || '0'}} </span><br/>-->
+                    <small class="text-muted">Browse all notifications below.</small>
+                </div>
+            </div>
+            <!--header-->
+            <div class="row-row">
+                <div class="cell">
+                    <div class="cell-inner">
+                        <!--body-->
+                        <div class="col-md-12  no-padder">
+                            <div ng-if=" !vm.show_loading && vm. mainList.length">
+                                <div>
+                                    <table class="table m-b-none">
+                                        <thead>
+                                        <tr>
+                                            <th class="col-md-1 text-center" style="width: 4%">#</th>
+                                            <th class="col-md-4">Title</th>
+                                            <th class="col-md-4">Date</th>
+                                            <!--<th class="col-md-2">Type</th>-->
+                                            <!--<th class="col-md-2">Status</th>-->
+                                        </tr>
+                                        </thead>
+                                    </table>
+                                </div>
+
+                                <div class="panel m-b-none panel-default">
+                                    <div class="panel-body no-padder">
+                                        <div class="col-lg-12 col-md-12 col-sm-12 no-padder">
+                                            <div ng-if="vm.mainList.length">
+                                                <table class="table m-b-none">
+                                                    <tbody>
+                                                    <tr ng-repeat="notification in vm.mainList | orderBy:vm.sortByVal track by $index">
+                                                        <td class="col-md-1 text-center" style="width: 4%" nowrap>
+                                                            {{((vm.page - 1) * vm.limit) + ($index + 1)}}
+                                                        </td>
+                                                        <td class="col-md-4">
+                                                            {{notification.title}}
+                                                        </td>
+                                                        <td class="col-md-4">
+                                                            {{notification.createdAt | date :'dd/MM/yyyy hh:mm:ss a'}}
+                                                        </td>
+                                                        <!--<td class="col-md-2">-->
+                                                        <!--{{notification.type}}-->
+                                                        <!--</td>-->
+                                                    </tr>
+                                                    </tbody>
+                                                </table>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="clearfix" ng-if="!vm. mainList.length && !vm.show_loading">
+                                <div class="block-form text-center">
+                                    <br>
+                                    <br>
+
+                                    <h3>No records found!</h3>
+                                </div>
+                            </div>
+
+                            <div class="clearfix" ng-if="vm.show_loading">
+                                <div class="block-form text-center">
+                                    <br>
+                                    <br>
+
+                                    <h3><i style="font-size: 24px !important;" class="fa fa-spin fa-spinner"></i>
+                                        Loading...
+                                    </h3>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="wrapper-xs padder b-t centered-pagination"
+                 ng-if="vm.mainList.length">
+                <div class="input-group w-sm">
+                    <span class="input-group-btn">
+                        <button class="btn btn-sm btn-default" type="button">Limit</button>
+                    </span>
+                    <select class="form-control input-sm"
+                            ng-model="vm.limit"
+                            ng-change="vm.perPageChangeFn();">
+                        <option value="25"> 25</option>
+                        <option value="50" ng-show="vm.totalCount > 25"> 50</option>
+                        <option value="100" ng-show="vm.totalCount > 50"> 100</option>
+                        <option value="150" ng-show="vm.totalCount > 100"> 150</option>
+                        <option value="200" ng-show="vm.totalCount > 150"> 200</option>
+                        <option value="{{vm.totalCount}}"> All</option>
+                    </select>
+                </div>
+
+                <small class="text-muted">
+                    Showing {{vm.list_showing_from}}-{{vm.list_showing_to}} of {{vm.totalCount}} Entries
+                </small>
+
+                <ul class="pagination-sm m-b-none"
+                    ng-model="vm.page"
+                    ng-change="vm.getnotifications();"
+                    uib-pagination
+                    total-items="vm.totalCount"
+                    max-size="vm.maxSize"
+                    items-per-page="vm.limit"
+                    boundary-links="true"
+                    previous-text="&lsaquo;"
+                    next-text="&rsaquo;"
+                    first-text="&laquo;"
+                    last-text="&raquo;"
+                    num-pages="numPages"></ul>
+            </div>
+        </div>
+    </div>
+</div>

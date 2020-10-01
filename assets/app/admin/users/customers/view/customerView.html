@@ -1,0 +1,563 @@
+<style>
+    .panel-bg {
+        background-color : #F8F8F8
+    }
+</style>
+
+<!-- hbox layout -->
+<div class="hbox hbox-auto-xs bg-light " ng-init="
+  app.settings.asideFixed = true;
+  app.settings.asideDock = false;
+  app.settings.container = false;
+  app.hideAside = false;
+  ">
+
+    <div class="col">
+        <div class="vbox">
+            <!--Header-->
+            <div class="wrapper-sm bg-gray clearfix b-b">
+                <!--Module Name-->
+                <div class="pull-left">
+                    <!--Image-->
+                    <div class="m-r-sm thumb-sm pull-left">
+                        <div class="popup-gallery"
+                             ng-if="vm.data.image">
+                            <img class=""
+                                 ng-src="{{ vm.data.image }}"
+                                 ng-click="displayImages([{path:vm.data.image,type:1}], 0);"
+                                 alt="image" />
+                        </div>
+
+                        <ng-avatar width="100%"
+                                   ng-if="!vm.data.image"
+                                   initials="{{ vm.data.name | limitTo: 1 }}"
+                                   img-class="avatar"
+                                   upper-case="true"
+                                   round-shape="true"
+                                   bg-color="lightgray"
+                                   text-color="gray"
+                                   bind="true">
+                        </ng-avatar>
+                    </div>
+
+                    <!--Name, other details-->
+                    <div class="clear">
+                        <!--Name-->
+                        <span class="h4">
+                            {{ (vm.data.firstName || '-') | ucfirst }} {{vm.data.lastName | ucfirst}}
+
+                            <!--Active-->
+                            <div class="inline text-white text-sm r-3x p3 m-l-xs"
+                                 ng-class="vm.data.isActive ? 'bg-success' : 'bg-danger'">
+                                <div class="" ng-if="vm.data.isActive">
+                                    <i class="fa fa-check-circle"></i> Active
+                                </div>
+                                <div class="" ng-if="!vm.data.isActive">
+                                    <i class="fa fa-times-circle"></i> Deactive
+                                </div>
+                            </div>
+                        </span>
+
+                        <!--Location-->
+                        <div class="">
+                            <i class="fa fa-fw fa-map-marker"></i>
+                            {{ (vm.data.addresses | primaryAddress: ["city", "state"]) || '-' }}
+                        </div>
+                    </div>
+                </div>
+
+                <!--List btn-->
+                <div class="btn-group pull-right m-r-xs">
+                    <button class="btn btn-sm btn-dark"
+                            ui-sref="apps.users.customers">
+                        List
+                    </button>
+                </div>
+            </div>
+
+            <!--Detailed Header-->
+            <div class="wrapper-xs b-b bg-white">
+                <!--Emails-->
+                <div class="inline m-r">
+                    <div class="text-muted">
+                        Email
+                    </div>
+
+                    <div class="inline">
+                        <span ng-click="openCommonPopoverFn('contact-popover.html', 'openEmail', vm.data.emails, 'email')"
+                              uib-popover-template="detailPopover.templateUrl"
+                              popover-title="Emails ({{vm.data.emails.length}})" popover-class="popover-sm"
+                              popover-enable="vm.data.emails.length" popover-is-open="detailPopover.openEmail"
+                              popover-trigger="'outsideClick'" popover-placement="auto bottom"
+                              popover-append-to-body="true">
+                            <span>{{vm.data.emails | arrayPrimaryValue:'email'}}</span>
+                            <span ng-if="vm.data.emails.length ">
+                                <i class="fa fa-sort-down"></i>
+                            </span>
+                        </span>
+                    </div>
+                </div>
+
+                <!--Mobiles-->
+                <div class="inline m-r">
+                    <div class="text-muted">
+                        Mobile
+                    </div>
+
+                    <div class="inline">
+                        <span ng-click="openCommonPopoverFn('contact-popover.html', 'openMobile', vm.data.mobiles, 'mobile')"
+                              uib-popover-template="detailPopover.templateUrl"
+                              popover-title="Mobile ({{vm.data.mobiles.length}})" popover-class="popover-sm"
+                              popover-enable="vm.data.mobiles.length" popover-is-open="detailPopover.openMobile"
+                              popover-trigger="'outsideClick'" popover-placement="auto bottom"
+                              popover-append-to-body="true">
+                            <span>{{ vm.data.mobiles | arrayPrimaryValue: 'mobile' }}</span>
+                            <span ng-if="vm.data.mobiles.length">
+                                <i class="fa fa-sort-down"></i>
+                            </span>
+                        </span>
+                    </div>
+                </div>
+
+                <!--Addresses-->
+                <div class="inline m-r">
+                    <div class="text-muted">Address</div>
+
+                    <span ng-hide="true">
+                        {{ pAddressLine1 = (vm.data.addresses | primaryAddress: ["line1"]) }}
+                    </span>
+
+                    <div class="">
+                        <span ng-if="pAddressLine1"
+                              ng-click="openCommonPopoverFn('address-popover.html', 'openAddress', vm.data.addresses)"
+                              uib-popover-template="detailPopover.templateUrl"
+                              popover-title="Locations ({{vm.data.addresses.length}})" popover-class="popover-sm"
+                              popover-enable="vm.data.addresses.length" popover-is-open="detailPopover.openAddress"
+                              popover-trigger="'outsideClick'" popover-placement="auto bottom"
+                              popover-append-to-body="true">
+                            <span>{{ pAddressLine1 }}</span>
+                            <span ng-if="vm.data.addresses.length ">
+                                <i class="fa fa-sort-down"></i>
+                            </span>
+                        </span>
+
+                        <span ng-if="!pAddressLine1">-</span>
+                    </div>
+                </div>
+
+                <!--Right Side-->
+                <div class="pull-right">
+                    <!--Rating-->
+                    <div class="inline m-r">
+                        <div>
+                            <span class="text-muted">Rating</span> ({{ (data.averageRating.overallRating.rating || 0 )|
+                            number: 0 }})
+                        </div>
+
+                        <div class="text-center">
+                            <div class="">
+                                <span class="text-warning"
+                                      ng-model="data.averageRating.overallRating.rating"
+                                      uib-rating max="5"
+                                      read-only="true"></span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!--Registered Time-->
+                    <div class="inline m-r">
+                        <div class="text-muted">
+                            Registered
+                        </div>
+
+                        {{ vm.data.customCreatedAt || '-' }}
+                    </div>
+
+                    <!--Updated Date-->
+                    <div class="inline">
+                        <div class="text-muted">
+                            Last Job Date
+                        </div>
+
+                        {{ (vm.data.lastSubmittedJob.jobStartDateTime | appDateTime) || '-' }}
+                    </div>
+                </div>
+            </div>
+
+            <!--Static Tabs-->
+            <div class="bg-white">
+                <ul class="nav nav-tabs nav-justified custom-tabs">
+                    <li ng-class="vm.activeTab == stab.id ? 'active' : ''"
+                        ng-repeat="stab in vm.staticTabs">
+                        <a data-toggle="tab" href="#tab-{{ stab.code }}" target="_self">
+                            <div class="text-md">{{ stab.name }}</div>
+                        </a>
+                    </li>
+                </ul>
+            </div>
+
+            <!--Content-->
+            <div class="row-row">
+                <div class="cell" style="overflow: hidden;">
+                    <div class="cell-inner">
+                        <div class="hbox hbox-auto-xs">
+                            <div class="col">
+                                <div class="vbox">
+                                    <div class="tab-content h-full">
+                                        <!--Jobs-->
+                                        <div id="tab-JOBS"
+                                             class="tab-pane fade in h-full"
+                                             ng-class="vm.activeTab == 1 ? 'active' : ''">
+
+                                            <div class="hbox hbox-auto-xs">
+                                                <!--col 1: Summary-->
+                                                <div class="col col-xs-8 no-padder">
+                                                    <div class="vbox">
+                                                        <div class="row-row bg-white">
+                                                            <div class="cell">
+                                                                <div class="cell-inner">
+                                                                    <div class="wrapper">
+                                                                        <div class="panel m-b-none panel-default">
+                                                                            <div class="panel-heading no-padder">
+                                                                                <!--Details-->
+                                                                                <div class="text-lg wrapper-xs clearfix">
+                                                                                         <span class="pull-left">
+                                                                                             <i class="text-muted fa fa-tasks"></i>
+                                                                                             <span class="m-l-xs h4">Job Summary</span>
+                                                                                         </span>
+                                                                                </div>
+                                                                            </div>
+                                                                            <div class="panel-body no-padder">
+                                                                                <!--Fixed Div-->
+                                                                                <div class="col-md-12 col-sm-12 col-lg-12 col-xs-12 no-padder">
+                                                                                    <div class="wrapper-sm">
+                                                                                        <div class="col-md-12 col-sm-12 col-lg-12 col-xs-12 no-padder">
+                                                                                            <div class="col-md-4 col-sm-4 col-lg-4 col-xs-6 text-center">
+                                                                                                <div class="panel padder-v b-a item">
+                                                                                                    <div class="h1 text-info font-thin h1">
+                                                                                                        {{vm.data.jobs.totalJobRequests
+                                                                                                        || 0}}
+                                                                                                    </div>
+                                                                                                    <span class="text-muted text-sm">Total</span>
+                                                                                                </div>
+                                                                                            </div>
+                                                                                            <div class="col-md-4 col-sm-4 col-lg-4 col-xs-6 text-center">
+                                                                                                <div class="panel padder-v b-a item">
+                                                                                                    <div class="h1 text-success font-thin h1">
+                                                                                                        <a href=""
+                                                                                                           target="_blank"
+                                                                                                           ng-if="vm.data.jobs.totalCompletedJobRequests > 0"
+                                                                                                           ui-sref="apps.jobs.jobHistory({status:vm.jobStatus.COMPLETED,customerId:vm.data.id,name:vm.data.firstName})">{{vm.data.jobs.totalCompletedJobRequests}}
+                                                                                                        </a>
+                                                                                                        <span ng-if="!vm.data.jobs.totalCompletedJobRequests || vm.data.jobs.totalCompletedJobRequests <= 0">0</span>
+
+                                                                                                    </div>
+                                                                                                    <span class="text-muted text-sm">Completed</span>
+                                                                                                </div>
+                                                                                            </div>
+                                                                                            <div class="col-md-4 col-sm-4 col-lg-4 col-xs-6 text-center">
+                                                                                                <div class="panel padder-v b-a item">
+                                                                                                    <div class="h1 text-danger font-thin h1">
+                                                                                                        <a href=""
+                                                                                                           target="_blank"
+                                                                                                           ng-if="vm.data.jobs.totalCancelledJobRequests > 0"
+                                                                                                           ui-sref="apps.jobs.jobHistory({status:vm.jobStatus.CANCELLED,customerId:vm.data.id,name:vm.data.firstName})">{{vm.data.jobs.totalCancelledJobRequests}}
+                                                                                                        </a>
+                                                                                                        <span ng-if="!vm.data.jobs.totalCancelledJobRequests  || vm.data.jobs.totalCancelledJobRequests <= 0">0</span>
+                                                                                                    </div>
+                                                                                                    <span class="text-muted text-sm">Cancel</span>
+                                                                                                </div>
+                                                                                            </div>
+                                                                                        </div>
+
+                                                                                        <div class="col-md-12 col-sm-12 col-lg-12 col-xs-12">
+                                                                                            <div class="panel panel-bg padder-v b-a item text-center">
+                                                                                                <div class="text-primary-dk font-thin h1">
+                                                                                                    <span>{{( vm.data.totalPaid || 0) | currency}}</span>
+                                                                                                </div>
+                                                                                                <span class="text-muted text-sm">Revenue</span>
+                                                                                            </div>
+
+                                                                                        </div>
+                                                                                    </div>
+                                                                                </div>
+
+                                                                            </div>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                                <!--/cell inner-->
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+
+                                                <!--col 2: Current Jobs-->
+                                                <div class="col col-xs-4 no-padder b-l b-light">
+                                                    <div class="vbox">
+                                                        <div class="bg-light dk text-md font-bold b-b wrapper-xs">
+                                                            Current Jobs
+                                                            <b class="badge bg-dark text-white m-l-xs">
+                                                                {{vm.data.activeOrUpComingJobRequests.length || 0}}</b>
+                                                        </div>
+
+                                                        <div class="row-row bg-white">
+                                                            <div class="cell">
+                                                                <div class="cell-inner">
+                                                                    <div class="">
+                                                                        <ul class="list-group list-group-xs m-n"
+                                                                            ng-if="vm.data.activeOrUpComingJobRequests.length">
+                                                                            <li class="list-group-item no-border no-padder"
+                                                                                ng-repeat="cj in vm.data.activeOrUpComingJobRequests">
+                                                                                <div class="hbox p3"
+                                                                                     ng-class="$last ? '' : 'm-b-xs b-b b-light'">
+                                                                                    <div class="col col-sm-1 text-center text-muted p03">
+                                                                                        ({{ $index + 1 }})
+                                                                                    </div>
+                                                                                    <div class="col col-sm-10 p03">
+                                                                                        <span class="font-bold">
+                                                                                            <a class="ahover"
+                                                                                               ui-sref="apps.jobs.jobDetails({jobId:cj.id})">#{{ cj.reqNumber | uppercase }}</a>
+                                                                                        </span>
+                                                                                        <div class="pull-right">
+                                                                                            <span class="label bg-primary text-xs p3 inline wrapper-xs">
+                                                                                                {{ cj.totalCharge | currency }}
+                                                                                            </span>
+                                                                                        </div>
+                                                                                        <div>
+                                                                                            {{cj.serviceId.name }}
+                                                                                            <div class="text-muted pull-right">
+                                                                                                {{ cj.jobStartDateTime |
+                                                                                                appDateTime }}
+                                                                                            </div>
+                                                                                        </div>
+                                                                                    </div>
+                                                                                </div>
+                                                                            </li>
+                                                                        </ul>
+
+                                                                        <div class="m-lg"
+                                                                             ng-if="!vm.data.activeOrUpComingJobRequests.length">
+                                                                            <div class="text-muted wrapper-lg text-center">
+                                                                                No record found!
+                                                                            </div>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                            <!--/cell-->
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <!--/col 2-->
+                                            </div>
+                                        </div>
+
+                                        <!--Dispute-->
+                                        <div id="tab-DISPUTE"
+                                             class="tab-pane fade in h-full"
+                                             ng-class="vm.activeTab == 2 ? 'active' : ''">
+                                            <div class="hbox hbox-auto-xs"
+                                                 ng-include="'/app/admin/users/jobComplaintDispute/jobComplaintDispute.html'">
+                                            </div>
+                                        </div>
+
+                                        <!--Payment-->
+                                        <div id="tab-PAYMENTS"
+                                             class="tab-pane fade in h-full"
+                                             ng-class="vm.activeTab == 3 ? 'active' : ''">
+
+                                            <div class="hbox hbox-auto-xs"
+                                                 ng-include="'/app/admin/jobs/payment/payment.html'">
+                                            </div>
+                                        </div>
+
+                                        <!--Kyc-Password-->
+                                        <div id="tab-KYC_PASSWORD"
+                                             class="tab-pane fade in h-full"
+                                             ng-class="vm.activeTab == 4 ? 'active' : ''">
+
+                                            <div class="hbox hbox-auto-xs">
+                                                <!--col 1: KYC-->
+                                                <div class="col col-xs-8 no-padder">
+                                                    <div class="vbox">
+                                                        <div class="bg-light text-md font-bold b-b wrapper-xs">
+                                                            Credit Card
+                                                            <b class="badge bg-dark text-white m-l-xs">{{vm.data.cards.length
+                                                                || 0}}</b>
+                                                        </div>
+                                                        <div class="row-row bg-white">
+                                                            <div class="cell">
+                                                                <div class="cell-inner">
+                                                                    <div class="wrapper">
+                                                                        <div class="row"
+                                                                             ng-if="vm.data.cards && vm.data.cards.length">
+                                                                            <div class="col-sm-6 col-xs-12"
+                                                                                 ng-repeat="card in vm.data.cards">
+                                                                                <div class="panel wrapper-sm panel-bg  r r-3x b">
+                                                                                    <span class="h3">
+                                                                                        {{ card.brand }}
+                                                                                    </span>
+                                                                                    <span class="pull-right"
+                                                                                          ng-if="card.isPrimary">
+                                                                                        <span class="label text-sm bg-success inline">Primary</span>
+                                                                                    </span>
+                                                                                    <hr class="m-t-xs m-b-xs b" />
+
+                                                                                    <!-- <img src="/images/common/chip.png"
+                                                                                          class="m-r pull-right"
+                                                                                          width="30px" />-->
+
+                                                                                    <div>
+                                                                                        <div>
+                                                                                            <span class="text-muted">Card Number:</span>
+                                                                                        </div>
+                                                                                        <div class="font-bold text-md"
+                                                                                             ng-if="card.last4">
+                                                                                            xxxx xxxx xxxx
+                                                                                            {{card.last4}}
+                                                                                        </div>
+                                                                                    </div>
+
+                                                                                    <div class="row m-t-sm">
+                                                                                        <div class="col-xs-6"
+                                                                                             style="line-height: 1.20;">
+                                                                                            <span class="text-xs text-muted">
+                                                                                                Expiry Month
+                                                                                            </span>
+
+                                                                                            <div class="text-md font-bold textIceland">
+                                                                                                {{card.expMonth}}
+                                                                                            </div>
+                                                                                        </div>
+
+                                                                                        <div class="col-xs-6"
+                                                                                             style="line-height: 1.20;">
+                                                                                            <span class="text-xs text-muted">
+                                                                                                Expiry Year
+                                                                                            </span>
+
+                                                                                            <div class="text-md font-bold textIceland">
+                                                                                                {{card.expYear}}
+                                                                                            </div>
+                                                                                        </div>
+                                                                                    </div>
+                                                                                </div>
+                                                                            </div>
+                                                                        </div>
+                                                                        <div class="m-lg"
+                                                                             ng-if="!vm.data.cards.length">
+                                                                            <div class="text-muted wrapper-lg text-center">
+                                                                                No record found!
+                                                                            </div>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+
+                                                <!--col 2: Reset password -->
+                                                <div class="col col-xs-4 no-padder b-l">
+                                                    <div class="vbox">
+                                                        <div class="bg-light text-md font-bold b-b wrapper-xs">
+                                                            Password
+                                                        </div>
+                                                        <div class="row-row bg-white">
+                                                            <div class="cell">
+                                                                <div class="cell-inner">
+                                                                    <div class="wrapper-sm">
+                                                                        <form name="resetPasswordForm" novalidate>
+                                                                            <!--Password-->
+                                                                            <div class="form-group">
+                                                                                <label class="w-full">
+                                                                                    New Password
+                                                                                    <i class="fa fa-info-circle text-info"
+                                                                                       uib-tooltip-html="passwordGuideline"
+                                                                                       tooltip-append-to-body="true"></i>
+
+                                                                                    <span id="password-strength-label"
+                                                                                          class="text-xs pull-right"></span>
+                                                                                </label>
+
+                                                                                <div class="input-group">
+                                                                                    <input type="password"
+                                                                                           name="newPassword"
+                                                                                           class="form-control"
+                                                                                           ng-attr-type="{{ vm.passForm.showPassword ? 'text' : 'password' }}"
+                                                                                           ng-model="vm.passForm.newPassword"
+                                                                                           ok-password
+                                                                                           placeholder="Enter New Password"
+                                                                                           required />
+
+                                                                                    <a href=""
+                                                                                       class="input-group-addon"
+                                                                                       ng-click="vm.passForm.showPassword = !vm.passForm.showPassword"
+                                                                                       uib-tooltip="{{ 'Click to ' + (vm.passForm.showPassword ? 'hide' : 'show') + ' password' }}"
+                                                                                       tooltip-append-to-body="true"
+                                                                                       tooltip-placement="auto">
+                                                                                        <i class="fa"
+                                                                                           ng-class="vm.passForm.showPassword ? 'fa-eye' : 'fa-eye-slash'"></i>
+                                                                                    </a>
+                                                                                </div>
+
+                                                                                <!--Strength meter-->
+                                                                                <div class="strength-meter">
+                                                                                    <div class="strength-meter-fill"
+                                                                                         data-strength="{{passwordStrength}}"></div>
+                                                                                </div>
+                                                                            </div>
+
+                                                                            <!--Confirm Password-->
+                                                                            <div class="form-group">
+                                                                                <label class="w-full">
+                                                                                    Confirm Password
+                                                                                    <span class="text-xs text-danger font-bold pull-right"
+                                                                                          ng-show="vm.passForm.newPassword && vm.passForm.confirm_password && (vm.passForm.newPassword != vm.passForm.confirm_password)">
+                                                                                        <i class="fa fa-warning"></i>
+                                                                                        Password Mismatch
+                                                                                    </span>
+                                                                                </label>
+                                                                                <input type="password"
+                                                                                       name="confirm_password"
+                                                                                       class="form-control"
+                                                                                       ng-model="vm.passForm.confirm_password"
+                                                                                       placeholder="Enter Confirm Password" />
+                                                                            </div>
+
+                                                                            <!--Actions-->
+                                                                            <button type="button"
+                                                                                    class="btn btn-sm  w-full btn-default"
+                                                                                    ng-disabled="resetPasswordForm.$invalid ||
+                                                                                        vm.passForm.newPassword != vm.passForm.confirm_password ||
+                                                                                        vm.passForm.newPassword.length < 8"
+                                                                                    ng-click="vm.changePasswordFn(vm.passForm.newPassword);">
+                                                                                Reset Password
+                                                                            </button>
+                                                                        </form>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                            <!--cell-->
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <!--/col 2-->
+                                            </div>
+                                        </div>
+                                        <!--Kyc-Password-->
+                                    </div>
+                                </div>
+                                <!--/col-->
+                            </div>
+                        </div>
+                    </div>
+                    <!--cell-inner-->
+                </div>
+            </div>
+        </div>
+    </div>
+    <!--/col-->
+
+</div>

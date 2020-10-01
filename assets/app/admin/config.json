@@ -1,0 +1,57 @@
+{
+  "default": {
+    "Modules": {
+      "apps.users.list": {
+        "title": "Users"
+      },
+      "apps.users.upsert": {
+        "title": "User"
+      },
+      "apps.users.profile": {
+        "title": "User Profile"
+      },
+      "apps.adminSetup.mainMasters": {
+        "title": "Main Master"
+      },
+      "apps.adminSetup.subMasters": {
+        "title": "Sub Master"
+      },
+      "apps.adminSetup.notifications": {
+        "title": "Notifications"
+      },
+      "apps.adminSetup.settings": {
+        "title": "Settings"
+      }
+    },
+    "ActiveFilterStatus"       : {
+      "ALL"     : "-1",
+      "ACTIVE"  : "true",
+      "DEACTIVE": "false"
+    },
+    "UserTypes": {
+      "ADMIN": 1,
+      "DEVICE": 2
+    },
+    "COLOR_CLASS": [
+      "bg-skyblue",
+      "bg-orange",
+      "bg-primary",
+      "bg-success",
+      "bg-danger",
+      "bg-dkrgray",
+      "bg-warning"
+    ],
+    "FileTypes"         : {
+      "ATTACHMENT_TYPE_IMAGE"   : 1,
+      "ATTACHMENT_TYPE_VIDEO"   : 2,
+      "ATTACHMENT_TYPE_DOCUMENT": 3,
+      "ATTACHMENT_TYPE_AUDIO"   : 4
+    }
+  },
+  "development": {
+    "API_ENDPOINT": "http://localhost:1370"
+  },
+  "production": {
+    "API_ENDPOINT": "http://192.168.0.200:1370"
+  }
+}

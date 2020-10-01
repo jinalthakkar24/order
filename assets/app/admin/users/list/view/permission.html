@@ -1,0 +1,131 @@
+<div class="col-lg-12 col-md-12 col-xs-12 col-sm-12 no-padder">
+
+    <div class="panel panel-default">
+        <div class="table-responsive">
+            <table class="table table-striped b-t b-light">
+                <thead>
+                <tr>
+                    <th style="width: 10%"
+                        class="col-md-2 text-center">
+                        <div class="inline">
+                             <span>
+                                <label style="display: inline-flex"
+                                       class="i-checks">
+                                  <span style="margin-right: 25px;"><b>ALL</b></span>
+                                     <input type="checkbox"
+                                            class="m-l-xs"
+                                            ng-model="vm.allModules"
+                                            ng-change="vm.checkAllModulesFn(vm.allModules)" />
+                                      <i></i>
+                                   </label>
+                              </span>
+                        </div>
+
+                    </th>
+                    <th style="width: 40%"
+                        class="col-md-6 v-middle">
+                        <span style="font-size: 14px">Module</span>
+
+                        <span ng-if="vm.isGeneralPermission"
+                              style="background-color: #7091D0;letter-spacing: 1px"
+                              uib-tooltip="This permissions are default selected by Admin."
+                              class="label p3 m-l-sm">
+                             Default Permissions
+                        </span>
+
+                    </th>
+                    <th style="width: 10%"
+                        class="col-md-1 text-center">
+                        Insert
+                    </th>
+                    <th style="width: 10%"
+                        class="col-md-1 text-center">
+                        Update
+                    </th>
+                    <th style="width: 10%"
+                        class="col-md-1 text-center">
+                        Delete
+                    </th>
+                    <th style="width: 10%"
+                        class="col-md-1 text-center">
+                        Listing
+                    </th>
+                    <th style="width: 10%"
+                        class="col-md-10">
+                        <span class="pull-right">
+                            <button type="button"
+                                    style="line-height: 1 !important;"
+                                    has-permission="{{updatePermission}}"
+                                    has-module="{{moduleUsers}}"
+                                    class="btn btn-success btn-sm text-sm"
+                                    ng-click="vm.savePermissionFn(vm.item)">
+                                <span ng-if="!vm.updateBtn">Save</span>
+                                <span ng-if="vm.updateBtn">Update</span>
+                            </button>
+
+                        </span>
+                    </th>
+                </tr>
+                </thead>
+                <tbody>
+
+                <tr ng-repeat="menu in vm.allMenus">
+                    <td style="width: 10%"
+                        class="col-md-2 p-8558 text-center">
+
+                        <label class="i-checks">
+                            <input type="checkbox"
+                                   ng-model="menu.checked"
+                                   ng-change="vm.checkSingleModuleFn(menu.checked,menu)" />
+                            <i></i>
+                        </label>
+
+                    </td>
+                    <td style="width: 40%"
+                        class="col-md-6 p-8558">
+                        {{menu.title}}
+                    </td>
+                    <td style="width: 10%"
+                        class="col-md-1 text-center p-8558">
+
+                        <label class="i-checks">
+                            <input type="checkbox"
+                                   ng-change="vm.operationChangeFn()"
+                                   ng-model="menu.operations.insert" />
+                            <i></i>
+                        </label>
+                    </td>
+                    <td style="width: 10%"
+                        class="col-md-1 text-center p-8558">
+                        <label class="i-checks">
+                            <input type="checkbox"
+                                   ng-change="vm.operationChangeFn()"
+                                   ng-model="menu.operations.update" />
+                            <i></i>
+                        </label>
+                    </td>
+                    <td style="width: 10%"
+                        class="col-md-1 text-center p-8558">
+                        <label class="i-checks">
+                            <input type="checkbox"
+                                   ng-change="vm.operationChangeFn()"
+                                   ng-model="menu.operations.delete" />
+                            <i></i>
+                        </label>
+                    </td>
+                    <td style="width: 10%"
+                        class="col-md-1 text-center p-8558">
+                        <label class="i-checks">
+                            <input type="checkbox"
+                                   ng-change="vm.operationChangeFn()"
+                                   ng-model="menu.operations.list" />
+                            <i></i>
+                        </label>
+                    </td>
+
+                </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>

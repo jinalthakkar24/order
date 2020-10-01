@@ -1,0 +1,24 @@
+<div class="panel-body">
+    <div class="form-group pull-in clearfix" style="font-size:22px">
+        <div class="col-md-12 wrapper-xs text-dark text-center"><span
+                class="text-danger"><i class="fa fa-warning"></i></span> &nbsp; Are you
+            sure you want to delete this {{vm.options.title}} ?
+        </div>
+        <div class="col-md-11 m-t-xs m-l-lg text-md text-center" ng-if="vm.options.subTitle"
+             style="word-break: break-all;color:#777777"> {{vm.options.subTitle}}
+        </div>
+    </div>
+    <div class="form-group pull-in clearfix">
+        <div class="text-right m-t">
+            <center>
+                <button type="submit"
+                        ng-click="vm.closeModal();vm.deleteDocument(vm.options.model,vm.options.documentId,vm.options.paginateDetails, vm.options.callback,vm.options.list,vm.options.isNoPageRefresh)"
+                        class="btn btn-success m-r-xs ng-binding" style="width:11%"
+                        tabindex="0"> Yes <!-- button --></button>
+                <button type="submit" ng-click="vm.closeModal()"
+                        class="btn btn-danger ng-binding" style="width:11%"
+                        tabindex="0"> No <!-- button --></button>
+            </center>
+        </div>
+    </div>
+</div>

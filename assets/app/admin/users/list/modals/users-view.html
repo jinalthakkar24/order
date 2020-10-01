@@ -1,0 +1,123 @@
+<!--event detail view-->
+<div class="panel m-b-none panel-default" style="position: relative;">
+    <div class="panel-heading">
+
+        <div class="clearfix">
+
+                <span ng-if="vm.user.image" class="popup-gallery pull-left m-r">
+                    <img ng-src="{{vm.user.image}}"
+                         ng-click="displayImages([{path:vm.user.image,type:1}], 0)"
+                         class="img-circle"
+                         alt="img"
+                         height="50"
+                         width="50" />
+                </span>
+
+            <img ng-if="!vm.user.image"
+                 class="img-circle pull-left m-r-sm"
+                 src="{{noImage}}" height="40"
+                 width="40">
+
+            <div class="clear">
+                <div class="h4 m-t-xs m-b-xs">
+                    {{vm.user.name_prefix}}
+                    {{vm.user.first_name}}
+                    {{vm.user.middle_name}}
+                    {{vm.user.last_name}}
+
+                    <span ng-class="vm.user.is_authenticated ? 'text-success-dker' : 'text-danger'"
+                          class="m-l b-b b-success">
+                        <i ng-if="vm.user.is_authenticated" class="fa fa-check text"></i>
+                        <i ng-if="!vm.user.is_authenticated" class="fa fa-times text"></i>
+                        Authenticated
+                    </span>
+
+
+                    <button type="button" class="close" ng-click="vm.closeModal()"><span
+                            aria-hidden="true">&times;</span></button>
+                    <span ng-if="vm.user.membership_no"
+                          class="r-3x wrapper-xs bg-info text-sm text-white m-r pull-right">
+                            <b>Membership No :</b> {{vm.user.membership_no}}
+                        </span>
+                </div>
+                <small class="text-muted">
+                    {{vm.user.email}}
+                    <span ng-if="vm.user.cell">/
+                        {{vm.user.country_code}} {{vm.user.cell}}
+                    </span>
+                </small>
+            </div>
+        </div>
+
+    </div>
+    <div class="panel-body wrapper-sm" style="font-size: 15px">
+        <!--<div class="col-md-12">-->
+        <form class="form-horizontal">
+            <div class="form-group">
+                <div class="col-sm-6">
+                    <label class="control-label font-bold col-sm-3">Email (2):</label>
+                    <div class="col-sm-9">
+                        <p class="form-control-static">
+                            {{vm.user.email2 || '-'}}
+                        </p>
+                    </div>
+                </div>
+
+                <div class="col-sm-6">
+                    <label class="control-label font-bold col-sm-3 form-control-static p-l-r-none">Contact (2):</label>
+                    <div class="col-sm-9">
+                        <p class="form-control-static">
+                            {{vm.user.cell2 || '-'}}
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <div class="col-sm-6">
+                    <label class="control-label font-bold col-sm-3">Address:</label>
+                    <div class="col-sm-9"
+                         style="max-height: 120px; overflow: auto;">
+                        <span>{{vm.user | buildAddress}}</span>
+                    </div>
+                </div>
+
+                <div class="col-sm-6">
+                    <label class="control-label font-bold col-sm-3 form-control-static p-l-r-none">Education:</label>
+                    <div class="col-sm-9">
+                        <p class="form-control-static">
+                            <span> {{ vm.user.education || '-' }}</span>
+
+                            <small ng-if="vm.user.sub_specialist"><br />({{vm.user.sub_specialist}})</small>
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <div class="col-sm-6">
+                    <label class="control-label font-bold col-sm-3">Reg. No:</label>
+                    <div class="col-sm-9">
+                        <p class="form-control-static">
+                            {{ vm.user.reg_id || '-' }}
+                        </p>
+                    </div>
+                </div>
+
+                <div class="col-sm-6">
+                    <label class="control-label font-bold col-sm-3 form-control-static p-l-r-none">Website :</label>
+                    <div class="col-sm-9">
+                        <p class="form-control-static">
+                        <span ng-if="vm.user.website">
+                            <a href="{{ vm.user.website }}" target="_blank">{{ vm.user.website}}</a>
+                        </span>
+                            <span ng-if="!vm.user.website">-</span>
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </form>
+        <!--</div>-->
+    </div>
+</div>
+<!-- /event detail view-->
